@@ -20,8 +20,8 @@ const __dirname = dirname(__filename);
 process.chdir(join(__dirname, '..'));
 
 const DATE = new Date().toString().split('(')[0].trim();
-// const COMMIT = revision.execSync('git rev-parse --short HEAD')
-//   .toString().trim();
+const COMMIT = revision.execSync('git rev-parse --short HEAD')
+  .toString().trim();
 
 /** 
  * LittleJS Build System
@@ -167,7 +167,7 @@ function htmlBuildStep(filename) {
   html = html.replace('</html>', '')
 
   let inject = '<script>';
-  // inject += `window.COMMIT='${Config.title.split('(')[0]} ${COMMIT}';`;
+  inject += `window.COMMIT='${COMMIT}';`;
   inject += `window.BUILD='${DATE}';`;
   inject += fs.readFileSync(filename);
   inject += '</script>';

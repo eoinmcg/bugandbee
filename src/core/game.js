@@ -123,8 +123,8 @@ if (window.BUILD) {
   setShowWatermark(false);
   setShowSplashScreen(true);
   window.setTimeout(() => {
-    console.log(`Build: ${BUILD}\n\n`);
-    console.log(`🐞🐝 ${Game.title} say HAI!`);
+    console.log(`Built: ${BUILD}  [commit: ${COMMIT}]\n\n`);
+    console.log("%c" + `🐞🐝 ${Game.title} say HAI! \n`, "font-size: 24px; font-weight: bold; color: #c20;");
     console.log(`Check the source: https://github.com/eoinmcg/bugandbee`);
     console.log(`code & GFX by @eoinmcg`);
     console.log(`music: https://not-jam.itch.io/not-jam-music-pack`);
