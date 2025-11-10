@@ -21,6 +21,9 @@ export default class Victory extends Scene {
       this.g.playMusic(2);
       this.dance = true;
     }, 2000);
+
+    this.g.medals.unlock(4);
+
   }
 
   update() {

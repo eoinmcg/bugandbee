@@ -27,6 +27,12 @@ export default class Play extends Scene {
 
     this.levelManager = new LevelManager(g, this.g.levelNum);
 
+    if (this.g.p1 && this.g.p2) {
+      window.setTimeout(() => {
+        this.g.medals[0].unlock();
+      }, 2000);
+    }
+
   }
 
   update() {
@@ -40,7 +46,10 @@ export default class Play extends Scene {
       }
       this.g.newHiscore = true;
       this.g.hiScore = Math.max(this.g.store.p1.score, this.g.store.p2.score);
+      this.g.medals[1].unlock();
+
     }
+
 
     const p1Dead = this.g.store.p1.lives < 0;
     const p2Dead = this.g.p2 ? this.g.store.p2.lives < 0 : true;

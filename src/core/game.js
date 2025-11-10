@@ -99,6 +99,7 @@ export const Game = {
 document.title = Game.title
 Game.resetStore();
 
+
 let font = new FontImage;
 font.image.onload = () => {
   let cols = ['white', 'gray', 'red', 'black', 'yellow', 'green', 'pink', 'orange', 'aqua', 'lime'];

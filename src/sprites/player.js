@@ -266,6 +266,9 @@ export default class Player extends Sprite {
       props.angle = props.angle + PI;
       new Bullet(this.pos.add(vec2(0, -.5)), props);
     }
+    if (powerups > 4) {
+      this.g.medals.unlock(2);
+    }
   }
 
 }

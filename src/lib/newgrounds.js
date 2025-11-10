@@ -14,60 +14,63 @@ import CryptoJS from "crypto-js";
 
 ///////////////////////////////////////////////////////////////////////////////
 
+
 /** Newgrounds medal auto unlocks in newgronds API */
-class NewgroundsMedal extends Medal
-{
-    /** Create a medal object and adds it to the list of medals */
-    constructor(id, name, description, icon, src, g, NGid) {
-    super(id, name, description, icon, src); 
+class NewgroundsMedal extends Medal {
+  /** Create a medal object and adds it to the list of medals */
+  constructor(id, name, description, icon, src, g, NGid) {
+    super(id, name, description, icon, src);
     this.g = g;
     this.NGid = NGid;
+    this.medalDisplaySize = vec2(340, 80);
+    this.medalDisplayIconSize = 80;
   }
 
-    /** Unlocks a medal if not already unlocked */
-    unlock()
-    {
-        super.unlock();
-        // if (this.unlocked) {
-        //   console.log('MEDAL ALREADY UNLOCKED');
-        //   return;
-        // }
-        this.g.sfx.play('medal');
-        newgrounds && newgrounds.unlockMedal(this.NGid);
-    }
+  /** Unlocks a medal if not already unlocked */
+  unlock() {
+    super.unlock();
+    // if (this.unlocked) {
+    //   console.log('MEDAL ALREADY UNLOCKED');
+    //   return;
+    // }
+    this.g.sfx.play('medal');
+    newgrounds && newgrounds.unlockMedal(this.NGid);
+  }
 
-  render(hidePercent=0) {
-    // super.render(hidePercent);
-        const context = overlayContext;
-        const width = min(medalDisplaySize.x, mainCanvas.width);
-        const x = overlayCanvas.width - width;
-        const y = -medalDisplaySize.y*hidePercent;
-
-        // draw containing rect and clip to that region
-        context.save();
-        context.beginPath();
-        context.fillStyle = this.g.palette.forest2.col;
-        context.strokeStyle = this.g.palette.white2.col;
-        context.lineWidth = 3;
-        context.rect(x, y, width, medalDisplaySize.y);
-        context.fill();
-        context.stroke();
-        context.clip();
-
-
-        // draw the icon and text
-        this.renderIcon(vec2(x+medalDisplayIconSize/2, y+medalDisplaySize.y/2));
-
-        const pos = vec2(x+medalDisplayIconSize+30, y+18);
-        this.g.fonts.white.drawTextScreen(this.name, pos, 3.3);
-        pos.y += 32;
-        this.g.fonts.white.drawTextScreen(this.description, pos, 2);
-        context.restore();
+  render(hidePercent = 0) {
+    super.render(hidePercent);
+    // const context = overlayContext;
+    // const width = min(this.medalDisplaySize.x, mainCanvas.width);
+    // const x = overlayCanvas.width - width;
+    // const y = -this.medalDisplaySize.y * hidePercent;
+    //
+    // // draw containing rect and clip to that region
+    // context.save();
+    // context.beginPath();
+    // context.fillStyle = this.g.palette.emerald.col;
+    // context.strokeStyle = this.g.palette.white.col;
+    // context.lineWidth = 3;
+    // context.rect(x, y, width, this.medalDisplaySize.y);
+    // context.fill();
+    // context.stroke();
+    // context.clip();
+    //
+    // // draw the icon and text
+    // let p = vec2(x + this.medalDisplayIconSize / 2, y + this.medalDisplaySize.y / 2);
+    // console.log(this.medalDisplayIconSize, this.medalDisplaySize, x, y)
+    // console.log(p);
+    //
+    // const pos = vec2(x + this.medalDisplayIconSize + 30, y + 18);
+    // this.renderIcon(p, 2);
+    // this.g.fonts.white.drawTextScreen(this.name, pos, 3.3);
+    // pos.y += 32;
+    // this.g.fonts.white.drawTextScreen(this.description, pos, 2);
+    // context.restore();
   }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
- 
+
 /** Global Newgrounds object */
 let newgrounds;
 
@@ -88,135 +91,128 @@ function newgroundsInit(app_id, cipher) {
  * const app_id = '52123:1ZuSTQ7l';
  * newgrounds = new Newgrounds(app_id);
  */
-class Newgrounds
-{
-    /** Create a newgrounds object
-     *  @param {String} app_id   - The newgrounds App ID
-     *  @param {String} [cipher] - The encryption Key (AES-128/Base64)
-     *  @param {Object} [cryptoJS] - An instance of CryptoJS, if there is a cipher */
-    constructor(app_id, cipher, cryptoJS)
-    {
+class Newgrounds {
+  /** Create a newgrounds object
+   *  @param {String} app_id   - The newgrounds App ID
+   *  @param {String} [cipher] - The encryption Key (AES-128/Base64)
+   *  @param {Object} [cryptoJS] - An instance of CryptoJS, if there is a cipher */
+  constructor(app_id, cipher, cryptoJS) {
 
-        if (!cryptoJS) {
-            cryptoJS = new cryptoJS();
-        }
-
-        ASSERT(!newgrounds, 'there can only be one newgrounds object');
-        ASSERT(!cipher || cryptoJS, 'must provide cryptojs if there is a cipher');
-
-        this.app_id = app_id;
-        this.cipher = cipher;
-        this.cryptoJS = cryptoJS;
-        this.host = location ? location.hostname : '';
-
-        // get session id from url search params
-        const url = new URL(location.href);
-        this.session_id = url.searchParams.get('ngio_session_id');
-
-        if (!this.session_id)
-            return; // only use newgrounds when logged in
-
-        // get medals
-        const medalsResult = this.call('Medal.getList');
-        this.medals = medalsResult ? medalsResult.result.data['medals'] : [];
-        debugMedals && console.log(this.medals);
-        for (const newgroundsMedal of this.medals)
-        {
-            const medal = medals[newgroundsMedal['id']];
-            if (medal)
-            {
-                // copy newgrounds medal data
-                medal.image =       new Image;
-                medal.image.src =   newgroundsMedal['icon'];
-                medal.name =        newgroundsMedal['name'];
-                medal.description = newgroundsMedal['description'];
-                medal.unlocked =    newgroundsMedal['unlocked'];
-                medal.difficulty =  newgroundsMedal['difficulty'];
-                medal.value =       newgroundsMedal['value'];
-
-                if (medal.value) // add value to description
-                    medal.description = medal.description + ` (${ medal.value })`;
-            }
-        }
-    
-        // get scoreboards
-        const scoreboardResult = this.call('ScoreBoard.getBoards');
-        this.scoreboards = scoreboardResult ? scoreboardResult.result.data.scoreboards : [];
-        debugMedals && console.log(this.scoreboards);
-
-        // keep the session alive with a ping every 5 minutes
-        const keepAliveMS = 5 * 60 * 1e3;
-        setInterval(()=>this.call('Gateway.ping', 0, true), keepAliveMS);
+    if (!cryptoJS) {
+      cryptoJS = new cryptoJS();
     }
 
-    /** Send message to unlock a medal by id
-     * @param {Number} id - The medal id */
-    unlockMedal(id) { return this.call('Medal.unlock', {'id':id}, true); }
+    ASSERT(!newgrounds, 'there can only be one newgrounds object');
+    ASSERT(!cipher || cryptoJS, 'must provide cryptojs if there is a cipher');
 
-    /** Send message to post score
-     * @param {Number} id    - The scoreboard id
-     * @param {Number} value - The score value */
-    postScore(id, value) { return this.call('ScoreBoard.postScore', {'id':id, 'value':value}, true); }
+    this.app_id = app_id;
+    this.cipher = cipher;
+    this.cryptoJS = cryptoJS;
+    this.host = location ? location.hostname : '';
 
-    /** Get scores from a scoreboard
-     * @param {Number} id       - The scoreboard id
-     * @param {String} [user]   - A user's id or name
-     * @param {Number} [social] - If true, only social scores will be loaded
-     * @param {Number} [skip]   - Number of scores to skip before start
-     * @param {Number} [limit]  - Number of scores to include in the list
-     * @return {Object}         - The response JSON object
-     */
-    getScores(id, user, social=0, skip=0, limit=10)
-    { return this.call('ScoreBoard.getScores', {'id':id, 'user':user, 'social':social, 'skip':skip, 'limit':limit}); }
+    // get session id from url search params
+    const url = new URL(location.href);
+    this.session_id = url.searchParams.get('ngio_session_id');
 
-    /** Send message to log a view */
-    logView() { return this.call('App.logView', {'host':this.host}, true); }
+    if (!this.session_id)
+      return; // only use newgrounds when logged in
 
-    /** Send a message to call a component of the Newgrounds API
-     * @param {String}  component    - Name of the component
-     * @param {Object}  [parameters] - Parameters to use for call
-     * @param {Boolean} [async]      - If true, don't wait for response before continuing
-     * @return {Object}              - The response JSON object
-     */
-    call(component, parameters, async=false)
-    {
+    // get medals
+    const medalsResult = this.call('Medal.getList');
+    this.medals = medalsResult ? medalsResult.result.data['medals'] : [];
+    debugMedals && console.log(this.medals);
+    for (const newgroundsMedal of this.medals) {
+      const medal = medals[newgroundsMedal['id']];
+      if (medal) {
+        // copy newgrounds medal data
+        medal.image = new Image;
+        medal.image.src = newgroundsMedal['icon'];
+        medal.name = newgroundsMedal['name'];
+        medal.description = newgroundsMedal['description'];
+        medal.unlocked = newgroundsMedal['unlocked'];
+        medal.difficulty = newgroundsMedal['difficulty'];
+        medal.value = newgroundsMedal['value'];
 
-        if (!window.BUILD) { return; }
-
-        const call = {'component':component, 'parameters':parameters};
-        if (this.cipher)
-        {
-            // encrypt using AES-128 Base64 with cryptoJS
-            const cryptoJS = this.cryptoJS;
-            const aesKey = cryptoJS['enc']['Base64']['parse'](this.cipher);
-            const iv = cryptoJS['lib']['WordArray']['random'](16);
-            const encrypted = cryptoJS['AES']['encrypt'](JSON.stringify(call), aesKey, {'iv':iv});
-            call['secure'] = cryptoJS['enc']['Base64']['stringify'](iv.concat(encrypted['ciphertext']));
-            call['parameters'] = 0;
-        }
-
-        // build the input object
-        const input =
-        {
-            'app_id':     this.app_id,
-            'session_id': this.session_id,
-            'call':       call
-        };
-
-        // build post data
-        const formData = new FormData();
-        formData.append('input', JSON.stringify(input));
-        
-        // send post data
-        const xmlHttp = new XMLHttpRequest();
-        const url = 'https://newgrounds.io/gateway_v3.php';
-        xmlHttp.open('POST', url, !debugMedals && async);
-
-        xmlHttp.send(formData);
-        debugMedals && console.log(xmlHttp.responseText);
-        window.R = xmlHttp;
-        return xmlHttp.responseText && JSON.parse(xmlHttp.responseText);
+        if (medal.value) // add value to description
+          medal.description = medal.description + ` (${medal.value})`;
+      }
     }
+
+    // get scoreboards
+    const scoreboardResult = this.call('ScoreBoard.getBoards');
+    this.scoreboards = scoreboardResult ? scoreboardResult.result.data.scoreboards : [];
+    debugMedals && console.log(this.scoreboards);
+
+    // keep the session alive with a ping every 5 minutes
+    const keepAliveMS = 5 * 60 * 1e3;
+    setInterval(() => this.call('Gateway.ping', 0, true), keepAliveMS);
+  }
+
+  /** Send message to unlock a medal by id
+   * @param {Number} id - The medal id */
+  unlockMedal(id) { return this.call('Medal.unlock', { 'id': id }, true); }
+
+  /** Send message to post score
+   * @param {Number} id    - The scoreboard id
+   * @param {Number} value - The score value */
+  postScore(id, value) { return this.call('ScoreBoard.postScore', { 'id': id, 'value': value }, true); }
+
+  /** Get scores from a scoreboard
+   * @param {Number} id       - The scoreboard id
+   * @param {String} [user]   - A user's id or name
+   * @param {Number} [social] - If true, only social scores will be loaded
+   * @param {Number} [skip]   - Number of scores to skip before start
+   * @param {Number} [limit]  - Number of scores to include in the list
+   * @return {Object}         - The response JSON object
+   */
+  getScores(id, user, social = 0, skip = 0, limit = 10) { return this.call('ScoreBoard.getScores', { 'id': id, 'user': user, 'social': social, 'skip': skip, 'limit': limit }); }
+
+  /** Send message to log a view */
+  logView() { return this.call('App.logView', { 'host': this.host }, true); }
+
+  /** Send a message to call a component of the Newgrounds API
+   * @param {String}  component    - Name of the component
+   * @param {Object}  [parameters] - Parameters to use for call
+   * @param {Boolean} [async]      - If true, don't wait for response before continuing
+   * @return {Object}              - The response JSON object
+   */
+  call(component, parameters, async = false) {
+
+    if (!window.BUILD) { return; }
+
+    const call = { 'component': component, 'parameters': parameters };
+    if (this.cipher) {
+      // encrypt using AES-128 Base64 with cryptoJS
+      const cryptoJS = this.cryptoJS;
+      const aesKey = cryptoJS['enc']['Base64']['parse'](this.cipher);
+      const iv = cryptoJS['lib']['WordArray']['random'](16);
+      const encrypted = cryptoJS['AES']['encrypt'](JSON.stringify(call), aesKey, { 'iv': iv });
+      call['secure'] = cryptoJS['enc']['Base64']['stringify'](iv.concat(encrypted['ciphertext']));
+      call['parameters'] = 0;
+    }
+
+    // build the input object
+    const input =
+    {
+      'app_id': this.app_id,
+      'session_id': this.session_id,
+      'call': call
+    };
+
+    // build post data
+    const formData = new FormData();
+    formData.append('input', JSON.stringify(input));
+
+    // send post data
+    const xmlHttp = new XMLHttpRequest();
+    const url = 'https://newgrounds.io/gateway_v3.php';
+    xmlHttp.open('POST', url, !debugMedals && async);
+
+    xmlHttp.send(formData);
+    debugMedals && console.log(xmlHttp.responseText);
+    window.R = xmlHttp;
+    return xmlHttp.responseText && JSON.parse(xmlHttp.responseText);
+  }
 }
 
 

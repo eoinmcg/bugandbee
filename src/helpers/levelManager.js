@@ -91,6 +91,7 @@ export default class LevelManager {
             if (phase.types.includes('levelComplete')) {
               this.g.levelNum += 1;
               this.g.sceneManager.changeScene('LevelComplete');
+              this.g.medals.unlock(3);
             } else {
               new this.ents[phase.types.rnd()](this.g, phase.props);
             }
@@ -107,7 +108,6 @@ export default class LevelManager {
         // console.log(phase.types, type, isWave);
         type = type.replace('wave.', '');
         let props = isWave ? waves[type] : {};
-
 
         this.g.events.push(({
           ttl: time,

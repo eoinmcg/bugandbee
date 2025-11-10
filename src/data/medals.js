@@ -2,46 +2,34 @@ import { NewgroundsMedal } from "../lib/newgrounds";
 
 let medalData = [
   {
-    name: 'Keen',
-    info: 'Complete the tutorial',
-    icon: '🎓',
-    id: 82319
+    name: 'Buddy',
+    info: 'Play with a friend',
+    icon: '😎',
+    id: 0
   },
   {
-    name: 'Speedy',
-    info: 'Finish faster than 2:45',
+    name: 'Achiever',
+    info: 'Get a new HiScore',
+    icon: '💸',
+    id: 1
+  },
+  {
+    name: 'Power',
+    info: 'Achieve max powerups',
     icon: '⚡',
-    id: 82320
+    id: 2
   },
   {
-    name: 'Pacifist',
-    info: 'Finish Mission 3 without killing',
-    icon: '☮️',
-    id: 82322
+    name: 'Spelunker',
+    info: 'Survive the caves',
+    icon: '🦇',
+    id: 3
   },
   {
-    name: 'Killer',
-    info: 'Kill all baddies on Mission 4',
-    icon: '💀',
-    id: 82321
-  },
-  {
-    name: 'Hero',
-    info: 'Finish all Missions',
-    icon: '🦸',
-    id: 82324
-  },
-  {
-    name: 'Hawt',
-    info: 'Go for a swim in lava',
-    icon: '🔥',
-    id: 82323
-  },
-  {
-    name: 'NomNom!',
-    info: 'Eat the donut on Mission 5',
-    icon: '🍩',
-    id: 82325
+    name: 'Champion',
+    info: 'Beat the game',
+    icon: '🏆',
+    id: 4
   },
 ];
 
