@@ -20,7 +20,7 @@ export default class Help extends Scene {
   update() {
     super.update();
 
-    const stick = gamepadStick(0);
+    const stick = gamepadDpad(0);
 
     if (keyWasPressed('ArrowUp')
       || (this.lastStick[0] > 0 && stick.y === 0)) {

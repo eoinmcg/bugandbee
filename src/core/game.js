@@ -5,12 +5,14 @@ import palette from "../data/palette.js";
 import Sfx from "../data/sfx.js";
 
 import colorFont from "../helpers/colorFont.js";
+import { getItem } from "../helpers/store.js";
 
 import { newgroundsInit } from "../lib/newgrounds.js";
 import keys from "../data/keys.js";
 
 import generateMedals from "../data/medals.js";
 let newgrounds = newgroundsInit(keys.AppID, keys.EncryptionKey);
+
 
 export const Game = {
   title: Config.title,
@@ -26,7 +28,7 @@ export const Game = {
   levelNum: 1,
   startScene: 'Splash',
   images: Config.images,
-  hiScore: 200,
+  hiScore: getItem('HiScore', 500),
   newHiscore: false,
   tileSize: Config.tileSize,
   trackPaths: Config.trackPaths,
@@ -92,6 +94,7 @@ export const Game = {
     }
   }
 };
+
 
 document.title = Game.title
 Game.resetStore();

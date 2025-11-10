@@ -1,6 +1,7 @@
 import Scene from "./scene";
 import Player from "../sprites/player";
 import Alert from "../sprites/alert";
+import { setItem } from "../helpers/store.js";
 
 import LevelManager from "../helpers/levelManager";
 
@@ -38,7 +39,7 @@ export default class Play extends Scene {
         new Alert(this.g, { text: 'NEW HISCORE!!', col: 'lemon', pos: vec2(0, -5), fontSize: 1.5, sfx: 'score' });
       }
       this.g.newHiscore = true;
-      this.g.hiScore = this.g.store.p1.score;
+      this.g.hiScore = Math.max(this.g.store.p1.score, this.g.store.p2.score);
     }
 
     const p1Dead = this.g.store.p1.lives < 0;
@@ -47,6 +48,7 @@ export default class Play extends Scene {
     if (p1Dead && p2Dead && !this.g.gameOver) {
       if (this.g.newHiscore) {
         console.log('NEW HISCORE SAVED');
+        setItem('HiScore', this.g.hiScore);
       }
       this.g.gameOver = time;
       this.levelManager.setGameOver();

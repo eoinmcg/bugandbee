@@ -4,6 +4,7 @@ import Charge from "./charge";
 import Shield from "./shield";
 import Particles from "../helpers/particles";
 import { outlineTile } from "../helpers/drawOutline";
+import { gamepadStick } from "littlejsengine";
 
 export default class Player extends Sprite {
   constructor(g, pos, type = 'BEE', player = 'p1') {
@@ -165,7 +166,9 @@ export default class Player extends Sprite {
 
     const K = KEYS[this.player];
 
-    let stick = gamepadStick(K.pad);
+    // let stick = gamepadStickCount(K.pad) !== 0
+    //   ? gamepadStick(K.pad) : gamepadDpad(K.pad);
+    let stick = gamepadDpad(K.pad);
     let newAnim = 'fly';
 
     if (keyIsDown(K.left) || stick.x < 0) this.velocity.x = -.2;

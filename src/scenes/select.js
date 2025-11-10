@@ -10,9 +10,7 @@ export default class Select extends Scene {
     this.bgColor = new Color(.1, .1, .1)
 
     this.active = 0;
-    this.stick = [
-      gamepadStick(0),
-    ];
+    this.stick = [gamepadDpad(0)];
     this.lastStick = [0];
 
     this.frameCount = 0;
@@ -53,7 +51,8 @@ export default class Select extends Scene {
       this.g.sfx.play('alert');
       this.g.store.p1.type = this.active === 1
         ? 'BEE' : 'BUG';
-      this.g.sceneManager.changeScene('Tutorial');
+      const scene = this.g.plays === 0 ? 'Tutorial' : 'Play';
+      this.g.sceneManager.changeScene(scene);
     }
 
     this.lastStick = [stick.x];

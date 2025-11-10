@@ -10,9 +10,7 @@ export default class Splash extends Scene {
     this.pointer = 0;
 
     this.g.resetStore();
-    this.stick = [
-      gamepadStick(0),
-    ];
+    this.stick = [gamepadDpad(0)];
     this.lastStick = [0];
 
 
@@ -55,7 +53,8 @@ export default class Splash extends Scene {
         this.g.resetStore();
         this.g.store.p1.type = 'bug';
         this.g.store.p2.type = 'bee';
-        this.g.sceneManager.changeScene('Tutorial');
+        const scene = this.g.plays === 0 ? 'Tutorial' : 'Play';
+        this.g.sceneManager.changeScene(scene);
       }
 
     }
