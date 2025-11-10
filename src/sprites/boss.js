@@ -1,6 +1,7 @@
 import Enemy from "./enemy";
 import EnemyFire from "./enemyFire";
 import Score from './score';
+import Particles from "../helpers/particles";
 
 export default class Boss extends Enemy {
 
@@ -48,11 +49,26 @@ export default class Boss extends Enemy {
     this.g.stopMusic();
     new Score(this.g, { value: this.value, pos: this.pos });
 
-    setTimeout(() => {
-      if (this.g.gameOver) return;
-      this.g.levelNum += 1;
-      this.g.sceneManager.changeScene('LevelComplete');
-    }, 2000);
+    for (let i = 0; i < 7; i += 1) {
+      let p = this.pos.copy().add(vec2(rand(-1, 1), rand(-1, 1))),
+        s = rand(this.size.x - 1, this.size.x + 1);
+      this.g.events.push({
+        ttl: i * .2,
+        cb: () => {
+          Particles.explodeBaddie(p, this.size);
+          this.g.sfx.play('explosion', p);
+        }
+      });
+    }
+
+    this.g.events.push({
+      ttl: 2.5,
+      cb: () => {
+        if (this.g.gameOver) return;
+        this.g.levelNum += 1;
+        this.g.sceneManager.changeScene('LevelComplete');
+      }
+    })
   }
 
 }

@@ -5,8 +5,9 @@ export default class Popcorn extends Enemy {
   constructor(g, props = {}) {
 
     if (!props.pos) {
-      props.pos = vec2(rand() > .5 ? g.size.max.x : g.size.min.x, rand(-5, 5));
+      props.pos = vec2(rand() > .5 || g.levelNum === 1 ? g.size.max.x : g.size.min.x, rand(-5, 5));
     }
+    // if (g.levelNum = 1) { props.pos.x = g.size.max.x; }
 
     super(g, {
       waveId: props?.waveId,
@@ -19,13 +20,12 @@ export default class Popcorn extends Enemy {
 
     const anim = this.g.levelNum === 4
       ? 'bat' : 'flappy';
+
     this.changeAnim(anim, 0.1);
-    this.canShoot = rand() > .75;
+    this.canShoot = rand() > .85;
 
     const vx = props.pos.x < 0 ? .1 : -.1;
-    this.velocity = vec2(
-      vx, 0
-    );
+    this.velocity = vec2(vx, 0);
 
     this.mirror = this.velocity.x > 0;
   }

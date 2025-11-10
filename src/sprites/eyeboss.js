@@ -6,7 +6,7 @@ export default class EyeBoss extends Boss {
       pos: props.pos,
       size: vec2(3),
       tile: g.tile('eye0'),
-      health: 75,
+      health: 50,
       value: 500,
     });
     this.anims = {
@@ -20,8 +20,8 @@ export default class EyeBoss extends Boss {
     }, 10);
 
     this.state = 'floating'; // 'floating', 'charging', 'zooming'
-    this.floatSpeed = 0.3;
-    this.zoomSpeed = 1.5;
+    this.floatSpeed = 0.2;
+    this.zoomSpeed = 1.2;
     this.verticalDirection = 1; // 1 = down, -1 = up
     this.side = this.pos.x < 0 ? 'left' : 'right'; // Which side of screen
     this.chargeTimer = new Timer(rand(2, 4)); // Time until zoom charge

@@ -49,7 +49,7 @@ export default class LevelManager {
     window.ents = this.ents;
 
     g.waves = {};
-    this.events = [];
+    this.g.events = [];
     this.loadLevel(levelNum);
 
   }
@@ -85,7 +85,7 @@ export default class LevelManager {
     for (let phase of this.level.phases) {
 
       if (!phase.end) {
-        this.events.push(({
+        this.g.events.push(({
           ttl: phase.start,
           cb: () => {
             if (phase.types.includes('levelComplete')) {
@@ -104,12 +104,12 @@ export default class LevelManager {
         time = time + rand(phase.freq[0], phase.freq[1]);
         let type = phase.types.rnd();
         let isWave = type.includes('wave.');
+        // console.log(phase.types, type, isWave);
         type = type.replace('wave.', '');
         let props = isWave ? waves[type] : {};
 
-        console.log(type, waves[type], waves);
 
-        this.events.push(({
+        this.g.events.push(({
           ttl: time,
           cb: () => {
             if (isWave) {
@@ -186,7 +186,7 @@ export default class LevelManager {
     this.g.waves[waveId] = props.waveNum;
 
     for (let i = 0; i < props.waveNum; i += 1) {
-      this.events.push({
+      this.g.events.push({
         ttl: .5 * i, cb: () => {
           new Enemy(Game, props);
         }
@@ -231,13 +231,13 @@ export default class LevelManager {
 
     if (this.g.gameOver) return;
 
-    for (let i = this.events.length - 1; i >= 0; --i) {
-      const e = this.events[i];
+    for (let i = this.g.events.length - 1; i >= 0; --i) {
+      const e = this.g.events[i];
       e.ttl -= timeDelta;
 
       if (e.ttl < 0) {
         e.cb();
-        this.events.splice(i, 1);
+        this.g.events.splice(i, 1);
       }
     }
 

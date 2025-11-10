@@ -51,7 +51,6 @@ export default class Enemy extends Sprite {
     this.shots = 0;
     if (this.canShoot && rand() < this.canShoot) {
       this.shots = 1;
-      console.log('SHOOTER');
     }
 
   }
@@ -77,13 +76,13 @@ export default class Enemy extends Sprite {
 
     if (this.shots && this.canShoot && rand() > .5) {
       this.shots = 0;
-      console.log('BANG!');
       this.shoot();
     }
 
   }
 
   collideWithObject(o) {
+    this.multiplier = 1; // charge doubles this
     if (o.name === 'charge' || o.name === 'bullet') {
 
       this.health -= 1;
@@ -94,6 +93,7 @@ export default class Enemy extends Sprite {
       }
       if (o.name === 'charge') {
         this.health -= 2;
+        this.multiplier = 2;
       }
       if (o.name === 'charge' && this.type === 'boss') {
         o.destroy();
@@ -116,6 +116,7 @@ export default class Enemy extends Sprite {
     if (!this.dead && (this.health <= 0 || o.name === 'charge')) {
 
       if (o.name === 'bullet' || o.name === 'charge') {
+        this.value *= this.multiplier;
         this.g.store[o.owner].score += this.value;
       }
 

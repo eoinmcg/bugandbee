@@ -31,9 +31,9 @@ export default class Rock extends Enemy {
     }
 
     this.players.forEach((p) => {
-      if (!this.launched && this.pos.x - rand(2, 3) < p.pos.x) {
+      if (!this.launched && this.pos.x + rand(-2, 3) < p.pos.x) {
         this.launched = true;
-        this.velocity.y = -0.65;
+        this.velocity.y = -.5;
       }
     })
 
