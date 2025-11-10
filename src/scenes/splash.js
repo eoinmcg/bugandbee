@@ -15,7 +15,7 @@ export default class Splash extends Scene {
 
 
     this.g.levelNum = 1;
-    this.initTunnel(rand() > .5 ? 'maroon' : 'maroon', 'black');
+    this.initTunnel(rand() > .5 ? 'maroon' : 'orange', 'black');
 
   }
 
