@@ -267,7 +267,7 @@ export default class Player extends Sprite {
       new Bullet(this.pos.add(vec2(0, -.5)), props);
     }
     if (powerups > 4) {
-      this.g.medals.unlock(2);
+      this.g.medals[2].unlock();
     }
   }
 

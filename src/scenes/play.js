@@ -10,6 +10,7 @@ export default class Play extends Scene {
   enter(g, data) {
     this.g = g;
     this.g.plays += 1;
+    setItem('plays', this.g.plays);
 
     if (g.store.p2.type) {
       inputWASDEmulateDirection = false;

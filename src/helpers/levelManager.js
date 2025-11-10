@@ -91,7 +91,7 @@ export default class LevelManager {
             if (phase.types.includes('levelComplete')) {
               this.g.levelNum += 1;
               this.g.sceneManager.changeScene('LevelComplete');
-              this.g.medals.unlock(3);
+              this.g.medals[3].unlock();
             } else {
               new this.ents[phase.types.rnd()](this.g, phase.props);
             }

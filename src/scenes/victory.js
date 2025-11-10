@@ -22,7 +22,7 @@ export default class Victory extends Scene {
       this.dance = true;
     }, 2000);
 
-    this.g.medals.unlock(4);
+    this.g.medals[4].unlock();
 
   }
 
