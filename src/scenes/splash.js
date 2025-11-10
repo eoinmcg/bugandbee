@@ -55,7 +55,7 @@ export default class Splash extends Scene {
         this.g.resetStore();
         this.g.store.p1.type = 'bug';
         this.g.store.p2.type = 'bee';
-        this.g.sceneManager.changeScene('Play');
+        this.g.sceneManager.changeScene('Tutorial');
       }
 
     }

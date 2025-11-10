@@ -4,14 +4,14 @@ export const waves = {
   // e.g. declare as ['wave.level1a']
   level1a: { anim: 'skull', path: 'topRightZig', speed: 6, health: 1, motion: 'smooth', canShoot: .1, shotSpeed: .1 },
   // e.g. declare as ['wave.level1b']
-  level1b: { anim: 'muncher', path: 'circle', speed: 6, health: 2, motion: 'linear', canShoot: .1, shotSpeed: .15 },
-  level1c: { anim: 'muncher', path: 'bottomRightLeft', speed: 8, health: 1, motion: 'smooth', canShoot: .1, shotSpeed: .1 },
+  level1b: { anim: 'muncher', path: 'bottomRightLeft', speed: 8, health: 1, motion: 'smooth', canShoot: .1, shotSpeed: .1 },
 
   level4a: { anim: 'eye', path: 'circle', speed: 6, health: 2, motion: 'linear', canShoot: .1, shotSpeed: .15 },
+  level4b: { anim: 'eye', path: 'circleBottom', speed: 6, health: 2, motion: 'linear', canShoot: .1, shotSpeed: .15 },
 
   // old format - just produces sth random
   topright: { anim: 'skull', path: 'topRightZig', speed: 6, health: 1, motion: 'smooth' },
-  circle: { anim: 'skull', path: 'circle', speed: 8, health: 2, motion: 'smooth' },
+  // circle: { anim: 'skull', path: 'circle', speed: 8, health: 2, motion: 'smooth' },
   topcenter: { anim: 'skull', path: 'topCenterZig', speed: 8, health: 2, motion: 'smooth' },
   bottomright: { anim: 'skull', path: 'bottomRight', speed: 8, health: 2, motion: 'smooth' },
 }
@@ -26,7 +26,7 @@ export const levels = [
     phases: [
       { start: 0, end: 40, types: ['popcorn'], freq: [3, 5] },
       { start: 30, end: 50, types: ['worm'], freq: [3, 5] },
-      { start: 45, end: 70, types: ['wave.level1a', 'wave.level1c'], freq: [4, 5], },
+      { start: 45, end: 70, types: ['wave.level1a', 'wave.level1b'], freq: [4, 5], },
       { start: 70, types: ['alert'], props: { text: 'DANGER!', col: 'pink', sfx: 'spotted', stopMusic: true } },
       { start: 75, types: ['skullboss'], props: { pos: vec2(13, 5) } },
     ]
@@ -72,7 +72,7 @@ export const levels = [
       { start: 2, end: 10, types: ['rock'], freq: [1, 2] },
       { start: 11, end: 20, types: ['shroom'], freq: [1, 2] },
 
-      { start: 0, end: 40, types: ['shroom', 'rock', 'wave.level4a'], freq: [1, 2] },
+      { start: 20, end: 48, types: ['rock', 'wave.level4a', 'wave.level4b'], freq: [2, 3] },
       { start: 50, types: ['alert'], props: { text: 'I C U!', col: 'pink', sfx: 'spotted', stopMusic: true } },
       { start: 55, types: ['eyeboss'], props: { pos: vec2(-10, 0) } },
     ],

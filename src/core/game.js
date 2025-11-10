@@ -18,6 +18,7 @@ export const Game = {
   H: Config.H,
   sfx: new Sfx(),
   palette: palette,
+  plays: 0,
   p1: null,
   p2: null,
   gameOver: false,

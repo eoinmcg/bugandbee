@@ -3,18 +3,22 @@ import Help from "../scenes/help.js";
 import Select from "../scenes/select.js";
 import Play from "../scenes/play.js";
 import LevelComplete from "../scenes/levelComplete.js";
-import Waver from "../scenes/waver.js";
+import Tutorial from "../scenes/tutorial";
 import Victory from "../scenes/victory.js";
+
+// dev mode only
+import Waver from "../scenes/waver.js";
 import Cols from "../scenes/cols";
 
 const Scenes = {
   'Splash': Splash,
   'Help': Help,
+  'Tutorial': Tutorial,
   'Select': Select,
   'Play': Play,
   'LevelComplete': LevelComplete,
-  'Waver': Waver,
   'Victory': Victory,
+  'Waver': Waver,
   'Cols': Cols,
 }
 

@@ -53,7 +53,7 @@ export default class Select extends Scene {
       this.g.sfx.play('alert');
       this.g.store.p1.type = this.active === 1
         ? 'BEE' : 'BUG';
-      this.g.sceneManager.changeScene('Play');
+      this.g.sceneManager.changeScene('Tutorial');
     }
 
     this.lastStick = [stick.x];
