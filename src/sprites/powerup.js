@@ -1,4 +1,5 @@
 import { outlineTile } from "../helpers/drawOutline";
+import Particles from "../helpers/particles";
 import Sprite from "./sprite";
 
 export default class Powerup extends Sprite {
@@ -22,6 +23,7 @@ export default class Powerup extends Sprite {
       this.g.store[o.player].powerups += 1;
       this.destroy();
       this.g.sfx.play('key', this.pos);
+      Particles.powerup(this.pos);
     }
   }
 

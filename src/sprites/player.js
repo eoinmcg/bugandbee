@@ -241,12 +241,6 @@ export default class Player extends Sprite {
     const powerups = this.getStore('powerups');
     if (!powerups) return;
 
-    // props.angle + PI           // behind
-    // props.angle + (PI / 12)    // up angle
-    // props.angle - (PI / 12)   // down angle
-    // props.angle - (PI / 2)     // straight down
-    // props.angle + (PI / 2)     // straight up
-
     let props;
     if (powerups > 0) {
       new Bullet(this.pos.add(vec2(0, -.75)), bulletProps);
