@@ -8,7 +8,7 @@ By [@eoinmcg](https://twitter.com/eoinmcg)
 
 
 ## Play here
-[LittleJS Game Jam entry](https://eoinmcg.itch.io/bugandbee)
+[LittleJS Game Jam 2025 entry](https://eoinmcg.itch.io/bugandbee)
 
 ----
 Something weird is happening in the microcosmos...
