@@ -134,17 +134,19 @@ if (window.BUILD) {
 } else {
   window.G = Game;
   window.NG = newgrounds;
-  const params = Object.fromEntries(new URLSearchParams(location.search))
-  if (params.l) {
-    Game.levelNum = parseInt(params.l, 10);
-    Game.lives = 2;
-    Game.startScene = 'Play';
-  }
-  if (params.s) {
-    Game.startScene = params.s.charAt(0)
-      .toUpperCase()
-      + params.s.slice(1);
-  }
+}
+
+// for debugging ?l=levelNum or ?s=Tutorial etc
+const params = Object.fromEntries(new URLSearchParams(location.search))
+if (params.l) {
+  Game.levelNum = parseInt(params.l, 10);
+  Game.lives = 2;
+  Game.startScene = 'Play';
+}
+if (params.s) {
+  Game.startScene = params.s.charAt(0)
+    .toUpperCase()
+    + params.s.slice(1);
 }
 
 export default Game;
