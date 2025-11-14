@@ -23,7 +23,7 @@ export default class Powerup extends Sprite {
       this.g.store[o.player].powerups += 1;
       this.destroy();
       this.g.sfx.play('key', this.pos);
-      Particles.powerup(this.pos);
+      Particles.powerup(this.pos, this.g.palette.lemon.mk());
     }
   }
 

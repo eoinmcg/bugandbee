@@ -127,15 +127,15 @@ const Particles = {
     );
   },
 
-  powerup: function (p, t = 4, c = YELLOW) {
+  powerup: function (p, c = WHITE, t = 4) {
     new ParticleEmitter(
-      p, 0,            // pos, angle
+      p, PI * 2,            // pos, angle
       0, .2, 30, 1, // emitSize, emitTime, emitRate, emiteCone
       tile(t, 4),                      // tileInfo
       c, c,           // colorStartA, colorStartB
       c.scale(1, 0), c.scale(1, 0), // colorEndA, colorEndB
-      1, .5, .9, .5, 0.005,  // time, sizeStart, sizeEnd, speed, angleSpeed
-      1, 1, 0.05, PI,   // damping, angleDamping, gravityScale, cone
+      1, .5, .9, .25, 0.005,  // time, sizeStart, sizeEnd, speed, angleSpeed
+      1, 1, 50, PI,   // damping, angleDamping, gravityScale, cone
       0, 0, 0, 0        // fadeRate, randomness, collide, additive
     );
   },
