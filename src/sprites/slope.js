@@ -23,8 +23,8 @@ export default class Slope extends Sprite {
     this.fixed = true;
     this.setCollision(true, false);
     this.speed = 1;
-    this.velocity = vec2(this.g.level.speed, G.angle);
-    this.angle = G.angle;
+    this.velocity = vec2(this.g.level.speed, 0);
+    this.angle = 0;
 
     this.seed = rand(0, 100);
 
@@ -33,12 +33,11 @@ export default class Slope extends Sprite {
   update() {
     super.update();
 
-    this.velocity = vec2(this.g.level.speed, G.angle);
-    this.angle = G.angle;
+    this.velocity = vec2(this.g.level.speed, this.g.angle);
+    this.angle = this.g.angle;
 
     if (this.pos.x < this.g.size.min.x - (this.size.x / 2)) {
       this.pos.x = this.g.size.max.x + (this.size.x / 2);
-      // this.size.y = 10;
       this.pos.y = this.startPos.y;
     }
   }
