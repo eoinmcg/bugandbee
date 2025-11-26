@@ -77,7 +77,6 @@ export const Game = {
   },
   tracksReady: false,
   isNewgrounds: window.location.hostname === 'uploads.ungrounded.net',
-  // scoreboard: scoreboard.result.data.scores,
   ng: newgrounds,
   store: {},
   resetStore: () => {

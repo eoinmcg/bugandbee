@@ -5,6 +5,7 @@ import Shield from "./shield";
 import Powerup from './powerup';
 import Particles from "../helpers/particles";
 import { outlineTile } from "../helpers/drawOutline";
+import postScore from "../helpers/postScore";
 
 export default class Player extends Sprite {
   constructor(g, pos, type = 'BEE', player = 'p1') {
@@ -241,6 +242,8 @@ export default class Player extends Sprite {
       });
 
       if (this.g.store[this.player].lives < 0) {
+
+        postScore(this.g.store[this.player].score, this.g);
         this.destroy();
         for (let i = 0; i < 8; i += 1) {
           Particles.explode(this.pos.add(vec2(rand(-1, 1))));
