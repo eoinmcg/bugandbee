@@ -233,8 +233,11 @@ export default class Player extends Sprite {
       this.children.forEach((c) => {
         c.destroy();
       });
+
+      this.g.playerFlash = this.player;
       this.hitStop(() => {
         const startAngle = PI / 1.3;
+        this.g.playerFlash = false;
         for (let i = 0; i < powerups; i++) {
           const angle = startAngle + (PI * 2 * i) / powerups;
           new Powerup(this.g, this.pos, angle);
