@@ -46,7 +46,6 @@ export default class Boss extends Enemy {
   destroy(explode) {
     if (this.g.gameOver) return super.destroy(false);
     super.destroy(explode);
-    this.g.stopMusic();
     new Score(this.g, { value: this.value, pos: this.pos });
 
     for (let i = 0; i < 7; i += 1) {
@@ -69,6 +68,7 @@ export default class Boss extends Enemy {
         this.g.sceneManager.changeScene('LevelComplete');
       }
     })
+    this.g.stopMusic();
   }
 
 }

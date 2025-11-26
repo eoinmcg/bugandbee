@@ -18,7 +18,7 @@ export default class Slope extends Sprite {
     this.type = type;
 
     this.gravity = 0;
-    this.col = g.palette.midnight_blue.mk();
+    this.col = g.palette.red.mk();
 
     this.fixed = true;
     this.setCollision(true, false);

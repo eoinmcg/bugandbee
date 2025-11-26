@@ -2,9 +2,9 @@ import Sprite from "./sprite";
 import Bullet from "./bullet";
 import Charge from "./charge";
 import Shield from "./shield";
+import Powerup from './powerup';
 import Particles from "../helpers/particles";
 import { outlineTile } from "../helpers/drawOutline";
-import { gamepadStick } from "littlejsengine";
 
 export default class Player extends Sprite {
   constructor(g, pos, type = 'BEE', player = 'p1') {
@@ -40,8 +40,8 @@ export default class Player extends Sprite {
 
     this.charge = 0;
 
-    this.hurtTimer.set(this.hurtFor);
-    this.fade = true;
+    // this.hurtTimer.set(this.hurtFor);
+    this.fade = 0;
 
     this.velocity = vec2(0, 0);
     this.renderOrder = 2000;
@@ -54,9 +54,6 @@ export default class Player extends Sprite {
     this.bounceTimer = 0;
     this.bounceDuration = 0.2;
 
-    // this.children.push(
-    //   new Shield(this.g, this.pos, this)
-    // );
 
   }
 
@@ -118,8 +115,18 @@ export default class Player extends Sprite {
 
   render() {
     const wave = Math.sin(time * 20);
+
+    if (this.g.playerFlash === this.player) {
+      drawTile(this.pos, vec2(2.7), tile(2, this.g.tileSize), WHITE, time);
+    }
+
     if (this.fade) {
       let t = this.type === 'BUG' ? 15 : 10;
+      let size = (1 - this.fade) * 10;
+      let ringColor = this.type === 'BUG'
+        ? new Color(1, 0, 0, this.fade)
+        : new Color(1, 1, 0, this.fade);
+      drawEllipse(this.pos, vec2(clamp(size, 1, 3)), CLEAR_BLACK, 0, .3, ringColor);
       drawTile(this.pos, vec2(2 * (this.fade * .9)), tile(t, this.g.tileSize), new Color(1, 1, 1, this.fade * .9));
     }
     if (this.fade && wave > 0) return;
@@ -208,6 +215,9 @@ export default class Player extends Sprite {
         this.velocity = bounceDir.scale(bounceMagnitude);
         this.bounceTimer = this.bounceDuration;
       }
+
+      let powerups = this.g.store[this.player].powerups;
+
       this.g.store[this.player].lives -= 1;
       this.g.store[this.player].powerups = 0;
       this.g.sfx.play('smash', this.pos);
@@ -215,13 +225,25 @@ export default class Player extends Sprite {
       Particles.sparks(this.pos);
 
       this.hurtTimer.set(this.hurtFor);
-      this.fade = true;
+      this.fade = 1;
+
+      this.g.sfx.play('hurt', this.pos);
+      setPaused(true);
+      this.children.forEach((c) => {
+        c.destroy();
+      });
+      this.hitStop(() => {
+        const startAngle = PI / 1.3;
+        for (let i = 0; i < powerups; i++) {
+          const angle = startAngle + (PI * 2 * i) / powerups;
+          new Powerup(this.g, this.pos, angle);
+        }
+      });
 
       if (this.g.store[this.player].lives < 0) {
         this.destroy();
         for (let i = 0; i < 8; i += 1) {
           Particles.explode(this.pos.add(vec2(rand(-1, 1))));
-
         }
         this.g.sfx.play('explosion', this.pos);
         this.g.sfx.play('hurt', this.pos);
@@ -260,7 +282,12 @@ export default class Player extends Sprite {
       props.angle = props.angle + PI;
       new Bullet(this.pos.add(vec2(0, -.5)), props);
     }
-    if (powerups > 4) {
+    if (powerups > 5 && this.children.length === 0) {
+      this.children.push(
+        new Shield(this.g, this.pos, this)
+      );
+    }
+    if (powerups > 5) {
       this.g.medals[2].unlock();
     }
   }

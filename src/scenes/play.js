@@ -57,7 +57,6 @@ export default class Play extends Scene {
 
     if (p1Dead && p2Dead && !this.g.gameOver) {
       if (this.g.newHiscore) {
-        console.log('NEW HISCORE SAVED');
         setItem('HiScore', this.g.hiScore);
       }
       this.g.gameOver = time;
@@ -104,7 +103,6 @@ export default class Play extends Scene {
         || keyWasPressed('Enter')
         || gamepadWasPressed(2)) {
         if (this.pointer === 0) {
-          console.log('CONTINUE', this.g.store);
           let p1Type = this.g.p1.type;
           let p2Type = this.g.p2?.type;
           this.g.resetStore();
@@ -169,7 +167,7 @@ export default class Play extends Scene {
       drawTile(vec2(-6, this.yPos[this.pointer] - .3), vec2(1), this.g.tile('skull'), undefined, 0, true);
     }
 
-    if (wave > 0 && paused) {
+    if (wave > 0 && paused && !this.g.hitStop) {
       this.g.fonts.black.drawTextOverlay(`PAUSED`, cameraPos.add(vec2(0, .75)), .2, true);
       this.g.fonts.lime.drawTextOverlay(`PAUSED`, cameraPos.add(vec2(0, 1)), .2, true);
     }

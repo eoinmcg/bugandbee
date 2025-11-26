@@ -13,7 +13,7 @@
  * @param {number} [options.outlineOffset=0.1] - Distance of outline from tile edge
  * 
  * @example
- * drawTileWithOutline({
+ * outlineTile({
  *   pos: vec2(5, 5),
  *   size: vec2(2, 2),
  *   tileInfo: tile(0, tileSize),

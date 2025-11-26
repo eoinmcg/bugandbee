@@ -116,8 +116,8 @@ const sceneManager = new SceneManager(Game);
 Game.sceneManager = sceneManager;
 
 tileFixBleedScale = .1;
-// touchInputInit();
-touchGamepadEnable = true;
+setTouchGamepadButtonCount(2);
+setTouchGamepadEnable(true);
 setCanvasClearColor(new Color(0, 0, 0, 0));
 
 if (window.BUILD) {

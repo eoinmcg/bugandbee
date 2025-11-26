@@ -113,4 +113,14 @@ export default class Sprite extends EngineObject {
     return types.rnd();
   }
 
+  hitStop(callback, delay = 200) {
+    setPaused(true);
+    this.g.hitStop = true;
+    window.setTimeout(() => {
+      setPaused(false);
+      this.g.hitStop = false;
+      if (callback) { callback(); }
+    }, delay);
+  }
+
 }

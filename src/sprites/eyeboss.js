@@ -25,7 +25,7 @@ export default class EyeBoss extends Boss {
     this.verticalDirection = 1; // 1 = down, -1 = up
     this.side = this.pos.x < 0 ? 'left' : 'right'; // Which side of screen
     this.chargeTimer = new Timer(rand(2, 4)); // Time until zoom charge
-    this.floatRange = 3; // How far to float up/down
+    this.floatRange = 5; // How far to float up/down
     this.startY = this.pos.y;
   }
 
@@ -36,7 +36,7 @@ export default class EyeBoss extends Boss {
     const half = 0;
     const minX = size.min.x + half;
     const maxX = size.max.x - half;
-    const minY = size.min.y + half;
+    const minY = size.min.y + (half * 2);
     const maxY = size.max.y - half;
 
     if (this.state === 'floating') {
@@ -107,5 +107,13 @@ export default class EyeBoss extends Boss {
     if (rand() > .99) {
       this.shoot();
     }
+  }
+
+  collideWithObject(o) {
+    if (o.name === 'platform') {
+      this.verticalDirection *= -1;
+      return;
+    }
+    super.collideWithObject(o);
   }
 }

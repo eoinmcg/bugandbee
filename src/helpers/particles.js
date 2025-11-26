@@ -51,12 +51,12 @@ const Particles = {
 
   },
 
-  explode: function (pos, size) {
-    const color = palette.maroon.col;
-    const color2 = palette.orange.col;
+  explode: function (pos, size, cols = ['maroon', 'orange']) {
+    const color = palette[cols[0]].col;
+    const color2 = palette[cols[1]].col;
     new ParticleEmitter(
       pos, 0,            // pos, angle
-      size, .1, 200, PI, // emitSize, emitTime, emitRate, emiteCone
+      1, .1, 200, PI, // emitSize, emitTime, emitRate, emiteCone
       G.tile('circle'),
       color, color2,           // colorStartA, colorStartB
       color.scale(1, 0), color2.scale(1, 0), // colorEndA, colorEndB
