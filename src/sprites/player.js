@@ -174,9 +174,11 @@ export default class Player extends Sprite {
 
     const K = KEYS[this.player];
 
-    // let stick = gamepadStickCount(K.pad) !== 0
-    //   ? gamepadStick(K.pad) : gamepadDpad(K.pad);
     let stick = gamepadDpad(K.pad);
+    if (isTouchDevice) {
+      stick = gamepadStick(0);
+
+    }
     let newAnim = 'fly';
 
     if (keyIsDown(K.left) || stick.x < 0) this.velocity.x = -.2;
