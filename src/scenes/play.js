@@ -76,6 +76,7 @@ export default class Play extends Scene {
   updatePost() {
     if (!this.g.gameOver && keyWasPressed('KeyP')) {
       paused = !paused;
+      inputClear();
     }
   }
 

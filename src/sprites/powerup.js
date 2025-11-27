@@ -13,7 +13,7 @@ export default class Powerup extends Sprite {
     super(pos, vec2(.5), g.tile(type));
     this.color = BLACK;
     this.g = g;
-    this.velocity = vec2(.01, .03);
+    this.velocity = vec2(-.01, .03);
     this.burst = burst;
     this.type = type;
 

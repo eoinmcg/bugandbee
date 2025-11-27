@@ -33,7 +33,6 @@ let medalData = [
   },
 ];
 
-
 export default function generateMedals(gameTitle, g) {
   const medals = [];
   medalData.forEach((medal, i) => {

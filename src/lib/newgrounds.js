@@ -28,11 +28,13 @@ class NewgroundsMedal extends Medal {
 
   /** Unlocks a medal if not already unlocked */
   unlock() {
-    super.unlock();
     if (this.unlocked) {
-      // console.log('MEDAL ALREADY UNLOCKED');
+      console.log('MEDAL ALREADY UNLOCKED', this);
       return;
     }
+
+    super.unlock();
+    console.log('Unlocking medal: ', this.NGid);
     this.g.sfx.play('medal');
     newgrounds && newgrounds.unlockMedal(this.NGid);
   }
@@ -114,15 +116,16 @@ class Newgrounds {
     const url = new URL(location.href);
     this.session_id = url.searchParams.get('ngio_session_id');
 
-    if (!this.session_id)
+    if (!this.session_id) {
       return; // only use newgrounds when logged in
+    }
 
     // get medals
     const medalsResult = this.call('Medal.getList');
     this.medals = medalsResult ? medalsResult.result.data['medals'] : [];
     debugMedals && console.log(this.medals);
     for (const newgroundsMedal of this.medals) {
-      const medal = medals[newgroundsMedal['id']];
+      const medal = this.medals.find(obj => obj.id === newgroundsMedal['id']);
       if (medal) {
         // copy newgrounds medal data
         medal.image = new Image;
@@ -178,7 +181,7 @@ class Newgrounds {
    */
   call(component, parameters, async = false) {
 
-    if (!window.BUILD) { return; }
+    // if (!window.BUILD) { return; }
 
     const call = { 'component': component, 'parameters': parameters };
     if (this.cipher) {
