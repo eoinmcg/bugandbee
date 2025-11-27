@@ -29,12 +29,11 @@ class NewgroundsMedal extends Medal {
   /** Unlocks a medal if not already unlocked */
   unlock() {
     if (this.unlocked) {
-      console.log('MEDAL ALREADY UNLOCKED', this);
+      console.log('Already unlocked: ' + this.icon);
       return;
     }
-
     super.unlock();
-    console.log('Unlocking medal: ', this.NGid);
+    console.log('Unlocking medal: ' + this.icon);
     this.g.sfx.play('medal');
     newgrounds && newgrounds.unlockMedal(this.NGid);
   }
