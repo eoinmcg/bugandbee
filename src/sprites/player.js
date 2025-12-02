@@ -198,7 +198,9 @@ export default class Player extends Sprite {
       this.charge = clamp(this.charge, 0, 100);
     }
 
-    this.shoot = keyWasPressed(K.shoot) || gamepadWasPressed(2, K.pad);
+    this.shoot = keyWasPressed(K.shoot)
+      || gamepadWasPressed(0, K.pad)
+      || gamepadWasPressed(2, K.pad);
     this.shootCharge = ((keyWasReleased(K.shoot) || gamepadWasReleased(2, K.pad)) && this.charge > 80);
     if ((keyWasReleased(K.shoot) || gamepadWasReleased(2, K.pad)) && this.charge < 80) {
       this.charge = 0;
