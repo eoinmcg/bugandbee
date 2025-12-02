@@ -4,7 +4,6 @@ import Alert from "../sprites/alert";
 import { setItem } from "../helpers/store.js";
 
 import LevelManager from "../helpers/levelManager";
-import { gamepadWasReleased } from "littlejsengine";
 
 export default class Play extends Scene {
 
@@ -55,6 +54,9 @@ export default class Play extends Scene {
 
     const p1Dead = this.g.store.p1.lives < 0;
     const p2Dead = this.g.p2 ? this.g.store.p2.lives < 0 : true;
+    const is2PlayerGame = this.g.p2 && this.g.p1 ? true : false;
+
+    this.check2PlayerContinue(p1Dead, p2Dead, is2PlayerGame);
 
     if (p1Dead && p2Dead && !this.g.gameOver) {
       if (this.g.newHiscore) {
@@ -76,8 +78,44 @@ export default class Play extends Scene {
 
   updatePost() {
     if (!this.g.gameOver && (keyWasPressed('KeyP') || gamepadWasPressed(9))) {
+      console.log('pause');
       paused = !paused;
     }
+  }
+
+  check2PlayerContinue(p1Dead, p2Dead, is2PlayerGame) {
+    if (!is2PlayerGame) return;
+
+    const restore = (player = 'p1') => {
+
+      let text = player === 'p1' ? 'BUG ' : 'BEE ';
+      let col = player == 'p1' ? 'white' : 'white';
+
+      new Alert(this.g, { text: text + 'IS BACK', col: col, pos: vec2(0, -5), fontSize: 1.5, sfx: 'respawn' });
+      this.g.store[player] = {
+        score: 0,
+        lives: 2,
+        powerups: 0
+      }
+    }
+
+
+    if (p1Dead && !p2Dead
+      && (time > this.g.p1.killedAt + 2)
+      && (keyWasPressed('Space') || gamepadWasPressed(2, 0))
+    ) {
+      restore('p1');
+      this.g.p1 = new Player(this.g, vec2(0), 'BUG', 'p1');
+    }
+
+    if (p2Dead && !p1Dead
+      && (time > this.g.p2.killedAt + 2)
+      && (keyWasPressed('KeyF') || gamepadWasPressed(2, 1))
+    ) {
+      restore('p2');
+      this.g.p2 = new Player(this.g, vec2(0, 2), 'BEE', 'p2');
+    }
+
   }
 
   checkGameOverInput() {
@@ -102,6 +140,7 @@ export default class Play extends Scene {
       if (keyWasPressed('Space')
         || keyWasPressed('KeyF')
         || keyWasPressed('Enter')
+        || gamepadWasPressed(0)
         || gamepadWasPressed(2)) {
         if (this.pointer === 0) {
           let p1Type = this.g.p1.type;
@@ -132,7 +171,10 @@ export default class Play extends Scene {
     this.g.fonts.black.drawTextOverlay(hi, cameraPos.add(vec2(0, -11.65)), .1, true);
     this.g.fonts[col].drawTextOverlay(hi, cameraPos.add(vec2(0, -11.5)), .1, true);
 
-    const text = `${this.g.p1.type}: ${this.g.store.p1.score.toString().padStart(5, '0')}`;
+
+    const text = this.g.p2 && this.g.p1.destroyed
+      ? wave > 0 ? 'PRESS FIRE' : ''
+      : `${this.g.p1.type}: ${this.g.store.p1.score.toString().padStart(5, '0')}`;
     this.g.fonts.black.drawTextOverlay(text, cameraPos.add(vec2(-13.9, 11.9)), .1, false);
     this.g.fonts.white.drawTextOverlay(text, cameraPos.add(vec2(-14, 12)), .1, false);
     const heartTile = this.g.tile('heart');
@@ -142,23 +184,20 @@ export default class Play extends Scene {
     }
 
     if (this.g.p2) {
-      const text = `${this.g.p2.type}: ${this.g.store.p2.score.toString().padStart(5, '0')}`;
+      const text = this.g.p2.destroyed
+        ? wave > 0 ? 'PRESS FIRE' : ''
+        : `${this.g.p2.type}: ${this.g.store.p2.score.toString().padStart(5, '0')}`;
+
       this.g.fonts.black.drawTextOverlay(text, cameraPos.add(vec2(5.8, 11.8)), .1, false);
       this.g.fonts.white.drawTextOverlay(text, cameraPos.add(vec2(6, 12)), .1, false);
+
       for (let i = 0; i < this.g.store.p2.lives; i += 1) {
-        // drawTile(cameraPos.add(vec2(6.6 + (i), 10.3)), vec2(.8, .8), heartTile, new Color(0, 0, 0, 0.5));
         drawTile(cameraPos.add(vec2(6.5 + (i), 10.5)), vec2(.8), heartTile, pink);
       }
-
     }
 
     if (this.g.gameOver) {
       if (wave > 0) {
-        // this.logoText({
-        //   text: 'GAME OVER', pos: vec2(0, 1), size: 5, color: RED,
-        //   lineColor: BLACK
-        // });
-
         this.g.fonts.black.drawTextOverlay(`GAME OVER`, cameraPos.add(vec2(0, .75)), .25, true);
         this.g.fonts.red.drawTextOverlay(`GAME OVER`, cameraPos.add(vec2(0, 1)), .25, true);
       }
@@ -173,7 +212,7 @@ export default class Play extends Scene {
       this.g.fonts.lime.drawTextOverlay(`PAUSED`, cameraPos.add(vec2(0, 1)), .2, true);
     }
 
-    // hacky
+    // hacky. ensure enemyFire appears above explosions
     engineObjects.forEach((o) => {
       if (o.name === 'enemyFire') {
         o.render();

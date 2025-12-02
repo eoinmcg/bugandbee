@@ -14,8 +14,7 @@ export default class Scene {
       this.g.toggleMusic();
     }
 
-    if (keyWasPressed('KeyF')) {
-      console.log('FULLSCREEN', mainCanvas.parentElement);
+    if (keyWasPressed('KeyO')) {
       toggleFullScreen();
       // toggleFullscreen();
     }

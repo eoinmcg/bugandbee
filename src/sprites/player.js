@@ -198,13 +198,6 @@ export default class Player extends Sprite {
       this.charge = clamp(this.charge, 0, 100);
     }
 
-    // this.shoot = keyWasPressed(K.shoot)
-    //   || gamepadWasPressed(FIREBUTTON, K.pad);
-    // this.shootCharge = ((keyWasReleased(K.shoot) || gamepadWasReleased(FIREBUTTON, K.pad)) && this.charge > 80);
-    // if ((keyWasReleased(K.shoot) || gamepadWasReleased(FIREBUTTON, K.pad)) && this.charge < 80) {
-    //   this.charge = 0;
-    // }
-
     const shootPressed = keyIsDown(K.shoot) || gamepadIsDown(FIREBUTTON, K.pad);
     const shootJustPressed = keyWasPressed(K.shoot) || gamepadWasPressed(FIREBUTTON, K.pad);
     let shootReleased = keyWasReleased(K.shoot) || gamepadWasReleased(FIREBUTTON, K.pad);
@@ -250,6 +243,7 @@ export default class Player extends Sprite {
       this.g.sfx.play('smash', this.pos);
       Particles.explode(this.pos, .25);
       Particles.sparks(this.pos);
+      this.killedAt = time;
 
       this.hurtTimer.set(this.hurtFor);
       this.fade = 1;
