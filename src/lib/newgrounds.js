@@ -29,7 +29,7 @@ class NewgroundsMedal extends Medal {
   /** Unlocks a medal if not already unlocked */
   unlock() {
     if (this.unlocked) {
-      console.log('Already unlocked: ' + this.icon);
+      // console.log('Already unlocked: ' + this.icon);
       return;
     }
     super.unlock();
