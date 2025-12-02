@@ -11,6 +11,7 @@ export default class Splash extends Scene {
 
     if (isMobile()) {
       this.options.shift();
+      this.yPos.shift();
       this.options[0] = 'Play';
     }
 
