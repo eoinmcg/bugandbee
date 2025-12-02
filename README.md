@@ -24,6 +24,7 @@ or use a gamepad
 hold fire for a mega shot
 [M] mutes music & sfx
 [P] pause
+[F] fullscreen
 
 -----
 
