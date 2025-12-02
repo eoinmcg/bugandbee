@@ -5,17 +5,18 @@ export default class Splash extends Scene {
   enter(Game) {
     this.g = Game;
 
-    this.options = ['1Player', '2Player', 'Help'];
-    this.yPos = [-5, -6.5, -8];
+    this.options = ['1Player', '2Player', 'Help', 'Settings'];
+    this.yPos = [-5, -6.5, -8, -9.5];
     this.pointer = 0;
 
     this.g.resetStore();
     this.stick = [gamepadDpad(0)];
     this.lastStick = [0];
 
-
     this.g.levelNum = 1;
-    this.initTunnel(rand() > .5 ? 'maroon' : 'orange', 'black');
+    this.bgCol = rand() > .5 ? 'maroon' : 'orange'
+    this.activeTextCol = this.bgCol === 'maroon' ? 'lime' : 'aqua';
+    this.initTunnel(this.bgCol, 'black');
 
   }
 
@@ -47,6 +48,8 @@ export default class Splash extends Scene {
       const opt = this.options[this.pointer];
       if (opt === 'Help') {
         this.g.sceneManager.changeScene('Help');
+      } else if (opt === 'Settings') {
+        this.g.sceneManager.changeScene('Settings');
       } else if (opt === '1Player') {
         this.g.store.p1.type = 'bug';
         this.g.sceneManager.changeScene('Select');
@@ -94,9 +97,12 @@ export default class Splash extends Scene {
     const wave = Math.sin(new Date().getTime() * 0.009);
     const t = wave > 0 ? 'worm0' : 'worm1';
     drawTile(vec2(-4, this.yPos[this.pointer] - .3), vec2(1), this.g.tile(t), undefined, 0, true);
-    this.g.fonts[this.pointer === 0 ? 'white' : 'gray'].drawText(`1 Player`, cameraPos.add(vec2(-3, -5)), .1, false);
-    this.g.fonts[this.pointer === 1 ? 'white' : 'gray'].drawText(`2 Player`, cameraPos.add(vec2(-3, -6.5)), .1, false);
-    this.g.fonts[this.pointer === 2 ? 'white' : 'gray'].drawText(`About`, cameraPos.add(vec2(-3, -8)), .1, false);
+    this.options.forEach((o, i) => {
+      let col = this.pointer === i ? this.activeTextCol : 'white';
+      console.log(col);
+      this.g.fonts.black.drawText(o, vec2(-3, this.yPos[i] - .1), .1, false);
+      this.g.fonts[col].drawText(o, vec2(-3, this.yPos[i]), .1, false);
 
+    })
   }
 }

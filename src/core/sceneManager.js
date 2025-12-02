@@ -5,6 +5,7 @@ import Play from "../scenes/play.js";
 import LevelComplete from "../scenes/levelComplete.js";
 import Tutorial from "../scenes/tutorial";
 import Victory from "../scenes/victory.js";
+import Settings from "../scenes/settings.js";
 
 // dev mode only
 import Waver from "../scenes/waver.js";
@@ -13,6 +14,7 @@ import Cols from "../scenes/cols";
 const Scenes = {
   'Splash': Splash,
   'Help': Help,
+  'Settings': Settings,
   'Tutorial': Tutorial,
   'Select': Select,
   'Play': Play,
