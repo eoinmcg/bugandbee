@@ -7,15 +7,17 @@ import LevelManager from "../helpers/levelManager";
 
 export default class Play extends Scene {
 
-  enter(g, data) {
+  enter(g) {
     this.g = g;
     this.g.plays += 1;
     setItem('plays', this.g.plays);
 
     if (g.store.p2.type) {
       inputWASDEmulateDirection = false;
-      this.g.p1 = new Player(this.g, vec2(0), 'BUG', 'p1');
-      this.g.p2 = new Player(this.g, vec2(0, 2), 'BEE', 'p2');
+      if (g.store.p1.lives > 0)
+        this.g.p1 = new Player(this.g, vec2(0), 'BUG', 'p1');
+      if (g.store.p2.lives > 0)
+        this.g.p2 = new Player(this.g, vec2(0, 2), 'BEE', 'p2');
     } else {
       this.g.p1 = new Player(this.g, vec2(0), this.g.store.p1.type || 'BUG', 'p1');
     }

@@ -91,7 +91,7 @@ export const Game = {
       lives: 2,
       powerups: 0
     }
-  }
+  },
 };
 
 

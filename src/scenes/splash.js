@@ -5,7 +5,7 @@ export default class Splash extends Scene {
   enter(Game) {
     this.g = Game;
 
-    this.options = ['1Player', '2Player', 'Help', 'Settings'];
+    this.options = ['1 Player', '2 Players', 'Help', 'Settings'];
     this.yPos = [-5, -6.5, -8, -9.5];
     this.pointer = 0;
 
@@ -50,10 +50,10 @@ export default class Splash extends Scene {
         this.g.sceneManager.changeScene('Help');
       } else if (opt === 'Settings') {
         this.g.sceneManager.changeScene('Settings');
-      } else if (opt === '1Player') {
+      } else if (opt === '1 Player') {
         this.g.store.p1.type = 'bug';
         this.g.sceneManager.changeScene('Select');
-      } else if (opt === '2Player') {
+      } else if (opt === '2 Players') {
         this.g.resetStore();
         this.g.store.p1.type = 'bug';
         this.g.store.p2.type = 'bee';
@@ -72,8 +72,8 @@ export default class Splash extends Scene {
 
 
     const hi = `HI: ${this.g.hiScore.toString().padStart(5, '0')}`;
-    this.g.fonts.black.drawTextOverlay(hi, cameraPos.add(vec2(0, 11.4)), .1, true);
-    this.g.fonts.white.drawTextOverlay(hi, cameraPos.add(vec2(0, 11.5)), .1, true);
+    this.g.fonts.black.drawTextOverlay(hi, vec2(0, 11.4), .1, true);
+    this.g.fonts.white.drawTextOverlay(hi, vec2(0, 11.5), .1, true);
 
     const red = this.g.palette.red.mk();
     const yellow = this.g.palette.yellow.mk();
@@ -99,7 +99,6 @@ export default class Splash extends Scene {
     drawTile(vec2(-4, this.yPos[this.pointer] - .3), vec2(1), this.g.tile(t), undefined, 0, true);
     this.options.forEach((o, i) => {
       let col = this.pointer === i ? this.activeTextCol : 'white';
-      console.log(col);
       this.g.fonts.black.drawText(o, vec2(-3, this.yPos[i] - .1), .1, false);
       this.g.fonts[col].drawText(o, vec2(-3, this.yPos[i]), .1, false);
 
