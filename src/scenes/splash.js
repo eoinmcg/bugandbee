@@ -1,13 +1,18 @@
 import Scene from "./scene";
+import isMobile from '../helpers/isMobile';
 
 export default class Splash extends Scene {
-
   enter(Game) {
     this.g = Game;
 
     this.options = ['1 Player', '2 Players', 'Help', 'Settings'];
     this.yPos = [-5, -6.5, -8, -9.5];
     this.pointer = 0;
+
+    if (isMobile()) {
+      this.options.shift();
+      this.options[0] = 'Play';
+    }
 
     this.g.resetStore();
     this.stick = [gamepadDpad(0)];
@@ -50,7 +55,7 @@ export default class Splash extends Scene {
         this.g.sceneManager.changeScene('Help');
       } else if (opt === 'Settings') {
         this.g.sceneManager.changeScene('Settings');
-      } else if (opt === '1 Player') {
+      } else if (opt === '1 Player' || opt === 'Play') {
         this.g.store.p1.type = 'bug';
         this.g.sceneManager.changeScene('Select');
       } else if (opt === '2 Players') {
