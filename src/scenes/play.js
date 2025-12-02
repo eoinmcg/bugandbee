@@ -80,8 +80,19 @@ export default class Play extends Scene {
 
   updatePost() {
     if (!this.g.gameOver && (keyWasPressed('KeyP') || gamepadWasPressed(9))) {
-      console.log('pause');
-      paused = !paused;
+      this.togglePause();
+    }
+  }
+
+  togglePause() {
+    paused = !paused;
+
+    if (this.g.sfx.isMuted) return;
+
+    if (paused) {
+      this.g.music.pause();
+    } else {
+      this.g.music.play();
     }
   }
 
