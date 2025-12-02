@@ -1,4 +1,5 @@
 import { outlineTile } from '../helpers/drawOutline';
+import Powerup from '../sprites/powerup';
 import Scene from './scene';
 
 export default class Tutorial extends Scene {
@@ -22,6 +23,9 @@ export default class Tutorial extends Scene {
     this.timer = new Timer();
     this.interval = 2;
     this.timer.set(this.interval);
+
+    this.powerup = new Powerup(this.g, vec2(-11, -20));
+
   }
 
   update() {
@@ -49,6 +53,7 @@ export default class Tutorial extends Scene {
 
     if (keyWasPressed('Enter')
       || keyWasPressed('KeyX')
+      || gamepadWasPressed(0)
       || gamepadWasPressed(1)
       || gamepadWasPressed(2)
       || keyWasPressed('Space')) {
@@ -74,8 +79,11 @@ export default class Tutorial extends Scene {
     }
 
     if (this.step > 1) {
-      outlineTile({ pos: vec2(startX, 2), size: vec2(1.7), tileInfo: this.g.tile('circle'), color: YELLOW });
-      drawTile(vec2(startX, 2), vec2(1), this.g.tile('smiley'), BLACK);
+      this.powerup.pos = vec2(-11, 2);
+      this.powerup.render();
+
+      // outlineTile({ pos: vec2(startX, 2), size: vec2(1.7), tileInfo: this.g.tile('circle'), color: YELLOW });
+      // drawTile(vec2(startX, 2), vec2(1), this.g.tile('smiley'), BLACK);
       this.g.fonts['white']
         .drawText('Collect powerups', vec2(startX + 2, 2), .13, false);
 

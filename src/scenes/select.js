@@ -45,8 +45,9 @@ export default class Select extends Scene {
 
     if (keyWasPressed('Enter')
       || keyWasPressed('KeyX')
-      || gamepadWasPressed(2, 0)
-      || gamepadWasPressed(2, 1)
+      || gamepadWasPressed(0)
+      || gamepadWasPressed(1)
+      || gamepadWasPressed(2)
       || keyWasPressed('Space')) {
       this.g.sfx.play('alert');
       this.g.store.p1.type = this.active === 1

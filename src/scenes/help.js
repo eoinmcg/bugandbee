@@ -34,6 +34,7 @@ export default class Help extends Scene {
     if (keyWasPressed('Enter')
       || keyWasPressed('KeyX')
       || keyWasPressed('KeyF')
+      || gamepadWasPressed(0)
       || gamepadWasPressed(1)
       || gamepadWasPressed(2)
       || keyWasPressed('Space')) {

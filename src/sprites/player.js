@@ -6,6 +6,7 @@ import Powerup from './powerup';
 import Particles from "../helpers/particles";
 import { outlineTile } from "../helpers/drawOutline";
 import postScore from "../helpers/postScore";
+import { gamepadWasReleased } from "littlejsengine";
 
 export default class Player extends Sprite {
   constructor(g, pos, type = 'BEE', player = 'p1') {
@@ -76,7 +77,7 @@ export default class Player extends Sprite {
 
     if (this.shootCharge) {
       new Charge(this.g, this.pos,
-        this.angle * -.5, this.charge / 10, this.player)
+        this.angle * -.5, 10, this.player)
       this.charge = 0;
     } else if (this.shoot) {
       this.g.sfx.play('shoot', this.pos);
@@ -172,25 +173,24 @@ export default class Player extends Sprite {
       }
     }
 
+    let FIREBUTTON = 2;
+
     const K = KEYS[this.player];
 
     let stick = gamepadDpad(K.pad);
     if (isTouchDevice) {
       stick = gamepadStick(0);
-
+      FIREBUTTON = 0;
     }
-    let newAnim = 'fly';
 
     if (keyIsDown(K.left) || stick.x < 0) this.velocity.x = -.2;
     if (keyIsDown(K.right) || stick.x > 0) this.velocity.x = .2;
 
     if (keyIsDown(K.up) || stick.y > 0) {
       this.velocity.y = .2;
-      newAnim = 'up';
     }
     if (keyIsDown(K.down) || stick.y < 0) {
       this.velocity.y = -.2;
-      newAnim = 'down';
     }
 
     if (keyIsDown(K.shoot) || gamepadIsDown(2, K.pad)) {
@@ -198,11 +198,33 @@ export default class Player extends Sprite {
       this.charge = clamp(this.charge, 0, 100);
     }
 
-    this.shoot = keyWasPressed(K.shoot)
-      || gamepadWasPressed(0, K.pad)
-      || gamepadWasPressed(2, K.pad);
-    this.shootCharge = ((keyWasReleased(K.shoot) || gamepadWasReleased(2, K.pad)) && this.charge > 80);
-    if ((keyWasReleased(K.shoot) || gamepadWasReleased(2, K.pad)) && this.charge < 80) {
+    // this.shoot = keyWasPressed(K.shoot)
+    //   || gamepadWasPressed(FIREBUTTON, K.pad);
+    // this.shootCharge = ((keyWasReleased(K.shoot) || gamepadWasReleased(FIREBUTTON, K.pad)) && this.charge > 80);
+    // if ((keyWasReleased(K.shoot) || gamepadWasReleased(FIREBUTTON, K.pad)) && this.charge < 80) {
+    //   this.charge = 0;
+    // }
+
+    const shootPressed = keyIsDown(K.shoot) || gamepadIsDown(FIREBUTTON, K.pad);
+    const shootJustPressed = keyWasPressed(K.shoot) || gamepadWasPressed(FIREBUTTON, K.pad);
+    let shootReleased = keyWasReleased(K.shoot) || gamepadWasReleased(FIREBUTTON, K.pad);
+
+    if (!shootPressed) {
+      shootReleased = true;
+    }
+
+    if (shootJustPressed) {
+      this.charge = 0;
+    }
+
+    if (shootPressed) {
+      this.charge = Math.min(this.charge + 1, 100);
+    }
+
+    this.shoot = shootJustPressed;
+    this.shootCharge = shootReleased && this.charge >= 80;
+
+    if (shootReleased) {
       this.charge = 0;
     }
   }

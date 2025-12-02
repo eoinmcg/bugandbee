@@ -18,7 +18,10 @@ export default class EnemyFire extends Sprite {
     this.speed = speed;
     this.angle = angle;
 
+    this.renderOrder = 3000;
+
     this.outline = { color: g.palette.red.mk(), offset: .15 }
+    // this.outline = { color: BLACK, offset: .15 }
 
   }
 

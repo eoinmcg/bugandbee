@@ -4,6 +4,7 @@ import Alert from "../sprites/alert";
 import { setItem } from "../helpers/store.js";
 
 import LevelManager from "../helpers/levelManager";
+import { gamepadWasReleased } from "littlejsengine";
 
 export default class Play extends Scene {
 
@@ -74,9 +75,8 @@ export default class Play extends Scene {
   }
 
   updatePost() {
-    if (!this.g.gameOver && keyWasPressed('KeyP')) {
+    if (!this.g.gameOver && (keyWasPressed('KeyP') || gamepadWasPressed(9))) {
       paused = !paused;
-      inputClear();
     }
   }
 
@@ -172,6 +172,13 @@ export default class Play extends Scene {
       this.g.fonts.black.drawTextOverlay(`PAUSED`, cameraPos.add(vec2(0, .75)), .2, true);
       this.g.fonts.lime.drawTextOverlay(`PAUSED`, cameraPos.add(vec2(0, 1)), .2, true);
     }
+
+    // hacky
+    engineObjects.forEach((o) => {
+      if (o.name === 'enemyFire') {
+        o.render();
+      };
+    })
 
   }
 }

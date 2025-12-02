@@ -40,6 +40,7 @@ export default class Splash extends Scene {
 
     if (keyWasPressed('Enter')
       || keyWasPressed('KeyX')
+      || gamepadWasPressed(0)
       || gamepadWasPressed(1)
       || gamepadWasPressed(2)
       || keyWasPressed('Space')) {

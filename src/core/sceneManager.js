@@ -80,25 +80,9 @@ export default class SceneManager {
   }
 
   clearInput() {
-
-    // clear keys
+    inputClear();
     for (let key in keyIsDown) {
       keyIsDown[key] = false;
     }
-
-    // clear mouse
-    // mouseIsDown = false;
-    // mousePos = new Vector2(0, 0);
-
-    // clear gamepads
-    // for (let i = 0; i < gamepads.length; i++) {
-    //     if (gamepads[i]) {
-    //         gamepads[i].buttons.forEach(button => button.pressed = false);
-    //         gamepads[i].axes.forEach((axis, index) => gamepads[i].axes[index] = 0);
-    //     }
-    // }
-
-    // clear touch
-    // touches.length = 0;
   }
 }
