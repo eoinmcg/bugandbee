@@ -61,7 +61,11 @@ export default class LevelManager {
       return;
     }
     this.bg = new this.bgs[this.level.bg](this.level.sky, this.level.speed[0]);
+
     this.g.playMusic(this.level.audio);
+    if (this.g.sfx.isMuted) {
+      this.g.music.pause();
+    }
 
     this.g.level = {
       // ground speed ALWAYS *-.15

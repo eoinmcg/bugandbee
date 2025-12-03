@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐞🐝</text></svg>">
+   
+    <style>
+    @font-face {
+        font-family: '04b_19';
+        src: url('./04b19.woff2') format('woff2'),
+            url('./04b19.woff') format('woff');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    body { font-family: '04b_19', monospace; transition: all 0.5s ease-in-out; background: #122232; color: #fff; }
+    body.complete { opacity: 0; }
+    .dusk { background: linear-gradient(black, darkblue, cornflowerblue, yellow);}
+    h1 { margin-top: 3rem; text-align: center; font-size: 500%; color: #000; 
+    text-shadow:
+    7px 7px 0 #fff,
+    -7px 7px 0 #fff,
+    -7px -7px 0 #fff,
+    7px -7px 0 #fff
+    }
+    .bug { color: crimson; }
+    .bee { color: orange; }
+
+    img { display: block; margin: 2rem auto; border: 5px solid rgba(255,255,255,.2); 
+    max-width: 400px;
+    }
+
+    .intro {
+      display: block; margin: 1rem auto; width: 400px;
+      font-size: 2rem;
+    }
+
+    .wrap {
+    display: block; margin: 1rem auto; width: 400px;
+    font-size: 1.5rem; font-family: monospace;
+    }
+
+
+    </style>
+
+  </head>
+  <body>
+
+    <h1><span class="bug">BuG</span><small>&</small><span class="bee">bEe</span></h1>
+
+    <img src="../promo/cover.png" />
+    <div class="intro">
+    <p>
+    Something weird is happening in the microcosmos...
+    </p>
+
+    <p>
+    Angry insects are taking over.
+    </p>
+
+    <p>
+    Sounds like a job for Bug & Bee!
+    </p>
+      </div>
+
+    <div class="wrap">
+      <p>
+      <b>Controls:</b>
+        <br />Player 1: Arrows and [space] to shoot
+        <br />Player 2: WASD and [f] to shoot
+        <br />or use a gamepad
+        <br />hold fire for a mega shot
+        <br />[M] mutes music & sfx
+        <br />[P] pause
+      </p>
+
+    </div>
+
+    <img src="../promo/splash.png" />
+    <img src="../promo/level1.png" />
+    <img src="../promo/level2.png" />
+    <img src="../promo/level3.png" />
+
+  </body>
+</html>
