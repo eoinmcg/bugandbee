@@ -54,24 +54,27 @@ export default class LevelComplete extends Scene {
   }
 
   render() {
-    this.g.fonts.white.drawText(`LEVEL COMPLETE!`, cameraPos.add(vec2(0, 10)), .17, true);
+
+    const font = engineFontImage;
+
+    font.drawText(`LEVEL COMPLETE!`, vec2(0, 10), 1.5, true);
 
     const bonus = `+${this.displayBonus}`;
     let col = ['lime', 'pink', 'yellow', 'orange', 'aqua'].rnd();
-    col = 'pink';
+    col = this.g.palette['pink'].mk();
 
     if (this.p1) {
       let p1Tile = (this.g.p1.type === 'BEE') ? 10 : 15;
-      this.g.fonts.white.drawText(`BONUS`, cameraPos.add(vec2(-7, -2)), .12, true);
-      this.g.fonts[col].drawText(bonus, cameraPos.add(vec2(-7, -4)), .1, true);
-      drawTile(vec2(-7, 0), vec2(2), tile(p1Tile, this.g.tileSize));
+      font.drawText(`BONUS`, cameraPos.add(vec2(-7, -2)), 1.2, true);
+      font.drawText(bonus, cameraPos.add(vec2(-7, -4)), 1, true, col);
+      drawTile(vec2(-7, 1), vec2(2), tile(p1Tile, this.g.tileSize));
     }
 
     if (this.p2) {
       let p2Tile = (this.g.p2.type === 'BEE') ? 10 : 15;
-      this.g.fonts.white.drawText(`BONUS`, cameraPos.add(vec2(7, -2)), .12, true);
-      this.g.fonts[col].drawText(bonus, cameraPos.add(vec2(7, -4)), .1, true);
-      drawTile(vec2(7, 0), vec2(2), tile(p2Tile, this.g.tileSize));
+      font.drawText(`BONUS`, cameraPos.add(vec2(7, -2)), 1.2, true);
+      fonts.drawText(bonus, cameraPos.add(vec2(7, -4)), 1, true, col);
+      drawTile(vec2(7, 1), vec2(2), tile(p2Tile, this.g.tileSize));
     }
 
   }

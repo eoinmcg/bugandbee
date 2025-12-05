@@ -4,6 +4,7 @@ import Scene from './scene';
 
 export default class Tutorial extends Scene {
   enter(Game) {
+    super.enter(Game);
     this.g = Game;
 
     this.initTunnel('maroon', 'red', 0.05, .07);
@@ -67,29 +68,29 @@ export default class Tutorial extends Scene {
   render() {
 
     const wave = Math.sin(new Date().getTime() * 0.009);
+    const font = engineFontImage;
+
     setFontDefault('"04b_19"');
-    drawTextOverlay(this.titleTyped, vec2(-3, 11), 2, WHITE, 0, WHITE, 'left');
+    drawText(this.titleTyped, vec2(-3, 11), 2, WHITE, 0, WHITE, 'left');
 
     let startX = -11;
 
     if (this.step > 0) {
-      outlineTile({ pos: vec2(startX, 4.8), size: vec2(1.2), tileInfo: this.g.tile(this.enemySprite) });
-      this.g.fonts['white']
-        .drawText('Shoot baddies', vec2(startX + 2, 5), .13, false);
+      outlineTile({ pos: vec2(startX, 5), size: vec2(1.2), tileInfo: this.g.tile(this.enemySprite) });
+      font.drawText('Shoot baddies', vec2(startX + 2, 5), .9, false);
     }
 
     if (this.step > 1) {
-      this.powerup.pos = vec2(-11, 1.8);
+      this.powerup.pos = vec2(-11, 2);
       this.powerup.render();
 
-      this.g.fonts['white']
-        .drawText('Collect powerups', vec2(startX + 2, 2), .13, false);
+      font.drawText('Collect powerups', vec2(startX + 2, 2), .9, false);
 
     }
 
     if (this.step > 2) {
       outlineTile({
-        pos: vec2(startX, -1.3),
+        pos: vec2(startX, -1),
         size: vec2(2 * this.charge / 100),
         tileInfo: this.g.tile('circle'),
         color: this.charge > 80 ? WHITE : new Color(1, .7, 0, this.charge / 100),
@@ -97,13 +98,11 @@ export default class Tutorial extends Scene {
         outlineColor: RED,
         outlineOffset: .2
       });
-      this.g.fonts['white']
-        .drawText('Hold fire for MegaShot', vec2(startX + 2, -1), .13, false);
+      font.drawText('Hold fire for MegaShot', vec2(startX + 2, -1), .9, false);
     }
 
     if (this.step > 3 && wave > 0) {
-      this.g.fonts['pink']
-        .drawText('Now go kick some butt!', vec2(2, -10), .13, true);
+      font.drawText('Now go kick some butt!', vec2(2, -10), .9, this.g.palette.pink.mk());
     }
 
   }

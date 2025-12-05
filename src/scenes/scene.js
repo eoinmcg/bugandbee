@@ -4,9 +4,8 @@ export default class Scene {
     this.g = game;
 
     window.setTimeout(() => {
-      console.log(mainCanvas);
       mainCanvas.style.zIndex = -999999;
-    }, 50)
+    }, 100)
   }
 
   exit() { }

@@ -30,9 +30,6 @@ export default class SceneManager {
     this.g = Game;
     this.currentScene = null;
     this.lastChange = 500;
-
-
-    console.log('READY?', mainCanvas);
   }
 
   changeScene(newScene, data = {}, effect = 'complete', force = false) {
