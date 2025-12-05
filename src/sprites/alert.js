@@ -53,7 +53,7 @@ export default class Alert extends EngineObject {
 
     // console.log(this.fontSize);
     setFontDefault('"04b_19"');
-    drawTextOverlay(this.text, this.pos.add(vec2(0, this.fontSize / -15)), this.fontSize, this.outline);
-    drawTextOverlay(this.text, this.pos, this.fontSize, this.col);
+    drawText(this.text, this.pos.add(vec2(0, this.fontSize / -15)), this.fontSize, this.outline);
+    drawText(this.text, this.pos, this.fontSize, this.col);
   }
 }

@@ -48,20 +48,23 @@ export default class Help extends Scene {
 
   renderPost() {
 
+    const font = engineFontImage;
+
     this.logoText({
       text: 'ABOUT', pos: vec2(0, 10), size: 3, color: WHITE,
       lineColor: this.g.palette.pink.mk()
     });
 
-    this.g.fonts.pink.drawText(`Controls`, cameraPos.add(vec2(-8, 7)), .11, false);
-    this.g.fonts.white.drawText(`p1: Arrow keys + space \np2: WASD + f\n\nor use a gamepad`, cameraPos.add(vec2(-8, 5)), .1, false);
-    this.g.fonts.white.drawText(`Hold in fire for a mega shot`, cameraPos.add(vec2(-8, 1)), .1, false);
+    font.drawText(`Controls`, vec2(-8, 7), 1.1, false, this.g.palette.pink.mk());
+    font.drawText(`p1: Arrow keys + space \np2: WASD + f\n\nor use a gamepad`, vec2(-8, 5), .8, false);
+    font.drawText(`Hold in fire for a mega shot`, vec2(-8, 1), .8, false);
 
-    this.g.fonts.gray.drawText(`code & gfx: @eoinmcg`, cameraPos.add(vec2(-8, -2)), .1, false);
-    this.g.fonts.gray.drawText(`music: not-jam.itch.io`, cameraPos.add(vec2(-8, -4)), .1, false);
-    this.g.fonts.gray.drawText(`made with: LittleJS`, cameraPos.add(vec2(-8, -6)), .1, false);
+    const gray = this.g.palette.gray.mk();
+    font.drawText(`code & gfx: @eoinmcg`, vec2(-8, -2), .8, false, gray);
+    font.drawText(`music: not-jam.itch.io`, vec2(-8, -4), .8, false, gray);
+    font.drawText(`made with: LittleJS`, vec2(-8, -6), .8, false, gray);
 
-    this.g.fonts.gray.drawText(`Press fire to quit`, cameraPos.add(vec2(-4, -10)), .08, false);
+    font.drawText(`Press fire to quit`, vec2(-4, -10), .8, false, gray);
 
   }
 }

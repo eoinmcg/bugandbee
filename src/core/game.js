@@ -100,22 +100,23 @@ document.title = Game.title
 Game.resetStore();
 
 
-let font = new FontImage;
-font.image.onload = () => {
-  let cols = ['white', 'gray', 'red', 'black', 'yellow', 'green', 'pink', 'orange', 'aqua', 'lime'];
-  Game.fonts = {};
-  cols.forEach((col) => {
-    let image = colorFont(palette[col].hex, font.image);
-    Game.fonts[col] = new FontImage(image);
-  });
-}
+// let font = new FontImage;
+// font.image.onload = () => {
+//   let cols = ['white', 'gray', 'red', 'black', 'yellow', 'green', 'pink', 'orange', 'aqua', 'lime'];
+//   Game.fonts = {};
+//   cols.forEach((col) => {
+//     let image = colorFont(palette[col].hex, font.image);
+//     Game.fonts[col] = new FontImage(image);
+//   });
+// }
 
 Game.medals = generateMedals(Game.title, Game);
 
 const sceneManager = new SceneManager(Game);
 Game.sceneManager = sceneManager;
 
-tileFixBleedScale = .1;
+// tileFixBleedScale = .1;
+setTileDefaultBleed(.1);
 setTouchGamepadEnable(true);
 setTouchGamepadButtonCount(1);
 setTouchGamepadSize(160);

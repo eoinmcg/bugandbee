@@ -10,6 +10,7 @@ import Settings from "../scenes/settings.js";
 // dev mode only
 import Waver from "../scenes/waver.js";
 import Cols from "../scenes/cols";
+import { mainCanvas } from "littlejsengine";
 
 const Scenes = {
   'Splash': Splash,
@@ -29,6 +30,9 @@ export default class SceneManager {
     this.g = Game;
     this.currentScene = null;
     this.lastChange = 500;
+
+
+    console.log('READY?', mainCanvas);
   }
 
   changeScene(newScene, data = {}, effect = 'complete', force = false) {

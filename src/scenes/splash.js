@@ -3,6 +3,7 @@ import isMobile from '../helpers/isMobile';
 
 export default class Splash extends Scene {
   enter(Game) {
+    super.enter(Game);
     this.g = Game;
 
     this.options = ['1 Player', '2 Players', 'Help', 'Settings'];
@@ -21,7 +22,9 @@ export default class Splash extends Scene {
 
     this.g.levelNum = 1;
     this.bgCol = rand() > .5 ? 'maroon' : 'orange'
-    this.activeTextCol = this.bgCol === 'maroon' ? 'lime' : 'aqua';
+    this.activeTextCol = this.bgCol === 'maroon'
+      ? this.g.palette.lime.mk() : this.g.palette.aqua.mk();
+
     this.initTunnel(this.bgCol, 'black');
 
   }
@@ -76,10 +79,11 @@ export default class Splash extends Scene {
 
   renderPost() {
 
+    const font = engineFontImage;
 
     const hi = `HI: ${this.g.hiScore.toString().padStart(5, '0')}`;
-    this.g.fonts.black.drawTextOverlay(hi, vec2(0, 11.4), .1, true);
-    this.g.fonts.white.drawTextOverlay(hi, vec2(0, 11.5), .1, true);
+    font.drawText(hi, vec2(0, 11.4), 1, true, BLACK);
+    font.drawText(hi, vec2(0, 11.5), 1, true);
 
     const red = this.g.palette.red.mk();
     const yellow = this.g.palette.yellow.mk();
@@ -102,12 +106,11 @@ export default class Splash extends Scene {
 
     const wave = Math.sin(new Date().getTime() * 0.009);
     const t = wave > 0 ? 'worm0' : 'worm1';
-    drawTile(vec2(-4, this.yPos[this.pointer] - .3), vec2(1), this.g.tile(t), undefined, 0, true);
+    drawTile(vec2(-4.5, this.yPos[this.pointer] + .1), vec2(1), this.g.tile(t), undefined, 0, true);
     this.options.forEach((o, i) => {
-      let col = this.pointer === i ? this.activeTextCol : 'white';
-      this.g.fonts.black.drawText(o, vec2(-3, this.yPos[i] - .1), .1, false);
-      this.g.fonts[col].drawText(o, vec2(-3, this.yPos[i]), .1, false);
-
+      let col = this.pointer === i ? this.activeTextCol : WHITE;
+      font.drawText(o, vec2(-3, this.yPos[i] - .1), .85, false, BLACK);
+      font.drawText(o, vec2(-3, this.yPos[i]), .85, false, col);
     })
   }
 }

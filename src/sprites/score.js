@@ -20,8 +20,7 @@ export default class Score extends EngineObject {
   }
 
   render() {
-    overlayContext.globalAlpha = this.ttl;
-    this.g.fonts[this.value > 100 ? 'yellow' : 'lime'].drawTextOverlay('+' + this.value, this.pos, .1);
-    overlayContext.globalAlpha = 1;
+    let col = this.g.palette[this.value > 100 ? 'yellow' : 'lime'].mk(this.ttl);
+    drawText('+' + this.value, this.pos, 1, col)
   }
 }

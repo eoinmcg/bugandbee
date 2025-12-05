@@ -61,6 +61,8 @@ export default class Select extends Scene {
   }
 
   render() {
+    const font = engineFontImage;
+
     this.logoText({
       text: 'SELECT', pos: vec2(0, 10), size: 3, color: WHITE,
       lineColor: BLACK
@@ -71,17 +73,16 @@ export default class Select extends Scene {
     const bugFrame = this.active === 0
       ? `bug${this.frame}` : 'bug3';
     drawTile(vec2(-5, 0), vec2(4), this.g.tile(bugFrame));
-    this.g.fonts[this.active === 0 ? 'red' : 'gray']
-      .drawText('BUG', vec2(-5, -5), this.active === 0 ? .15 : .1, true);
+    let col = this.active === 0 ? 'red' : 'gray';
+    font.drawText('BUG', vec2(-5, -6), this.active === 0 ? 1.2 : 1, true, this.g.palette[col].mk());
 
     drawRect(vec2(5, 0), vec2(8.4), this.active === 1 ? YELLOW : BLACK);
     drawRect(vec2(5, 0), vec2(8), this.bgColor);
     const beeFrame = this.active === 1
       ? `bee${this.frame}` : 'bee3';
     drawTile(vec2(5, -1), vec2(4), this.g.tile(beeFrame));
-    this.g.fonts[this.active === 1 ? 'yellow' : 'gray']
-      .drawText('BEE', vec2(5, -5), this.active === 1 ? .15 : .1, true);
-
+    col = this.active === 1 ? 'yellow' : 'gray';
+    font.drawText('BEE', vec2(5, -6), this.active === 1 ? 1.2 : 1, true, this.g.palette[col].mk());
   }
 
 }

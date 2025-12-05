@@ -2,6 +2,11 @@ import Circle from "../sprites/circle";
 export default class Scene {
   enter(game) {
     this.g = game;
+
+    window.setTimeout(() => {
+      console.log(mainCanvas);
+      mainCanvas.style.zIndex = -999999;
+    }, 50)
   }
 
   exit() { }
@@ -70,7 +75,7 @@ export default class Scene {
 
     props = { ...defaults, ...props };
 
-    drawTextOverlay(props.text,
+    drawText(props.text,
       props.pos,
       props.size,
       props.color,

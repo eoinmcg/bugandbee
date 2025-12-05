@@ -6,6 +6,7 @@ import Alert from '../sprites/alert';
 export default class Victory extends Scene {
 
   enter(Game) {
+    super.enter(Game);
     this.g = Game;
 
     this.stick = [gamepadStick(0),];

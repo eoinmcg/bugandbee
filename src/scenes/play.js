@@ -8,6 +8,7 @@ import LevelManager from "../helpers/levelManager";
 export default class Play extends Scene {
 
   enter(g) {
+    super.enter(g);
     this.g = g;
     this.g.plays += 1;
     setItem('plays', this.g.plays);
@@ -178,23 +179,26 @@ export default class Play extends Scene {
 
   renderPost() {
     const wave = Math.sin(new Date().getTime() * 0.005);
+    const font = engineFontImage;
 
     const hi = `HI: ${this.g.hiScore.toString().padStart(5, '0')}`;
-    const col = this.g.newHiscore ? 'lime' : 'white';
-    this.g.fonts.black.drawTextOverlay(hi, cameraPos.add(vec2(0, -11.65)), .1, true);
-    this.g.fonts[col].drawTextOverlay(hi, cameraPos.add(vec2(0, -11.5)), .1, true);
+    const col = this.g.newHiscore ? this.g.palette.lime : WHITE;
+    // this.g.fonts.black.drawTextOverlay(hi, cameraPos.add(vec2(0, -11.65)), .1, true);
+    // this.g.fonts[col].drawTextOverlay(hi, cameraPos.add(vec2(0, -11.5)), .1, true);
+    font.drawText(hi, vec2(0, -11.65), .9, true, BLACK);
+    font.drawText(hi, vec2(0, -11.5), .9, true, col);
 
     const leftX = this.g.widescreen ? -20 : -14;
 
     const text = this.g.p2 && this.g.p1.destroyed
       ? wave > 0 ? 'PRESS FIRE' : ''
       : `${this.g.p1.type}: ${this.g.store.p1.score.toString().padStart(5, '0')}`;
-    this.g.fonts.black.drawTextOverlay(text, cameraPos.add(vec2(leftX + .1, 11.9)), .1, false);
-    this.g.fonts.white.drawTextOverlay(text, cameraPos.add(vec2(leftX, 12)), .1, false);
+    font.drawText(text, vec2(leftX, 12), .8, false, BLACK);
+    font.drawText(text, vec2(leftX, 11.8), .8, false, WHITE);
     const heartTile = this.g.tile('heart');
     const pink = this.g.palette.pink.mk();
     for (let i = 0; i < this.g.store.p1.lives; i += 1) {
-      drawTile(cameraPos.add(vec2(leftX + .5 + (i), 10.5)), vec2(.8), heartTile, pink);
+      drawTile(cameraPos.add(vec2(leftX + (i), 10.5)), vec2(.8), heartTile, pink);
     }
 
     if (this.g.p2) {
@@ -203,28 +207,28 @@ export default class Play extends Scene {
         ? wave > 0 ? 'PRESS FIRE' : ''
         : `${this.g.p2.type}: ${this.g.store.p2.score.toString().padStart(5, '0')}`;
 
-      this.g.fonts.black.drawTextOverlay(text, cameraPos.add(vec2(rightX - .1, 11.8)), .1, false);
-      this.g.fonts.white.drawTextOverlay(text, cameraPos.add(vec2(rightX, 12)), .1, false);
+      font.drawText(text, vec2(rightX - .1, 11.8), .8, false, BLACK);
+      font.drawText(text, vec2(rightX, 12), .8, false, WHITE);
 
       for (let i = 0; i < this.g.store.p2.lives; i += 1) {
-        drawTile(cameraPos.add(vec2(rightX + .5 + (i), 10.5)), vec2(.8), heartTile, pink);
+        drawTile(cameraPos.add(vec2(rightX + (i), 10.5)), vec2(.8), heartTile, pink);
       }
     }
 
     if (this.g.gameOver) {
       if (wave > 0) {
-        this.g.fonts.black.drawTextOverlay(`GAME OVER`, cameraPos.add(vec2(0, .75)), .25, true);
-        this.g.fonts.red.drawTextOverlay(`GAME OVER`, cameraPos.add(vec2(0, 1)), .25, true);
+        // this.g.fonts.black.drawTextOverlay(`GAME OVER`, cameraPos.add(vec2(0, .75)), .25, true);
+        // this.g.fonts.red.drawTextOverlay(`GAME OVER`, cameraPos.add(vec2(0, 1)), .25, true);
       }
-      this.g.fonts.white.drawTextOverlay('CONTINUE?', cameraPos.add(vec2(0, -5)), .15, true);
-      this.g.fonts.white.drawTextOverlay('QUIT', cameraPos.add(vec2(0, -7)), .15, true);
+      // this.g.fonts.white.drawTextOverlay('CONTINUE?', cameraPos.add(vec2(0, -5)), .15, true);
+      // this.g.fonts.white.drawTextOverlay('QUIT', cameraPos.add(vec2(0, -7)), .15, true);
 
       drawTile(vec2(-6, this.yPos[this.pointer] - .3), vec2(1), this.g.tile('skull'), undefined, 0, true);
     }
 
     if (wave > 0 && paused && !this.g.hitStop) {
-      this.g.fonts.black.drawTextOverlay(`PAUSED`, cameraPos.add(vec2(0, .75)), .2, true);
-      this.g.fonts.lime.drawTextOverlay(`PAUSED`, cameraPos.add(vec2(0, 1)), .2, true);
+      // this.g.fonts.black.drawTextOverlay(`PAUSED`, cameraPos.add(vec2(0, .75)), .2, true);
+      // this.g.fonts.lime.drawTextOverlay(`PAUSED`, cameraPos.add(vec2(0, 1)), .2, true);
     }
 
     // hacky. ensure enemyFire appears above explosions

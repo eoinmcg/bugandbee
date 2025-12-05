@@ -54,6 +54,9 @@ export default class SEttings extends Scene {
 
   renderPost() {
 
+    const font = engineFontImage;
+    const gray = this.g.palette.gray.mk();
+
     this.logoText({
       text: 'SETTINGS', pos: vec2(0, 4), size: 2, color: WHITE,
       lineColor: this.g.palette.pink.mk()
@@ -62,7 +65,7 @@ export default class SEttings extends Scene {
     const wave = Math.sin(new Date().getTime() * 0.009);
     const t = wave > 0 ? 'drone0' : 'drone1';
 
-    drawTile(vec2(-4, this.yPos[this.pointer] - .3), vec2(1), this.g.tile(t), undefined, 0, true);
+    drawTile(vec2(-4.5, this.yPos[this.pointer] + .2), vec2(1), this.g.tile(t), undefined, 0, true);
     this.options.forEach((o, i) => {
       let text = o;
       if (o === 'Mute' && this.g.sfx.isMuted) {
@@ -71,7 +74,8 @@ export default class SEttings extends Scene {
       if (o === 'Mute' && !this.g.sfx.isMuted) {
         text = 'Mute: off';
       }
-      this.g.fonts[this.pointer === i ? 'white' : 'gray'].drawText(text, vec2(-2.5, this.yPos[i]), .1, false);
+      let col = this.pointer === i ? WHITE : gray;
+      font.drawText(text, vec2(-2.5, this.yPos[i]), .8, false, col);
     });
 
   }
