@@ -1,14 +1,18 @@
+const WIDESCREEN = true;
+
 const Config = {
   title: 'Bug&Bee',
-  W: 960,
+  // W: 960,
+  W: WIDESCREEN ? 1422 : 960,
   H: 800,
+  widescreen: WIDESCREEN,
   images: ['t.gif'],
   tileSize: 4,
   trackPaths: ['begin.ogg', 'die.ogg', 'switch.ogg', 'critical.ogg', 'meltdown.ogg', 'drag.ogg', 'boss.ogg'],
   tracks: [],
   size: {
-    max: { x: 15, y: 12.5 },
-    min: { x: -15, y: -12.5 },
+    max: { x: WIDESCREEN ? 22 : 15, y: 12.5 },
+    min: { x: WIDESCREEN ? -22 : -15, y: -12.5 },
   },
   atlas: {
     circle: 0,
@@ -21,10 +25,12 @@ const Config = {
     bee1: 7,
     bee2: 8,
     bee3: 9,
+    beeDead: 10,
     bug0: 12,
     bug1: 13,
     bug2: 14,
     bug3: 15,
+    bugDead: 16,
     shroom: 18,
     heart: 19,
     skull: 20,

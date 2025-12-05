@@ -1,3 +1,4 @@
+import { mainCanvas } from "littlejsengine";
 import Game from "./core/game.js";
 import resize from "./helpers/resize.js";
 

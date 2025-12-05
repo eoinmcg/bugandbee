@@ -3,7 +3,7 @@ import Enemy from "./enemy";
 export default class Worm extends Enemy {
 
   constructor(g, props = {}) {
-    props.pos = props.pos || vec2(-14, -11);
+    props.pos = props.pos || vec2(-23, -11);
     super(g, {
       pos: props.pos,
       size: vec2(1),

@@ -51,7 +51,7 @@ const Particles = {
 
   },
 
-  explode: function (pos, size, cols = ['maroon', 'orange']) {
+  explode: function (pos, size = .5, cols = ['maroon', 'orange']) {
     const color = palette[cols[0]].col;
     const color2 = palette[cols[1]].col;
     new ParticleEmitter(
@@ -60,7 +60,7 @@ const Particles = {
       G.tile('circle'),
       color, color2,           // colorStartA, colorStartB
       color.scale(1, 0), color2.scale(1, 0), // colorEndA, colorEndB
-      .3, .5, 2.5, .1, .1,  // time, sizeStart, sizeEnd, speed, angleSpeed
+      .3, size, size * 5, .1, .1,  // time, sizeStart, sizeEnd, speed, angleSpeed
       .99, .95, .4, PI,   // damping, angleDamping, gravityScale, cone
       .1, .5, 0, 1        // fadeRate, randomness, collide, additive
     );

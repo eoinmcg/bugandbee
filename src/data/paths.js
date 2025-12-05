@@ -1,3 +1,6 @@
+import Config from "./config";
+
+
 const paths = {
   topRightZig: [
     vec2(12, 15),
@@ -95,5 +98,16 @@ const paths = {
     vec2(-14.1, -9.4),
   ],
 };
+
+function scalePathX(path, scaleX) {
+  return path.map(point => vec2(point.x * scaleX, point.y));
+}
+
+if (Config.widescreen) {
+  const scale = Config.widescreen ? 1422 / 960 : 1;
+  for (let path in paths) {
+    paths[path] = scalePathX(paths[path], scale);
+  }
+}
 
 export default paths;

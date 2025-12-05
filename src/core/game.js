@@ -18,6 +18,7 @@ export const Game = {
   title: Config.title,
   W: Config.W,
   H: Config.H,
+  widescreen: Config.widescreen,
   sfx: new Sfx(),
   palette: palette,
   p1: null,

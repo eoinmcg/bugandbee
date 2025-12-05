@@ -141,14 +141,15 @@ export default class LevelManager {
     const type = this.level.sloping ? 'slope' : 'platform';
 
     let platformW = 5;
+    let num = 6;
 
     if (this.level.platforms.includes('bottom')) {
-      for (let i = -3; i <= 3; i += 1) {
+      for (let i = -num; i <= num; i += 1) {
         new types[type](this.g, vec2((i * platformW), -11));
       }
     }
     if (this.level.platforms.includes('top')) {
-      for (let i = -3; i <= 3; i += 1) {
+      for (let i = -num; i <= num; i += 1) {
         new types[type](this.g, vec2((i * platformW), 14.5), 'top');
       }
     }
@@ -229,11 +230,9 @@ export default class LevelManager {
       return this.nextLevel();
     }
 
-    if (this.g.bossFight) {
-      // console.log(this.g.bossFight)
+    if (this.g.gameOver && time > this.g.gameOver + 2) {
+      return;
     }
-
-    if (this.g.gameOver) return;
 
     for (let i = this.g.events.length - 1; i >= 0; --i) {
       const e = this.g.events[i];

@@ -48,8 +48,9 @@ const drawWeather = {
     let lateral = speed <= 0;
     const random = new RandomGenerator(skySeed);
     for (let i = 500; i--;) {
-      let speedX = lateral ? -250 : 0,
-        speedY = 500
+      const size = Math.round(random.float(2, 4)) / 10;
+      let speedX = -150 * (size * 10),
+        speedY = size * 2000;
       const extraSpace = 200;
       const w = mainCanvas.width + 2 * extraSpace, h = mainCanvas.height + 2 * extraSpace;
       const screenPos = vec2(
@@ -66,8 +67,8 @@ const drawWeather = {
       drawLine(
         worldStart,          // posA - start position
         worldEnd,            // posB - end position
-        0.2,                 // width
-        palette.pale_blue.mk(.5)
+        size,                 // width
+        palette.pale_blue.mk(.2 + size)
       );
     }
   },

@@ -2,6 +2,7 @@ import Sprite from "./sprite";
 import Bullet from "./bullet";
 import Charge from "./charge";
 import Shield from "./shield";
+import DeadPlayer from "./deadPlayer";
 import Powerup from './powerup';
 import Particles from "../helpers/particles";
 import { outlineTile } from "../helpers/drawOutline";
@@ -73,7 +74,7 @@ export default class Player extends Sprite {
     }
 
 
-    this.angle = -this.velocity.y * 2;
+    this.angle = -this.velocity.y * 2.5;
 
     if (this.shootCharge) {
       new Charge(this.g, this.pos,
@@ -84,7 +85,7 @@ export default class Player extends Sprite {
       Particles.gunsmoke(this.pos.add(vec2(.5, 0)));
       const bulletProps = {
         g: this.g,
-        angle: this.angle * -.5,
+        angle: this.angle * -.2,
         owner: this.player,
         name: 'bullet'
       }
@@ -93,7 +94,7 @@ export default class Player extends Sprite {
       this.charge = 0;
     }
 
-    this.velocity.y = clamp(this.velocity.y, -.1, .2);
+    this.velocity.y = clamp(this.velocity.y, -.2, .2);
     this.pos.x = clamp(this.pos.x, this.g.size.min.x + .5, this.g.size.max.x - .5);
     this.pos.y = clamp(this.pos.y, this.g.size.min.y + .5, this.g.size.max.y - .5);
 
@@ -268,9 +269,16 @@ export default class Player extends Sprite {
 
         postScore(this.g.store[this.player].score, this.g);
         this.destroy();
-        for (let i = 0; i < 8; i += 1) {
-          Particles.explode(this.pos.add(vec2(rand(-1, 1))));
+        for (let i = 0; i < 4; i += 1) {
+          this.g.events.push({
+            ttl: i * .2,
+            cb: () => {
+              Particles.explode(this.pos.add(vec2(rand(-1, 1))), rand(1, 2));
+              this.g.sfx.play('explosion', this.pos);
+            }
+          });
         }
+        new DeadPlayer(this.g, this.pos, this.type);
         this.g.sfx.play('explosion', this.pos);
         this.g.sfx.play('hurt', this.pos);
       }
@@ -317,5 +325,4 @@ export default class Player extends Sprite {
       this.g.medals[2].unlock();
     }
   }
-
 }

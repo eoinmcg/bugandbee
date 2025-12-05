@@ -13,7 +13,9 @@ export default class Forest {
 
     this.blocks = [];
 
-    for (let i = 16; i >= -15; i--) {
+    let W = 26;
+
+    for (let i = W; i >= -W; i--) {
       const col = BLACK;
       if (Math.random() > .9) {
         this.blocks.push(
@@ -25,12 +27,13 @@ export default class Forest {
         );
       }
     }
-    for (let i = 16; i >= -16; i--) {
+
+    for (let i = W + 10; i >= -W; i--) {
       const col = BLACK;
       this.blocks.push(new BgBlock(vec2(i, -10), vec2(rand(2, 4)), col, this.speed * -.02));
     }
 
-    for (let i = 16; i >= -15; i--) {
+    for (let i = W; i >= -W; i--) {
       const col = new Color(.09, .05, .09);
       if (Math.random() > .5) {
         this.blocks.push(
@@ -43,23 +46,24 @@ export default class Forest {
       }
     }
 
-    for (let i = 16; i >= -16; i--) {
+    W = 40;
+    for (let i = W; i >= -W; i--) {
       const col = new Color(rand(.05, .1), .1, .4);
       this.blocks.push(new BgBlock(vec2(i, -11), vec2(1), col, this.speed * -.05));
     }
 
-    for (let i = 16; i >= -16; i--) {
+    for (let i = W; i >= -W; i--) {
       const col = new Color(rand(.1, .3), .1, .4);
       this.blocks.push(new BgBlock(vec2(i, -11.5), vec2(1), col, this.speed * -.1));
     }
 
-    for (let i = 16; i >= -16; i--) {
+    for (let i = W; i >= -W; i--) {
       const col = new Color(rand(.2, .4), .1, .5);
       this.blocks.push(new BgBlock(vec2(i, -12.2), vec2(1), col, this.speed * -.15));
     }
 
-    for (let i = 16; i >= -16; i--) {
-      const col = new Color(0, rand(.05, .1), 0);
+    for (let i = W; i >= -W; i--) {
+      const col = new Color(0, rand(.2, .1), 0);
       this.blocks.push(new Foliage(vec2(i, 12.2), vec2(rand(5, 6)), col, this.speed * -.05));
     }
   }

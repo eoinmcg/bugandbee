@@ -10,7 +10,8 @@ export default class Tunnel {
 
     this.blocks = [];
 
-    for (let i = 16; i >= -15; i--) {
+    let W = 26;
+    for (let i = W; i >= -W; i--) {
       const col = BLACK;
       if (Math.random() > .9) {
         this.blocks.push(

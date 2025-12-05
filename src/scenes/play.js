@@ -184,28 +184,30 @@ export default class Play extends Scene {
     this.g.fonts.black.drawTextOverlay(hi, cameraPos.add(vec2(0, -11.65)), .1, true);
     this.g.fonts[col].drawTextOverlay(hi, cameraPos.add(vec2(0, -11.5)), .1, true);
 
+    const leftX = this.g.widescreen ? -20 : -14;
 
     const text = this.g.p2 && this.g.p1.destroyed
       ? wave > 0 ? 'PRESS FIRE' : ''
       : `${this.g.p1.type}: ${this.g.store.p1.score.toString().padStart(5, '0')}`;
-    this.g.fonts.black.drawTextOverlay(text, cameraPos.add(vec2(-13.9, 11.9)), .1, false);
-    this.g.fonts.white.drawTextOverlay(text, cameraPos.add(vec2(-14, 12)), .1, false);
+    this.g.fonts.black.drawTextOverlay(text, cameraPos.add(vec2(leftX + .1, 11.9)), .1, false);
+    this.g.fonts.white.drawTextOverlay(text, cameraPos.add(vec2(leftX, 12)), .1, false);
     const heartTile = this.g.tile('heart');
     const pink = this.g.palette.pink.mk();
     for (let i = 0; i < this.g.store.p1.lives; i += 1) {
-      drawTile(cameraPos.add(vec2(-13.5 + (i), 10.5)), vec2(.8), heartTile, pink);
+      drawTile(cameraPos.add(vec2(leftX + .5 + (i), 10.5)), vec2(.8), heartTile, pink);
     }
 
     if (this.g.p2) {
+      const rightX = this.g.widescreen ? 13 : 6;
       const text = this.g.p2.destroyed
         ? wave > 0 ? 'PRESS FIRE' : ''
         : `${this.g.p2.type}: ${this.g.store.p2.score.toString().padStart(5, '0')}`;
 
-      this.g.fonts.black.drawTextOverlay(text, cameraPos.add(vec2(5.8, 11.8)), .1, false);
-      this.g.fonts.white.drawTextOverlay(text, cameraPos.add(vec2(6, 12)), .1, false);
+      this.g.fonts.black.drawTextOverlay(text, cameraPos.add(vec2(rightX - .1, 11.8)), .1, false);
+      this.g.fonts.white.drawTextOverlay(text, cameraPos.add(vec2(rightX, 12)), .1, false);
 
       for (let i = 0; i < this.g.store.p2.lives; i += 1) {
-        drawTile(cameraPos.add(vec2(6.5 + (i), 10.5)), vec2(.8), heartTile, pink);
+        drawTile(cameraPos.add(vec2(rightX + .5 + (i), 10.5)), vec2(.8), heartTile, pink);
       }
     }
 

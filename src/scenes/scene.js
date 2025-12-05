@@ -42,7 +42,7 @@ export default class Scene {
     colA = this.g.palette[colA].mk();
     colB = this.g.palette[colB].mk();
 
-    let i = 12;
+    let i = this.g.widescreen ? 16 : 12;
 
     while (i--) {
       let col = i % 2 === 0 ? colA : colB;
@@ -84,7 +84,4 @@ export default class Scene {
     );
 
   }
-
-
-
 }

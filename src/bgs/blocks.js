@@ -1,3 +1,4 @@
+import Game from "../core/game";
 import Config from "../data/config";
 
 export class BgBlock {
@@ -7,11 +8,13 @@ export class BgBlock {
     this.col = col;
     this.speed = speed;
     this.pos.y += rand(0, .2);
+    this.maxW = Game.widescreen ? 32 : 18;
   }
+
 
   update() {
     this.pos.x += this.speed;
-    if (this.pos.x <= -16) this.pos.x = 16;
+    if (this.pos.x <= -this.maxW) this.pos.x = this.maxW;
   }
 
   render() {
@@ -24,10 +27,9 @@ export class Foliage extends BgBlock {
 
   update() {
     this.pos.x += this.speed;
-    if (this.pos.x <= -18) {
-      this.pos.x = 18;
+    if (this.pos.x <= -this.maxW) {
+      this.pos.x = this.maxW;
     }
-
   }
 
   render() {
@@ -40,7 +42,7 @@ export class Mountain extends BgBlock {
 
   update() {
     this.pos.x += this.speed;
-    if (this.pos.x <= -19) this.pos.x = 19;
+    if (this.pos.x <= -this.maxW) this.pos.x = this.maxW;
   }
 
   render() {
@@ -57,8 +59,8 @@ export class Trunk extends BgBlock {
     }
 
     this.pos.x += this.speed;
-    if (this.pos.x <= -19) {
-      this.pos.x = 19;
+    if (this.pos.x <= -this.maxW) {
+      this.pos.x = this.maxW;
       this.resetAngle();
     }
   }
@@ -70,7 +72,6 @@ export class Trunk extends BgBlock {
   render() {
     drawTile(this.pos, this.size, tile(Config.atlas.square, Config.tileSize), this.col, this.angle);
   }
-
 }
 
 export class Beam extends Trunk {
