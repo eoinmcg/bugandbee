@@ -1,4 +1,6 @@
-const WIDESCREEN = true;
+
+const params = Object.fromEntries(new URLSearchParams(location.search));
+const WIDESCREEN = params.widescreen && params.widescreen === '1';
 
 const Config = {
   title: 'Bug&Bee',
