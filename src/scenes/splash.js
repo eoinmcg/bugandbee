@@ -61,8 +61,8 @@ export default class Splash extends Scene {
         this.g.sceneManager.changeScene('Select');
       } else if (opt === '2 Players') {
         this.g.resetStore();
-        this.g.store.p1.type = 'bug';
-        this.g.store.p2.type = 'bee';
+        this.g.store.p1.type = 'BUG';
+        this.g.store.p2.type = 'BEE';
         const scene = this.g.plays === 0 ? 'Tutorial' : 'Play';
         this.g.sceneManager.changeScene(scene);
       }

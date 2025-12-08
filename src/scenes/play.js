@@ -109,7 +109,7 @@ export default class Play extends Scene {
         score: 0,
         lives: 2,
         powerups: 0,
-        type: text.toLowerCase(),
+        type: text,
       }
     }
 
