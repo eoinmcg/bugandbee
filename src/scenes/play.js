@@ -108,7 +108,8 @@ export default class Play extends Scene {
       this.g.store[player] = {
         score: 0,
         lives: 2,
-        powerups: 0
+        powerups: 0,
+        type: text.toLowerCase(),
       }
     }
 
