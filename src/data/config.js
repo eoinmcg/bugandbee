@@ -1,5 +1,5 @@
 
-const params = Object.fromEntries(new URLSearchParams(location.search));
+const params = Object.fromEntries(new URLSearchParams(window.location.search));
 const WIDESCREEN = params.widescreen && params.widescreen === '1';
 
 const Config = {
