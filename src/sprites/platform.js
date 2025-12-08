@@ -28,7 +28,7 @@ export default class Platform extends Sprite {
     super.update();
     if (this.pos.x < this.g.size.min.x - (this.size.x / 2)) {
       this.pos.x = this.g.size.max.x + (this.size.x / 2);
-      this.size.y = rand(5, 10);
+      this.size.y = this.g.bossFight ? rand(4, 6) : rand(5, 10);
       this.pos.x += 0.01;
     }
   }
@@ -56,13 +56,10 @@ export default class Platform extends Sprite {
     }
   }
 
-
   collideWithObject(o) {
     if (o.name === 'charge' || o.name === 'bullet') {
       o.destroy();
       return false;
     }
-
-
   }
 }

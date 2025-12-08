@@ -91,6 +91,7 @@ export default class SEttings extends Scene {
     if (option === 2) {
       try {
         localStorage.clear();
+        this.g.hiScore = 500;
         this.g.sfx.play('spotted');
       } catch (e) {
         console.log('FAILED TO CLEAR');

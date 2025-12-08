@@ -15,9 +15,9 @@ export default class Play extends Scene {
 
     if (g.store.p2.type) {
       inputWASDEmulateDirection = false;
-      if (g.store.p1.lives > 0)
+      if (g.store.p1.lives >= 0)
         this.g.p1 = new Player(this.g, vec2(0), 'BUG', 'p1');
-      if (g.store.p2.lives > 0)
+      if (g.store.p2.lives >= 0)
         this.g.p2 = new Player(this.g, vec2(0, 2), 'BEE', 'p2');
     } else {
       this.g.p1 = new Player(this.g, vec2(0), this.g.store.p1.type || 'BUG', 'p1');
@@ -109,7 +109,8 @@ export default class Play extends Scene {
       this.g.store[player] = {
         score: 0,
         lives: 2,
-        powerups: 0
+        powerups: 0,
+        type: text,
       }
     }
 
