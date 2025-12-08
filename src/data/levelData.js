@@ -68,13 +68,13 @@ export const levels = [
     audio: 5,
     speed: [1, 0],
     phases: [
-      // { start: 0, types: ['eyeboss'], props: { pos: vec2(-10, 0) } },
-      { start: 2, end: 10, types: ['rock'], freq: [1, 2] },
-      { start: 11, end: 20, types: ['shroom'], freq: [1, 2] },
-
-      { start: 20, end: 48, types: ['rock', 'wave.level4a', 'wave.level4b'], freq: [2, 3] },
-      { start: 50, types: ['alert'], props: { text: 'I C U!', col: 'pink', sfx: 'spotted', stopMusic: true } },
-      { start: 55, types: ['eyeboss'], props: { pos: vec2(-10, 0) } },
+      { start: 0, types: ['eyeboss'], props: { pos: vec2(-10, 0) } },
+      // { start: 2, end: 10, types: ['rock'], freq: [1, 2] },
+      // { start: 11, end: 20, types: ['shroom'], freq: [1, 2] },
+      //
+      // { start: 20, end: 48, types: ['rock', 'wave.level4a', 'wave.level4b'], freq: [2, 3] },
+      // { start: 50, types: ['alert'], props: { text: 'I C U!', col: 'pink', sfx: 'spotted', stopMusic: true } },
+      // { start: 55, types: ['eyeboss'], props: { pos: vec2(-10, 0) } },
     ],
   },
 ];

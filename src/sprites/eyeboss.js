@@ -104,7 +104,7 @@ export default class EyeBoss extends Boss {
     this.pos.y = clamp(this.pos.y, minY, maxY);
 
     // Occasional shooting
-    if (rand() > .99) {
+    if (rand() > .96) {
       this.shoot();
     }
   }
