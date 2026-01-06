@@ -57,7 +57,10 @@ export default class LevelComplete extends Scene {
 
     const font = engineFontImage;
 
-    this.renderTint();
+    const w = mainCanvas.width / cameraScale;
+    const h = mainCanvas.height / cameraScale;
+    drawRect(vec2(0, 0), vec2(w, h), new Color(0, 0, 0, 0.9));
+
     font.drawText(`LEVEL COMPLETE!`, vec2(0, 10), 1.5, true);
 
     const bonus = `+${this.displayBonus}`;

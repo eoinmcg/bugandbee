@@ -13,7 +13,7 @@ export default class Victory extends Scene {
     this.lastStick = [0];
 
     this.startTime = time;
-    this.bg = new Meadow('dusk');
+    this.bg = new Meadow('dusk', 0);
     this.g.playMusic(1);
     new Alert(this.g, { text: 'VICTORY!', fonts: this.g.fonts });
     this.dance = false;
@@ -59,7 +59,7 @@ export default class Victory extends Scene {
     this.g.sceneManager.changeScene('Splash');
   }
 
-  render() {
+  renderPost() {
     const random = new RandomGenerator(42);
     window.R = random;
     this.bg.render();

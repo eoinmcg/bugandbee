@@ -1,5 +1,3 @@
-import { outlineText } from "../helpers/drawOutline";
-
 export default class Alert extends EngineObject {
   constructor(g, props = {}) {
 
@@ -22,6 +20,8 @@ export default class Alert extends EngineObject {
     this.col = g.palette[props.col].mk();
     this.fontSize = props.fontSize;
     this.outline = g.palette[props.outline].mk();
+
+    this.renderOrder = 1000;
 
     this.props = props;
     this.blink = props.blink;
@@ -54,9 +54,5 @@ export default class Alert extends EngineObject {
     setFontDefault('"04b_19"');
     drawText(this.text, this.pos.add(vec2(0, this.fontSize / -15)), this.fontSize, this.outline);
     drawText(this.text, this.pos, this.fontSize, this.col);
-
-    // const font = engineFontImage;
-    // font.drawText(this.text, this.pos.add(vec2(0, this.fontSize / -15)), this.fontSize, true);
-    // font.drawText(this.text, this.pos, this.fontSize, true, this.col);
   }
 }
