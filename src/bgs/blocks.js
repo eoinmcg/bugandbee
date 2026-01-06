@@ -1,14 +1,16 @@
 import Game from "../core/game";
 import Config from "../data/config";
 
-export class BgBlock {
+export class BgBlock extends EngineObject {
   constructor(pos, size, col, speed, shape) {
+    super(pos, size);
     this.pos = pos;
     this.size = size;
     this.col = col;
     this.speed = speed;
     this.pos.y += rand(0, .2);
     this.maxW = Game.widescreen ? 32 : 18;
+    this.renderOrder = -4;
   }
 
 
@@ -25,6 +27,11 @@ export class BgBlock {
 
 export class Foliage extends BgBlock {
 
+  constructor(pos, size, col, speed, shape) {
+    super(pos, size, col, speed, shape);
+    this.a = rand(-.5, .5);
+  }
+
   update() {
     this.pos.x += this.speed;
     if (this.pos.x <= -this.maxW) {
@@ -33,7 +40,7 @@ export class Foliage extends BgBlock {
   }
 
   render() {
-    drawTile(this.pos, this.size, tile(Config.atlas.circle, Config.tileSize), this.col, .7);
+    drawTile(this.pos, this.size, tile(Config.atlas.circle, Config.tileSize), this.col, .7 + this.a);
   }
 
 }
@@ -75,6 +82,19 @@ export class Trunk extends BgBlock {
 }
 
 export class Beam extends Trunk {
+
+  constructor(pos, size, col, speed, shape) {
+    super(pos, size);
+    this.size = size;
+    this.col = col;
+    this.speed = speed / 5;
+    this.pos.y += rand(0, .2);
+    this.maxW = Game.widescreen ? 32 : 18;
+    this.renderOrder = -4;
+
+  }
+
+
   resetAngle() {
     this.angle = rand(-.2, .2);
   }

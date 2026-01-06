@@ -1,6 +1,5 @@
 import drawSky from "../helpers/drawSky";
 import palette from "../data/palette";
-import changeBg from "../helpers/changeBg";
 import { BgBlock, Mountain } from "./blocks";
 
 export default class Meadow {
@@ -64,10 +63,9 @@ export default class Meadow {
   }
 
   render() {
-    // changeBg('dusk');
-    drawSky(this.sky, ['stars', 'moonrise', 'cloudsFast', 'fog'], this.speed);
+    drawSky(this.sky, ['stars', 'moonrise', 'cloudsFast'], this.speed);
 
-    drawRect(vec2(0, -9), vec2(60, 3), BLACK);
+    // drawRect(vec2(0, -9), vec2(60, 3), BLACK);
     this.blocks.forEach(block => block.render());
   }
 

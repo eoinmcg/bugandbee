@@ -5,30 +5,16 @@ let skySeed = 6;
 
 export default function drawSky(style = 'dawn', extras = [], speed = 0) {
 
-  const w = mainCanvasSize.x,
-    h = mainCanvasSize.y;
 
   if (style) {
     let { light, med, dark, streak, stops } = styles[style];
-    light = palette[light].hex;
-    med = palette[med].hex;
-    dark = palette[dark].hex;
+    light = palette[light].mk();
+    med = palette[med].mk();
+    dark = palette[dark].mk();
 
-    mainContext.fillStyle = light;
-    mainContext.fillRect(0, 0, w, h);
-
-    mainContext.fillStyle = med;
-    mainContext.fillRect(0, 0, w, h / stops[0]);
-
-    mainContext.fillStyle = dark;
-    mainContext.fillRect(0, 0, w, h / stops[1]);
-
-    mainContext.fillStyle = light;
-    mainContext.fillRect(0, h / stops[0] - (streak * 2), w, streak);
-
-    mainContext.fillStyle = med;
-    mainContext.fillRect(0, h / stops[1] - (streak * 2), w, streak);
-
+    const w = mainCanvas.width / cameraScale;
+    const h = mainCanvas.height / cameraScale;
+    drawRectGradient(vec2(0), vec2(w, h), dark, light);
   }
 
   extras.forEach((extra) => {

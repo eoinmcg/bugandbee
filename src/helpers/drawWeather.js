@@ -1,4 +1,5 @@
 import Game from "../core/game";
+import Config from "../data/config";
 import palette from "../data/palette";
 let skySeed = 6;
 
@@ -12,14 +13,24 @@ const drawWeather = {
       let speed = random.float() < .9 ? random.float(5) : random.float(99, 9);
       let color = palette.white.mk(random.float(0.7, 1));
 
-      const extraSpace = 200;
-      const w = mainCanvas.width + 2 * extraSpace, h = mainCanvas.height + 2 * extraSpace;
-      const screenPos = vec2(
-        (random.float(w)), (random.float(h)));
+      // Get world space dimensions
+      const worldW = mainCanvasSize.x / cameraScale;
+      const worldH = mainCanvasSize.y / cameraScale;
+      const extraSpace = 200 / cameraScale;
 
+      // Generate random position in world space
+      const worldX = cameraPos.x - worldW / 2 - extraSpace + random.float(worldW + 2 * extraSpace);
+      const worldY = cameraPos.y - worldH / 2 - extraSpace + random.float(worldH + 2 * extraSpace);
+      const worldPos = vec2(worldX, worldY);
+
+      // Convert size to world space
+      const worldSize = size / cameraScale;
+
+      // Set alpha based on wave
       color.a = wave + 0.5;
-      mainContext.fillStyle = color;
-      mainContext.fillRect(screenPos.x, screenPos.y, size, size);
+
+      // Draw star as a small rectangle
+      drawRect(worldPos, vec2(worldSize, worldSize), color);
     }
   },
   snow: function () {
@@ -51,25 +62,19 @@ const drawWeather = {
       const size = Math.round(random.float(2, 4)) / 10;
       let speedX = -150 * (size * 10),
         speedY = size * 2000;
-      const extraSpace = 200;
+      const extraSpace = 1000;
       const w = mainCanvas.width + 2 * extraSpace, h = mainCanvas.height + 2 * extraSpace;
       const screenPos = vec2(
         ((random.float(w) + time * speedX) % w + w) % w - extraSpace,
         (random.float(h) + time * speedY) % h - extraSpace);
 
-      // Convert screen pixels to world coordinates
-      const worldStart = screenToWorld(screenPos);
-      const worldEnd = screenToWorld(vec2(
-        screenPos.x + (lateral ? -10 : 0),
-        screenPos.y + 12
-      ));
+      mainContext.lineWidth = size * 30;
+      mainContext.strokeStyle = palette.pale_blue.mk(.2 + size);
+      mainContext.beginPath();
+      mainContext.moveTo(screenPos.x, screenPos.y);
+      mainContext.lineTo(screenPos.x + (lateral ? -10 : 0), screenPos.y + 12);
+      mainContext.stroke();
 
-      drawLine(
-        worldStart,          // posA - start position
-        worldEnd,            // posB - end position
-        size,                 // width
-        palette.pale_blue.mk(.2 + size)
-      );
     }
   },
   fog: function () {
@@ -103,17 +108,25 @@ const drawWeather = {
     const random = new RandomGenerator(skySeed + 2); // Different seed
     const numFireflies = 30;
 
+    // Get actual camera viewport bounds in world space
+    const worldWidth = mainCanvas.width / cameraScale;
+    const worldHeight = mainCanvas.height / cameraScale;
+    const worldMin = vec2(cameraPos.x - worldWidth / 2, cameraPos.y - worldHeight / 2);
+    const worldMax = vec2(cameraPos.x + worldWidth / 2, cameraPos.y + worldHeight / 2);
+
     for (let i = 0; i < numFireflies; i++) {
-      // Each firefly has its own movement pattern
-      const baseX = random.float(mainCanvas.width);
-      const baseY = random.float(mainCanvas.height);
+      // Each firefly has its own movement pattern - directly in world space
+      const baseX = worldMin.x + random.float(worldMax.x - worldMin.x);
+      const baseY = worldMin.y + random.float(worldMax.y - worldMin.y);
       const speed = 20 + random.float(30);
       const phaseX = random.float(Math.PI * 2);
       const phaseY = random.float(Math.PI * 2);
 
-      // Float around in figure-8 or circular patterns
-      const x = baseX + Math.sin(time * speed * 0.01 + phaseX) * 50;
-      const y = baseY + Math.cos(time * speed * 0.015 + phaseY) * 40;
+      // Float around in figure-8 or circular patterns (scaled for world space)
+      const worldPos = vec2(
+        baseX + Math.sin(time * speed * 0.01 + phaseX) * 0.5,
+        baseY + Math.cos(time * speed * 0.015 + phaseY) * 0.4
+      );
 
       // Pulse effect: fade in and out
       const pulseSpeed = 2 + random.float(2);
@@ -122,15 +135,12 @@ const drawWeather = {
       // Skip if faded out
       if (opacity < 0.1) continue;
 
-      // Draw glowing firefly
-      const glowSize = 15;
-      const gradient = mainContext.createRadialGradient(x, y, 0, x, y, glowSize);
-      gradient.addColorStop(0, `rgba(255, 255, 150, ${opacity})`);
-      gradient.addColorStop(0.4, `rgba(255, 255, 100, ${opacity * 0.6})`);
-      gradient.addColorStop(1, 'rgba(255, 200, 0, 0)');
-
-      mainContext.fillStyle = gradient;
-      mainContext.fillRect(x - glowSize, y - glowSize, glowSize * 2, glowSize * 2);
+      // Draw glowing firefly with multiple rects for glow effect
+      const color = new Color(1, 0.9, 0.4, opacity);
+      for (let r = 1; r <= 4; r++) {
+        const glowColor = new Color(1, 0.9, 0.4, opacity * (1 - r / 4));
+        drawRect(worldPos, vec2(r * 0.15), glowColor, time);
+      }
     }
   },
   eyes: function () {
@@ -141,15 +151,20 @@ const drawWeather = {
         nextSpawn: time + 3 // First pair spawns in 3 seconds
       };
     }
-
     const state = this.eyesState;
+
+    // Get actual camera viewport bounds in world space
+    const worldWidth = mainCanvas.width / cameraScale;
+    const worldHeight = mainCanvas.height / cameraScale;
+    const worldMin = vec2(cameraPos.x - worldWidth / 2, cameraPos.y - worldHeight / 2);
+    const worldMax = vec2(cameraPos.x + worldWidth / 2, cameraPos.y + worldHeight / 2);
 
     if (state.pairs.length < 1 && time >= state.nextSpawn) {
       const random = new RandomGenerator(skySeed + time);
       state.pairs.push({
-        x: mainCanvas.width + 50,
-        y: random.float(50) + 650,
-        speedX: -30 - random.float(20),
+        x: worldMax.x + 3, // Start off right edge in world space
+        y: random.float(-7, -4),
+        speedX: -2 - random.float(1.5), // Scaled speed for world space
         speedY: 0,
         nextBlink: time + 2 + random.float(4),
         blinkStart: 0,
@@ -162,14 +177,12 @@ const drawWeather = {
     // Update and draw each pair
     for (let i = state.pairs.length - 1; i >= 0; i--) {
       const pair = state.pairs[i];
-      const elapsed = time - pair.spawnTime;
 
       // Move eyes
       pair.x += pair.speedX * 0.016;
-      pair.y += pair.speedY * 0.016;
 
-      // Remove if off left edge or too old
-      if (pair.x < -50) {
+      // Remove if off left edge
+      if (pair.x < worldMin.x - 3) {
         state.pairs.splice(i, 1);
         continue;
       }
@@ -181,15 +194,15 @@ const drawWeather = {
       }
 
       // Calculate blink state
-      let eyeHeight = 12;
+      let eyeHeightScale = 1;
       if (pair.isBlinking) {
         const blinkElapsed = time - pair.blinkStart;
         if (blinkElapsed < 0.15) {
           // Closing
-          eyeHeight = 12 * (1 - blinkElapsed / 0.15);
+          eyeHeightScale = 1 - blinkElapsed / 0.15;
         } else if (blinkElapsed < 0.3) {
           // Opening
-          eyeHeight = 12 * ((blinkElapsed - 0.15) / 0.15);
+          eyeHeightScale = (blinkElapsed - 0.15) / 0.15;
         } else {
           // Blink complete
           pair.isBlinking = false;
@@ -198,23 +211,25 @@ const drawWeather = {
       }
 
       // Draw both eyes with glow
-      const eyeSpacing = 20;
+      const eyeSpacing = 1.15; // World space units
       const eyePositions = [pair.x - eyeSpacing / 2, pair.x + eyeSpacing / 2];
 
       eyePositions.forEach(eyeX => {
-        // Glow
-        const gradient = mainContext.createRadialGradient(eyeX, pair.y, 0, eyeX, pair.y, 15);
-        gradient.addColorStop(0, 'rgba(255, 50, 50, 0.6)');
-        gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
-        mainContext.fillStyle = gradient;
-        mainContext.fillRect(eyeX - 15, pair.y - 15, 30, 30);
+        const eyePos = vec2(eyeX, pair.y);
 
-        // Eye itself (ellipse)
-        if (eyeHeight > 0.5) {
-          mainContext.beginPath();
-          mainContext.ellipse(eyeX, pair.y, 6, eyeHeight / 2, 0, 0, Math.PI * 2);
-          mainContext.fillStyle = 'rgba(255, 100, 100, 0.9)';
-          mainContext.fill();
+        // Glow effect with multiple layers
+        for (let r = 1; r <= 4; r++) {
+          const glowColor = new Color(1, 0.2, 0.2, 0.6 * (1 - r / 4));
+          // drawRect(eyePos, vec2(r * 0.5), glowColor);
+          drawCircle(eyePos, r * 0.5, glowColor);
+        }
+
+        // Eye itself (using rect to approximate ellipse during blink)
+        if (eyeHeightScale > 0.05) {
+          const eyeWidth = 0.15; // ~6 pixels in world space
+          const eyeHeight = 0.5 * eyeHeightScale; // ~12 pixels in world space
+          const eyeColor = new Color(1, 0.4, 0.4, 0.9);
+          drawCircle(eyePos, eyeHeight, eyeColor);
         }
       });
     }
@@ -245,8 +260,7 @@ const drawWeather = {
         // Calculate fade: starts at 1 (white), fades to 0 (transparent)
         const alpha = 1 - (elapsed / state.flashDuration);
 
-        mainContext.fillStyle = `rgba(255, 255, 255, ${alpha})`;
-        mainContext.fillRect(0, 0, mainCanvas.width, mainCanvas.height);
+        drawRect(vec2(0), vec2(40), WHITE);
       } else {
         state.isFlashing = false; // Flash complete
       }
@@ -279,7 +293,7 @@ const drawWeather = {
       let speed = random.float() < .9 ? random.float(5) : random.float(99, 9);
       speed *= (size * - 25) * masterSpeed;
 
-      const extraSpace = 200;
+      const extraSpace = 800;
       const w = mainCanvas.width + 2 * extraSpace, h = (mainCanvas.height / 4) + extraSpace;
 
       const screenPos = vec2(
@@ -334,30 +348,22 @@ const drawWeather = {
     mainContext.fill();
   },
   moonrise: function () {
-    const speedY = -5;
-    const startY = 900;
+
+    const speedY = .1;
+    const startY = -10;
     let moonY = (startY + time * speedY);
+    if (moonY > 6) moonY = 6;
 
-    if (moonY < 200) moonY = 200;
-
-    mainContext.beginPath();
-    mainContext.fillStyle = palette.white.mk(.8);
-    mainContext.arc(500, moonY, 180, 0, Math.PI * 2); // Full circle
-    mainContext.fill();
+    drawCircle(vec2(0, moonY), 10, palette.white.mk(.8), 0, CLEAR_BLACK, true);
   },
 }
 
 function drawCloud(x, y, size, col = 'gray') {
-  size *= 50;
-
-  mainContext.fillStyle = palette[col].col;
-  mainContext.globalAlpha = .5;
-  mainContext.beginPath();
-  mainContext.roundRect(x, y, size, size / 3, 20);
-  mainContext.fill();
-
-
-  mainContext.globalAlpha = 1;
+  let raw = screenToWorld(vec2(x, y));
+  let p = vec2(raw.x, raw.y);
+  drawCircle(p.add(vec2(-size, 0)), size / 2, WHITE);
+  drawCircle(p.add(vec2(size, 0)), size / 2, WHITE);
+  drawRect(p, vec2(size * 2, size * .5), WHITE);
 }
 
 export default drawWeather;

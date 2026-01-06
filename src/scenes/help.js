@@ -50,6 +50,10 @@ export default class Help extends Scene {
 
     const font = engineFontImage;
 
+    const w = mainCanvas.width / cameraScale;
+    const h = mainCanvas.height / cameraScale;
+    drawRect(vec2(0, 0), vec2(w, h), new Color(0, 0, 0, 0.9));
+
     this.logoText({
       text: 'ABOUT', pos: vec2(0, 10), size: 3, color: WHITE,
       lineColor: this.g.palette.pink.mk()
@@ -124,10 +128,9 @@ class Box extends EngineObject {
     }
     this.hover = false;
     super.update();
-
   }
 
-  render() {
+  renderPost() {
     drawRect(this.pos, this.size, this.hover ? this.active : this.color);
   }
 

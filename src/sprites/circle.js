@@ -19,13 +19,13 @@ export default class Circle extends EngineObject {
   }
 
   render() {
-    if (this.alpha !== 1) {
-      mainContext.globalAlpha = this.alpha;
-    }
-    drawCircle(this.pos, this.r, CLEAR_BLACK, 2, this.col, false);
-    if (this.alpha !== 1) {
-      mainContext.globalAlpha = 1;
-    }
+    // if (this.alpha !== 1) {
+    //   mainContext.globalAlpha = this.alpha;
+    // }
+    drawCircle(this.pos, this.r, CLEAR_BLACK, 2, this.col);
+    // if (this.alpha !== 1) {
+    //   mainContext.globalAlpha = 1;
+    // }
   }
 }
 

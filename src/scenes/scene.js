@@ -4,7 +4,7 @@ export default class Scene {
     this.g = game;
 
     window.setTimeout(() => {
-      mainCanvas.style.zIndex = -999999;
+      // mainCanvas.style.zIndex = -999999;
     }, 100)
   }
 
@@ -39,6 +39,12 @@ export default class Scene {
   render() { }
 
   renderPost() {
+  }
+
+  renderTint(tint = .7) {
+    const w = mainCanvas.width / cameraScale;
+    const h = mainCanvas.height / cameraScale;
+    drawRect(vec2(0, 0), vec2(w, h), new Color(0, 0, 0, tint));
   }
 
   initTunnel(colA, colB, speed = .05, alpha = 1) {

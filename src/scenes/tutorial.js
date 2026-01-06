@@ -61,11 +61,11 @@ export default class Tutorial extends Scene {
       if (this.step < 3) return;
       this.g.sceneManager.changeScene('Play');
     }
-
-
   }
 
-  render() {
+  renderPost() {
+
+    this.renderTint(.9);
 
     const wave = Math.sin(new Date().getTime() * 0.009);
     const font = engineFontImage;

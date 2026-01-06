@@ -51,12 +51,12 @@ export default class Alert extends EngineObject {
     const wave = Math.sin(new Date().getTime() * 0.005);
     if (this.blink && wave > 0) { return; }
 
-    // setFontDefault('"04b_19"');
-    // drawText(this.text, this.pos.add(vec2(0, this.fontSize / -15)), this.fontSize, this.outline);
-    // drawText(this.text, this.pos, this.fontSize, this.col);
+    setFontDefault('"04b_19"');
+    drawText(this.text, this.pos.add(vec2(0, this.fontSize / -15)), this.fontSize, this.outline);
+    drawText(this.text, this.pos, this.fontSize, this.col);
 
-    const font = engineFontImage;
-    font.drawText(this.text, this.pos.add(vec2(0, this.fontSize / -15)), this.fontSize, true);
-    font.drawText(this.text, this.pos, this.fontSize, true, this.col);
+    // const font = engineFontImage;
+    // font.drawText(this.text, this.pos.add(vec2(0, this.fontSize / -15)), this.fontSize, true);
+    // font.drawText(this.text, this.pos, this.fontSize, true, this.col);
   }
 }

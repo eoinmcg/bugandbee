@@ -26,7 +26,6 @@ export default class Splash extends Scene {
       ? this.g.palette.lime.mk() : this.g.palette.aqua.mk();
 
     this.initTunnel(this.bgCol, 'black');
-
   }
 
   update() {
@@ -90,7 +89,7 @@ export default class Splash extends Scene {
     mainContext.font = '04b_19';
     setFontDefault('"04b_19"');
     let col = new Color(0, 0, 0, .8);
-    drawCircle(vec2(0), 14, col, 0, CLEAR_BLACK, false);
+    drawCircle(vec2(0), 14, col, 0, CLEAR_BLACK, true);
     this.logoText({
       text: '&', pos: vec2(-4, 0), size: 2, color: WHITE,
       lineColor: CLEAR_BLACK

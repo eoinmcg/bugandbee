@@ -60,8 +60,12 @@ export default class Select extends Scene {
 
   }
 
-  render() {
+  renderPost() {
     const font = engineFontImage;
+
+    const w = mainCanvas.width / cameraScale;
+    const h = mainCanvas.height / cameraScale;
+    drawRect(vec2(0, 0), vec2(w, h), new Color(0, 0, 0, 0.9));
 
     this.logoText({
       text: 'SELECT', pos: vec2(0, 10), size: 3, color: WHITE,

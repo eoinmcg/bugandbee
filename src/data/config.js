@@ -1,8 +1,9 @@
 
-const params = typeof window !== 'undefined'
-  ? Object.fromEntries(new URLSearchParams(window.location.search))
-  : {};
-const WIDESCREEN = params.widescreen && params.widescreen === '1';
+// const params = typeof window !== 'undefined'
+//   ? Object.fromEntries(new URLSearchParams(window.location.search))
+//   : {};
+// const WIDESCREEN = params.widescreen && params.widescreen === '1';
+const WIDESCREEN = true;
 
 const Config = {
   title: 'Bug&Bee',

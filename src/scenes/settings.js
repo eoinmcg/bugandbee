@@ -1,3 +1,4 @@
+import Game from "../core/game";
 import Powerup from "../sprites/powerup";
 import Scene from "./scene";
 
@@ -56,6 +57,8 @@ export default class SEttings extends Scene {
 
     const font = engineFontImage;
     const gray = this.g.palette.gray.mk();
+
+    this.renderTint();
 
     this.logoText({
       text: 'SETTINGS', pos: vec2(0, 4), size: 2, color: WHITE,

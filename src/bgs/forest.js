@@ -74,7 +74,7 @@ export default class Forest {
   }
 
   render() {
-    drawSky(this.sky, ['lightning', 'fog', 'eyes']);
+    drawSky(this.sky, ['lightning', 'fireflies']);
     this.blocks.forEach(block => block.render());
     drawSky(false, ['rain']);
   }

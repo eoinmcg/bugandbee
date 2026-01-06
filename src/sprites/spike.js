@@ -11,7 +11,7 @@ export default class Spike extends Enemy {
     this.velocity = vec2(-.45, 0);
     this.name = 'rock';
     this.type = this.pos.y > 0 ? 'top' : 'bottom';
-    this.renderOrder = -50;
+    this.renderOrder = -2;
 
     this.startPos = props.pos.copy();
     this.spawnAngle = g.angle;

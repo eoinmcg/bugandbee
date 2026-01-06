@@ -53,10 +53,11 @@ export default class LevelComplete extends Scene {
     }
   }
 
-  render() {
+  renderPost() {
 
     const font = engineFontImage;
 
+    this.renderTint();
     font.drawText(`LEVEL COMPLETE!`, vec2(0, 10), 1.5, true);
 
     const bonus = `+${this.displayBonus}`;
@@ -73,7 +74,7 @@ export default class LevelComplete extends Scene {
     if (this.p2) {
       let p2Tile = (this.g.p2.type === 'BEE') ? 10 : 15;
       font.drawText(`BONUS`, cameraPos.add(vec2(7, -2)), 1.2, true);
-      fonts.drawText(bonus, cameraPos.add(vec2(7, -4)), 1, true, col);
+      font.drawText(bonus, cameraPos.add(vec2(7, -4)), 1, true, col);
       drawTile(vec2(7, 1), vec2(2), tile(p2Tile, this.g.tileSize));
     }
 
