@@ -3,12 +3,15 @@ import drawWeather from "./drawWeather";
 
 let skySeed = 6;
 
+// let skyStyle = 'copper';
+let skyStyle = 'default';
+
 export default function drawSky(style = 'dawn', extras = [], speed = 0) {
 
-
-  if (style) {
-    // let { cols, steps } = styles[style];
-    // drawCopperGradient(cols, { steps });
+  if (style && skyStyle === 'copper') {
+    let { cols, steps } = copperStyles[style];
+    drawCopperGradient(cols, { steps: 30 });
+  } else if (style) {
     drawSimpleGradient(style);
   }
 
@@ -63,38 +66,38 @@ const styles = {
   },
 }
 
-// const styles = {
-//   dawn: {
-//     cols: ['flesh', 'pink', 'red'],
-//     steps: 20,
-//   },
-//   dusk: {
-//     cols: ['flame_orange', 'red', 'maroon'],
-//     steps: 20,
-//   },
-//   day: {
-//     cols: ['blue', 'navy_blue', 'midnight_blue'],
-//     steps: 20,
-//   },
-//   night: {
-//     cols: ['midnight_blue', 'slate', 'midnight_blue'],
-//     steps: 20,
-//   },
-//   stormy: {
-//     cols: ['midnight_blue', 'royal_purple', 'midnight_blue'],
-//     steps: 20,
-//   },
-//   title: {
-//     cols: ['navy_blue', 'royal_purple', 'midnight_blue'],
-//     steps: 20,
-//   },
-// }
+const copperStyles = {
+  dawn: {
+    cols: ['flesh', 'pink', 'red'],
+    steps: 20,
+  },
+  dusk: {
+    cols: ['flame_orange', 'red', 'maroon'],
+    steps: 20,
+  },
+  day: {
+    cols: ['blue', 'navy_blue', 'midnight_blue'],
+    steps: 20,
+  },
+  night: {
+    cols: ['midnight_blue', 'slate', 'midnight_blue'],
+    steps: 20,
+  },
+  stormy: {
+    cols: ['midnight_blue', 'royal_purple', 'midnight_blue'],
+    steps: 20,
+  },
+  title: {
+    cols: ['navy_blue', 'royal_purple', 'midnight_blue'],
+    steps: 20,
+  },
+}
 //
-// for (let style in styles) {
-//   styles[style].cols.forEach((k, v) => {
-//     styles[style].cols[v] = palette[k].col;
-//   })
-// }
+for (let style in copperStyles) {
+  copperStyles[style].cols.forEach((k, v) => {
+    copperStyles[style].cols[v] = palette[k].col;
+  })
+}
 
 
 function drawSimpleGradient(style = 'dawn') {
