@@ -38,7 +38,7 @@ const styles = {
   },
   inferno: {
     light: 'maroon',
-    med: 'red',
+    med: 'midnight_blue',
     dark: 'maroon',
     streak: 10,
     stops: [1.8, 3]
@@ -83,7 +83,7 @@ const copperStyles = {
     steps: 20,
   },
   inferno: {
-    cols: ['maroon', 'red', 'maroon'],
+    cols: ['maroon', 'midnight_blue', 'maroon'],
     steps: 20,
   },
   day: {
