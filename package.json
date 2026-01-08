@@ -17,7 +17,7 @@
     "express": "^5.1.0",
     "gh-pages": "^6.3.0",
     "google-closure-compiler": "^20250721.0.0",
-    "littlejsengine": "^1.15.9",
+    "littlejsengine": "^1.17.11",
     "nodemon": "^3.1.10",
     "roadroller": "^2.1.0",
     "terser": "^5.43.1",

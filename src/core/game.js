@@ -123,7 +123,6 @@ setTouchGamepadSize(180);
 setCanvasClearColor(new Color(0, 0, 0, 0));
 
 if (window.BUILD) {
-  setShowWatermark(false);
   setShowSplashScreen(true);
   window.setTimeout(() => {
     console.log(`Built: ${BUILD}  [commit: ${COMMIT}]\n\n`);

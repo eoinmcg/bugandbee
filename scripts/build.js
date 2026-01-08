@@ -32,7 +32,8 @@ const COMMIT = revision.execSync('git rev-parse --short HEAD')
 const PROGRAM_NAME = 'bugandbee';
 const BUILD_FOLDER = 'tmp';
 const sourceFiles = [
-  'node_modules/littlejsengine/dist/littlejs.release.js',
+  // 'node_modules/littlejsengine/dist/littlejs.release.js',
+  'src/lib/littlejs.release.js',
   'dist/game.js',
 ];
 
