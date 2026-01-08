@@ -65,7 +65,6 @@ export default class Meadow {
   render() {
     drawSky(this.sky, ['stars', 'moonrise', 'cloudsFast'], this.speed);
 
-    // drawRect(vec2(0, -9), vec2(60, 3), BLACK);
     this.blocks.forEach(block => block.render());
   }
 

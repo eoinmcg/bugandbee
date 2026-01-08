@@ -32,9 +32,7 @@ export default class Tunnel {
 
   render() {
     // drawSky(this.sky, ['fog', 'eyes', 'fireflies']);
-    drawSky(this.sky, ['fog']);
+    drawSky(this.sky, []);
     this.blocks.forEach(block => block.render());
   }
 }
-
-
