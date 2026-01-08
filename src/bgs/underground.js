@@ -4,7 +4,7 @@ import { BgBlock, Beam } from "./blocks";
 
 export default class Underground {
 
-  constructor(sky = 'stormy', speed = 2) {
+  constructor(sky = 'inferno', speed = 2) {
 
     this.sky = sky;
     this.speed = speed;

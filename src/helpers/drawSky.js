@@ -3,14 +3,14 @@ import drawWeather from "./drawWeather";
 
 let skySeed = 6;
 
-// let skyStyle = 'copper';
-let skyStyle = 'default';
+let skyStyle = 'copper';
+skyStyle = 'default';
 
 export default function drawSky(style = 'dawn', extras = [], speed = 0) {
 
   if (style && skyStyle === 'copper') {
     let { cols, steps } = copperStyles[style];
-    drawCopperGradient(cols, { steps: 30 });
+    drawCopperGradient(cols, { steps });
   } else if (style) {
     drawSimpleGradient(style);
   }
@@ -31,6 +31,13 @@ const styles = {
   },
   dusk: {
     light: 'flame_orange',
+    med: 'red',
+    dark: 'maroon',
+    streak: 10,
+    stops: [1.8, 3]
+  },
+  inferno: {
+    light: 'maroon',
     med: 'red',
     dark: 'maroon',
     streak: 10,
@@ -73,6 +80,10 @@ const copperStyles = {
   },
   dusk: {
     cols: ['flame_orange', 'red', 'maroon'],
+    steps: 20,
+  },
+  inferno: {
+    cols: ['maroon', 'red', 'maroon'],
     steps: 20,
   },
   day: {
@@ -131,7 +142,7 @@ function drawSimpleGradient(style = 'dawn') {
   // Dark layer (top portion)
   const darkHeight = worldHeight / stops[1];
   const darkCenter = vec2(cameraPos.x, worldMax.y - darkHeight / 2);
-  const darkSize = vec2(worldWidth, darkHeight);
+  const darkSize = vec2(worldWidth, darkHeight + .5);
   drawRect(darkCenter, darkSize, darkColor);
 
   // Light streak
