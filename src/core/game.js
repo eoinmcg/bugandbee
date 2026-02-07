@@ -1,10 +1,9 @@
-import Config from '../data/config.js';
+import Config from "../data/config.js";
 import SceneManager from "./sceneManager.js";
 
 import palette from "../data/palette.js";
 import Sfx from "../data/sfx.js";
 
-import colorFont from "../helpers/colorFont.js";
 import { getItem } from "../helpers/store.js";
 
 import { newgroundsInit } from "../lib/newgrounds.js";
@@ -12,7 +11,6 @@ import keys from "../data/keys.js";
 
 import generateMedals from "../data/medals.js";
 let newgrounds = newgroundsInit(keys.AppID, keys.EncryptionKey);
-
 
 export const Game = {
   title: Config.title,
@@ -26,14 +24,15 @@ export const Game = {
   gameOver: false,
   level: null,
   levelNum: 1,
-  startScene: 'Splash',
+  startScene: "Splash",
   images: Config.images,
-  plays: getItem('plays', 0),
-  hiScore: getItem('HiScore', 500),
+  plays: getItem("plays", 0),
+  hiScore: getItem("HiScore", 500),
   newHiscore: false,
   tileSize: Config.tileSize,
   trackPaths: Config.trackPaths,
   tracks: Config.tracks,
+  shader: false,
   playMusic: (track) => {
     if (Game.music) {
       Game.music.pause();
@@ -53,8 +52,8 @@ export const Game = {
     }
     Game.music.volume = 0.7;
 
-    Game.music.play().catch(e => {
-      console.warn('Failed to play music:', e);
+    Game.music.play().catch((e) => {
+      console.warn("Failed to play music:", e);
     });
   },
   stopMusic: () => {
@@ -65,7 +64,9 @@ export const Game = {
     if (!Game.music) return;
 
     if (Game.music.paused) {
-      Game.music.play().catch(e => console.warn('Failed to resume music:', e));
+      Game.music
+        .play()
+        .catch((e) => console.warn("Failed to resume music:", e));
     } else {
       Game.music.pause();
     }
@@ -73,11 +74,10 @@ export const Game = {
   size: Config.size,
   atlas: Config.atlas,
   tile: (n, size, sheet = 0) => {
-    return tile(Game.atlas[n], size || Game.tileSize, sheet)
-
+    return tile(Game.atlas[n], size || Game.tileSize, sheet);
   },
   tracksReady: false,
-  isNewgrounds: window.location.hostname === 'uploads.ungrounded.net',
+  isNewgrounds: window.location.hostname === "uploads.ungrounded.net",
   ng: newgrounds,
   store: {},
   resetStore: () => {
@@ -85,20 +85,18 @@ export const Game = {
     Game.store.p1 = {
       score: 0,
       lives: 2,
-      powerups: 0
-    }
+      powerups: 0,
+    };
     Game.store.p2 = {
       score: 0,
       lives: 2,
-      powerups: 0
-    }
+      powerups: 0,
+    };
   },
 };
 
-
-document.title = Game.title
+document.title = Game.title;
 Game.resetStore();
-
 
 // let font = new FontImage;
 // font.image.onload = () => {
@@ -116,7 +114,7 @@ const sceneManager = new SceneManager(Game);
 Game.sceneManager = sceneManager;
 
 // tileFixBleedScale = .1;
-setTileDefaultBleed(.1);
+setTileDefaultBleed(0.1);
 setTouchGamepadEnable(true);
 setTouchGamepadButtonCount(1);
 setTouchGamepadSize(180);
@@ -126,33 +124,34 @@ if (window.BUILD) {
   setShowSplashScreen(true);
   window.setTimeout(() => {
     console.log(`Built: ${BUILD}  [commit: ${COMMIT}]\n\n`);
-    console.log("%c" + `🐞🐝 ${Game.title} say HAI! \n`, "font-size: 24px; font-weight: bold; color: #c20;");
+    console.log(
+      "%c" + `🐞🐝 ${Game.title} say HAI! \n`,
+      "font-size: 24px; font-weight: bold; color: #c20;",
+    );
     console.log(`Check the source: https://github.com/eoinmcg/bugandbee`);
     console.log(`code & GFX by @eoinmcg`);
     console.log(`music: https://not-jam.itch.io/not-jam-music-pack`);
     console.log(`made with: https://github.com/KilledByAPixel/LittleJS`);
-  }, 1000)
+  }, 1000);
 } else {
   window.G = Game;
   window.NG = newgrounds;
 }
 
 // for debugging ?l=levelNum or ?s=Tutorial etc
-const params = Object.fromEntries(new URLSearchParams(location.search))
+const params = Object.fromEntries(new URLSearchParams(location.search));
 if (params.l) {
   Game.levelNum = parseInt(params.l, 10);
   Game.lives = 2;
-  Game.startScene = 'Play';
+  Game.startScene = "Play";
 }
 if (params.s) {
-  Game.startScene = params.s.charAt(0)
-    .toUpperCase()
-    + params.s.slice(1);
+  Game.startScene = params.s.charAt(0).toUpperCase() + params.s.slice(1);
 }
 
 export default Game;
 
 // naughty, naughty
 Array.prototype.rnd = function () {
-  return this[Math.floor((Math.random() * this.length))];
-}
+  return this[Math.floor(Math.random() * this.length)];
+};

@@ -1,4 +1,3 @@
-
 // const params = typeof window !== 'undefined'
 //   ? Object.fromEntries(new URLSearchParams(window.location.search))
 //   : {};
@@ -6,14 +5,22 @@
 const WIDESCREEN = true;
 
 const Config = {
-  title: 'Bug&Bee',
+  title: "Bug&Bee",
   // W: 960,
   W: WIDESCREEN ? 1422 : 960,
   H: 800,
   widescreen: WIDESCREEN,
-  images: ['t.gif'],
+  images: ["t.gif"],
   tileSize: 4,
-  trackPaths: ['begin.ogg', 'die.ogg', 'switch.ogg', 'critical.ogg', 'meltdown.ogg', 'drag.ogg', 'boss.ogg'],
+  trackPaths: [
+    "begin.ogg",
+    "die.ogg",
+    "switch.ogg",
+    "critical.ogg",
+    "meltdown.ogg",
+    "drag.ogg",
+    "boss.ogg",
+  ],
   tracks: [],
   size: {
     max: { x: WIDESCREEN ? 22 : 15, y: 12.5 },
@@ -60,7 +67,7 @@ const Config = {
     flappy1: 43,
     rock0: 44,
     rock1: 45,
-  }
-}
+  },
+};
 
 export default Config;

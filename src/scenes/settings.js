@@ -1,86 +1,97 @@
-import Game from "../core/game";
-import Powerup from "../sprites/powerup";
 import Scene from "./scene";
 
 export default class SEttings extends Scene {
-
   enter(Game) {
     this.g = Game;
 
-    this.stick = [gamepadStick(0),];
+    this.stick = [gamepadStick(0)];
     this.lastStick = [0];
 
-    this.options = ['Mute', 'Fullscreen', 'Clear HiScore', 'Exit'];
-    this.yPos = [0, -1.5, -3, -4.5];
+    this.options = ["Mute", "Fullscreen", "Clear HiScore", "OldSkool", "Exit"];
+    this.yPos = [0, -1.5, -3, -4.5, -6];
     this.pointer = 0;
 
-    this.initTunnel('emerald', 'dark_teal', .02, .1);
+    this.initTunnel("emerald", "dark_teal", 0.02, 0.1);
   }
 
   update() {
-
     super.update();
 
     const stick = gamepadStick(0);
 
-    if (keyWasPressed('ArrowUp')
-      || (this.lastStick[0] > 0 && stick.y === 0)) {
+    if (keyWasPressed("ArrowUp") || (this.lastStick[0] > 0 && stick.y === 0)) {
       this.pointer -= 1;
-      this.g.sfx.play('walk');
+      this.g.sfx.play("walk");
     }
-    if (keyWasPressed('ArrowDown')
-      || (this.lastStick[0] < 0 && stick.y === 0)) {
+    if (
+      keyWasPressed("ArrowDown") ||
+      (this.lastStick[0] < 0 && stick.y === 0)
+    ) {
       this.pointer += 1;
-      this.g.sfx.play('walk');
+      this.g.sfx.play("walk");
     }
 
     if (this.pointer < 0) this.pointer = this.yPos.length - 1;
     if (this.pointer > this.yPos.length - 1) this.pointer = 0;
 
-    const inputPressed = (keyWasPressed('Enter')
-      || keyWasPressed('KeyX')
-      || keyWasPressed('KeyF')
-      || gamepadWasPressed(0)
-      || gamepadWasPressed(1)
-      || gamepadWasPressed(2)
-      || keyWasPressed('Space'));
+    const inputPressed =
+      keyWasPressed("Enter") ||
+      keyWasPressed("KeyX") ||
+      keyWasPressed("KeyF") ||
+      gamepadWasPressed(0) ||
+      gamepadWasPressed(1) ||
+      gamepadWasPressed(2) ||
+      keyWasPressed("Space");
 
     if (inputPressed) {
       this.runChoice(this.pointer);
     }
 
     this.lastStick = [stick.y];
-
   }
 
   renderPost() {
-
     const font = engineFontImage;
     const gray = this.g.palette.gray.mk();
 
     this.renderTint();
 
     this.logoText({
-      text: 'SETTINGS', pos: vec2(0, 4), size: 2, color: WHITE,
-      lineColor: this.g.palette.pink.mk()
+      text: "SETTINGS",
+      pos: vec2(0, 4),
+      size: 2,
+      color: WHITE,
+      lineColor: this.g.palette.pink.mk(),
     });
 
     const wave = Math.sin(new Date().getTime() * 0.009);
-    const t = wave > 0 ? 'drone0' : 'drone1';
+    const t = wave > 0 ? "drone0" : "drone1";
 
-    drawTile(vec2(-4.5, this.yPos[this.pointer] + .2), vec2(1), this.g.tile(t), undefined, 0, true);
+    drawTile(
+      vec2(-4.5, this.yPos[this.pointer] + 0.2),
+      vec2(1),
+      this.g.tile(t),
+      undefined,
+      0,
+      true,
+    );
     this.options.forEach((o, i) => {
       let text = o;
-      if (o === 'Mute' && this.g.sfx.isMuted) {
-        text = 'Mute: on';
+      if (o === "Mute" && this.g.sfx.isMuted) {
+        text = "Mute: on";
       }
-      if (o === 'Mute' && !this.g.sfx.isMuted) {
-        text = 'Mute: off';
+      if (o === "Mute" && !this.g.sfx.isMuted) {
+        text = "Mute: off";
+      }
+      if (o === "OldSkool" && this.g.shader.enabled) {
+        text = "OldSkool: on";
+      }
+      if (o === "OldSkool" && !this.g.shader.enabled) {
+        text = "OldSkool: off";
       }
       let col = this.pointer === i ? WHITE : gray;
-      font.drawText(text, vec2(-2.5, this.yPos[i]), .8, false, col);
+      font.drawText(text, vec2(-2.5, this.yPos[i]), 0.8, false, col);
     });
-
   }
 
   runChoice(option) {
@@ -95,13 +106,17 @@ export default class SEttings extends Scene {
       try {
         localStorage.clear();
         this.g.hiScore = 500;
-        this.g.sfx.play('spotted');
+        this.g.sfx.play("spotted");
       } catch (e) {
-        console.log('FAILED TO CLEAR');
+        console.log("FAILED TO CLEAR");
       }
     }
     if (option === 3) {
-      this.g.sceneManager.changeScene('Splash');
+      console.log("POOP!");
+      this.g.shader.enabled = !this.g.shader.enabled;
+    }
+    if (option === 4) {
+      this.g.sceneManager.changeScene("Splash");
     }
   }
 }
