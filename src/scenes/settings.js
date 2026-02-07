@@ -7,7 +7,7 @@ export default class SEttings extends Scene {
     this.stick = [gamepadStick(0)];
     this.lastStick = [0];
 
-    this.options = ["Mute", "Fullscreen", "Clear HiScore", "OldSkool", "Exit"];
+    this.options = ["Mute", "Fullscreen", "Clear HiScore", "Timewarp", "Exit"];
     this.yPos = [0, -1.5, -3, -4.5, -6];
     this.pointer = 0;
 
@@ -83,11 +83,11 @@ export default class SEttings extends Scene {
       if (o === "Mute" && !this.g.sfx.isMuted) {
         text = "Mute: off";
       }
-      if (o === "OldSkool" && this.g.shader.enabled) {
-        text = "OldSkool: on";
+      if (o === "Timewarp" && this.g.shader.enabled) {
+        text = "Timewarp: on";
       }
-      if (o === "OldSkool" && !this.g.shader.enabled) {
-        text = "OldSkool: off";
+      if (o === "Timewarp" && !this.g.shader.enabled) {
+        text = "Timewarp: off";
       }
       let col = this.pointer === i ? WHITE : gray;
       font.drawText(text, vec2(-2.5, this.yPos[i]), 0.8, false, col);
