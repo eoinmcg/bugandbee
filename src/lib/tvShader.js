@@ -50,3 +50,9 @@ void mainImage(out vec4 c, vec2 p)
     float dx = 2.*p.x-1., dy = 2.*p.y-1.;
     c *= 1.-pow((dx*dx + dy*dy)/vignette, vignettePow);
 }`;
+
+export const passthroughShader = `
+void mainImage(out vec4 c, vec2 p) {
+    c = texture(iChannel0, p/iResolution.xy);
+}
+`;

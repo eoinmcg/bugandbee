@@ -1,6 +1,6 @@
 import Game from "./core/game.js";
 import resize from "./helpers/resize.js";
-import { tvShader } from "./lib/tvShader.js";
+import { tvShader, passthroughShader } from "./lib/tvShader.js";
 
 let shaderEnabled = true;
 
@@ -13,8 +13,10 @@ function gameInit() {
   setCanvasPixelated(true);
   Game.sceneManager.changeScene(Game.startScene);
 
-  Game.shader = new PostProcessPlugin(tvShader);
-  Game.shader.enabled = false;
+  Game.shaders = { tvShader, passthroughShader };
+
+  new PostProcessPlugin(tvShader);
+  postProcess.enabled = false;
 }
 
 function gameUpdate() {

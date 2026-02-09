@@ -83,10 +83,10 @@ export default class SEttings extends Scene {
       if (o === "Mute" && !this.g.sfx.isMuted) {
         text = "Mute: off";
       }
-      if (o === "Timewarp" && this.g.shader.enabled) {
+      if (o === "Timewarp" && postProcess.enabled) {
         text = "Timewarp: on";
       }
-      if (o === "Timewarp" && !this.g.shader.enabled) {
+      if (o === "Timewarp" && !postProcess.enabled) {
         text = "Timewarp: off";
       }
       let col = this.pointer === i ? WHITE : gray;
@@ -112,8 +112,7 @@ export default class SEttings extends Scene {
       }
     }
     if (option === 3) {
-      console.log("POOP!");
-      this.g.shader.enabled = !this.g.shader.enabled;
+      postProcess.enabled = !postProcess.enabled;
     }
     if (option === 4) {
       this.g.sceneManager.changeScene("Splash");
