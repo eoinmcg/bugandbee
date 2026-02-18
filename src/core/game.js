@@ -107,6 +107,8 @@ setTileDefaultBleed(0.1);
 setTouchGamepadEnable(true);
 setTouchGamepadButtonCount(1);
 setTouchGamepadSize(200);
+setTouchGamepadAnalog(false);
+
 setCanvasClearColor(new Color(0, 0, 0, 0));
 
 if (window.BUILD) {

@@ -10,20 +10,21 @@ import Settings from "../scenes/settings.js";
 // dev mode only
 import Waver from "../scenes/waver.js";
 import Cols from "../scenes/cols";
-import { mainCanvas } from "littlejsengine";
+import Bgs from "../scenes/bgs";
 
 const Scenes = {
-  'Splash': Splash,
-  'Help': Help,
-  'Settings': Settings,
-  'Tutorial': Tutorial,
-  'Select': Select,
-  'Play': Play,
-  'LevelComplete': LevelComplete,
-  'Victory': Victory,
-  'Waver': Waver,
-  'Cols': Cols,
-}
+  Splash: Splash,
+  Help: Help,
+  Settings: Settings,
+  Tutorial: Tutorial,
+  Select: Select,
+  Play: Play,
+  LevelComplete: LevelComplete,
+  Victory: Victory,
+  Waver: Waver,
+  Cols: Cols,
+  Bgs: Bgs,
+};
 
 export default class SceneManager {
   constructor(Game) {
@@ -32,7 +33,7 @@ export default class SceneManager {
     this.lastChange = 500;
   }
 
-  changeScene(newScene, data = {}, effect = 'complete', force = false) {
+  changeScene(newScene, data = {}, effect = "complete", force = false) {
     const delta = new Date().getTime() - this.lastChange;
     if (!force && delta < 1000) {
       return;
@@ -40,7 +41,7 @@ export default class SceneManager {
 
     try {
       this.g.stopMusic();
-    } catch (e) { }
+    } catch (e) {}
 
     this.lastChange = new Date().getTime();
     document.body.classList.add(effect);
@@ -53,7 +54,7 @@ export default class SceneManager {
 
       this.clearInput();
       document.body.classList.remove(effect);
-      this.currentScene = new Scenes[newScene];
+      this.currentScene = new Scenes[newScene]();
       this.currentScene.enter(this.g, data);
     }, 250);
   }
