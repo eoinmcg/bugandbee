@@ -9,11 +9,16 @@ export default class Bullet extends Sprite {
 
     this.speed = 2;
 
-    // this.velocity = vec2(this.speed, this.angle * -.5);
-    const velocityX = Math.cos(props.angle) * this.speed;
-    const velocityY = Math.sin(props.angle) * this.speed;
+    let velocityX = Math.cos(props.angle) * this.speed;
+    let velocityY = Math.sin(props.angle) * this.speed;
 
-    this.angle = props.angle * -1;
+    if (props.mirror) {
+      velocityX *= -1;
+      this.angle = props.angle;
+    } else {
+      this.angle = props.angle * -1;
+    }
+
 
     this.velocity = vec2(velocityX, velocityY);
     this.mass = 0;

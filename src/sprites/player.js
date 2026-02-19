@@ -20,6 +20,8 @@ export default class Player extends Sprite {
     this.g = g;
     this.player = player;
     this.name = "player";
+    this.mirror = false;
+    this.canFlipX = false;
 
     this.mass = 1;
 
@@ -78,38 +80,12 @@ export default class Player extends Sprite {
       this.handleInput();
     }
 
+    this.handleRotation();
     this.handleAutofire();
-
-    this.angle = -this.velocity.y * 2.5;
-
-    if (this.shootCharge) {
-      new Charge(this.g, this.pos, this.angle * -0.5, 10, this.player);
-      this.charge = 0;
-    } else if (this.shoot) {
-      this.g.sfx.play("shoot", this.pos);
-      Particles.gunsmoke(this.pos.add(vec2(0.5, 0)));
-      const bulletProps = {
-        g: this.g,
-        angle: this.angle * -0.2,
-        owner: this.player,
-        name: "bullet",
-      };
-      new Bullet(this.pos, bulletProps);
-      this.applyPowerups(bulletProps);
-      this.charge = 0;
-    }
+    this.handleShoot();
 
     this.velocity.y = clamp(this.velocity.y, -0.2, 0.2);
-    this.pos.x = clamp(
-      this.pos.x,
-      this.g.size.min.x + 0.5,
-      this.g.size.max.x - 0.5,
-    );
-    this.pos.y = clamp(
-      this.pos.y,
-      this.g.size.min.y + 0.5,
-      this.g.size.max.y - 0.5,
-    );
+    this.clampToScreen();
 
     let t = this.hurtTimer.get();
     if (this.hurtTimer && this.hurtTimer.isSet && this.hurtTimer.elapsed()) {
@@ -160,8 +136,9 @@ export default class Player extends Sprite {
     if (this.fade && wave > 0) return;
 
     if (this.charge > 10) {
+      const direction = this.mirror ? -1 : 1;
       outlineTile({
-        pos: this.pos.add(vec2(0.5, 0)),
+        pos: this.pos.add(vec2(0.5 * direction, 0)),
         size: vec2((2 * this.charge) / 100),
         tileInfo: this.g.tile("circle"),
         color:
@@ -209,8 +186,15 @@ export default class Player extends Sprite {
       FIREBUTTON = 0;
     }
 
-    if (keyIsDown(K.left) || stick.x < 0) this.velocity.x = -0.2;
-    if (keyIsDown(K.right) || stick.x > 0) this.velocity.x = 0.2;
+    if (keyIsDown(K.left) || stick.x < 0) {
+      this.mirror = (this.canFlipX) ? true : false;
+      this.velocity.x = -0.2;
+    }
+
+    if (keyIsDown(K.right) || stick.x > 0)  {
+      this.mirror = (this.canFlipX) ? false : false;
+      this.velocity.x = 0.2;
+    }
 
     if (keyIsDown(K.up) || stick.y > 0) {
       this.velocity.y = 0.2;
@@ -259,6 +243,56 @@ export default class Player extends Sprite {
       this.autofireCooldown = this.autofireRate;
       this.shoot = true;
     }
+  }
+
+  handleRotation() {
+    const maxAngle = .5
+    const angleStep = 0.05;
+    const direction = this.mirror ? -1 : 1;
+
+    if (this.velocity.y !== 0) {
+      this.angle += (this.velocity.y > 0 ? -angleStep : angleStep) * direction;
+    } else if (this.angle !== 0) {
+      this.angle += this.angle > 0 ? -angleStep : angleStep;
+    }
+
+    this.angle = clamp(this.angle, -maxAngle, maxAngle)
+  }
+
+  handleShoot() {
+    const direction = (this.mirror) ? 1 : -1;
+    if (this.shootCharge) {
+      let chargeAngle = this.angle * (0.5 * direction); 
+      new Charge(this.g, this.pos, chargeAngle, 10, this.mirror, this.player);
+      this.charge = 0;
+    } else if (this.shoot) {
+      this.g.sfx.play("shoot", this.pos);
+      Particles.gunsmoke(this.pos.add(vec2(-0.65 * direction, 0)));
+      const bulletProps = {
+        g: this.g,
+        angle: this.angle * (0.5 * direction),
+        mirror: this.mirror ?? false,
+        owner: this.player,
+        name: "bullet",
+      };
+      new Bullet(this.pos, bulletProps);
+      this.applyPowerups(bulletProps);
+      this.charge = 0;
+    }
+  }
+
+  clampToScreen() {
+    this.pos.x = clamp(
+      this.pos.x,
+      this.g.size.min.x + 0.5,
+      this.g.size.max.x - 0.5,
+    );
+    this.pos.y = clamp(
+      this.pos.y,
+      this.g.size.min.y + 0.5,
+      this.g.size.max.y - 0.5,
+    );
+
   }
 
   collideWithObject(o) {

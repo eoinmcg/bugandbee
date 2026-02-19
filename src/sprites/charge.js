@@ -2,7 +2,7 @@ import Particles from "../helpers/particles";
 import Sprite from "./sprite";
 
 export default class Charge extends Sprite {
-  constructor(g, pos, angle = 0, size = 1, owner = 'p1') {
+  constructor(g, pos, angle = 0, size = 1, mirror = false, owner = 'p1') {
 
     const t = g.tile('circle');
     const props = {
@@ -15,9 +15,16 @@ export default class Charge extends Sprite {
     }
     super(pos, vec2(size / 5), t, props);
 
-    // this.velocity = vec2(this.speed, 0);
-    const velocityX = Math.cos(props.angle) * this.speed;
-    const velocityY = Math.sin(props.angle) * this.speed;
+    let velocityX = Math.cos(props.angle) * this.speed;
+    let velocityY = Math.sin(props.angle) * this.speed;
+
+    if (mirror) {
+      velocityX *= -1;
+      this.angle = angle;
+    } else {
+      this.angle = angle * -1;
+    }
+
     this.velocity = vec2(velocityX, velocityY);
 
     this.outline = {
