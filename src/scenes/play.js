@@ -135,16 +135,22 @@ export default class Play extends Scene {
 
   checkGameOverInput() {
     const stick = gamepadStick(0);
+    const swipe = this.g.swipe.dir;
 
     if (keyWasPressed('ArrowUp')
+      || swipe === 'up'
       || (this.lastStick[0] > 0 && stick.y === 0)) {
       this.pointer -= 1;
       this.g.sfx.play('walk');
+      this.g.swipe.clear();
+
     }
     if (keyWasPressed('ArrowDown')
+      || swipe === 'down'
       || (this.lastStick[0] < 0 && stick.y === 0)) {
       this.pointer += 1;
       this.g.sfx.play('walk');
+      this.g.swipe.clear();
     }
     if (this.pointer < 0) this.pointer = this.yPos.length - 1;
     if (this.pointer > this.yPos.length - 1) this.pointer = 0;
@@ -155,6 +161,7 @@ export default class Play extends Scene {
       if (keyWasPressed('Space')
         || keyWasPressed('KeyF')
         || keyWasPressed('Enter')
+        || swipe === 'tap'
         || gamepadWasPressed(0)
         || gamepadWasPressed(2)) {
         if (this.pointer === 0) {
@@ -163,11 +170,13 @@ export default class Play extends Scene {
           this.g.resetStore();
           this.g.store.p1.type = p1Type;
           this.g.store.p2.type = p2Type;
+          this.g.swipe.clear();
 
           this.levelManager = new LevelManager(this.g, this.g.levelNum);
           this.g.sceneManager.changeScene('Play');
         } else {
           this.g.sceneManager.changeScene('Splash');
+          this.g.swipe.clear();
         }
       }
     }
