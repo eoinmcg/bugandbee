@@ -19,30 +19,18 @@ export default class Help extends Scene {
 
   update() {
     super.update();
+    this.handleUiInput();
 
-    const stick = gamepadDpad(0);
-
-    if (keyWasPressed('ArrowUp')
-      || (this.lastStick[0] > 0 && stick.y === 0)) {
+    if (this.uiInput === 'up') {
       this.g.sfx.play('walk');
     }
-    if (keyWasPressed('ArrowDown')
-      || (this.lastStick[0] < 0 && stick.y === 0)) {
+    if (this.uiInput === 'down') {
       this.g.sfx.play('walk');
     }
 
-    if (keyWasPressed('Enter')
-      || keyWasPressed('KeyX')
-      || keyWasPressed('KeyF')
-      || gamepadWasPressed(0)
-      || gamepadWasPressed(1)
-      || gamepadWasPressed(2)
-      || keyWasPressed('Space')) {
+    if (this.uiInput === 'enter') {
       this.g.sceneManager.changeScene('Splash');
-
     }
-
-    this.lastStick = [stick.y];
 
   }
 

@@ -12,6 +12,10 @@ export default class Scene {
 
   update() {
 
+
+    this.g.floatingStick.update();
+    this.g.fireButton.update();
+
     if (keyWasPressed('KeyM')) {
       this.g.sfx.toggleMute();
       this.g.toggleMusic();
@@ -34,11 +38,69 @@ export default class Scene {
 
   }
 
+  // for navigating menus on splash screen etc
+  handleUiInput() {
+    let stick = gamepadDpad(0);
+    const swipe = this.g.swipe.dir;
+    const isTouchDevice = navigator.maxTouchPoints > 0;
+
+    this.uiInput = false;
+
+    if (keyWasPressed('ArrowUp')
+      || swipe === 'up'
+      || (this.lastStickY > 0 && stick.y === 0)) {
+      this.uiInput = 'up';
+      this.g.swipe.clear();
+    }
+    if (keyWasPressed('ArrowDown')
+      || swipe === 'down'
+      || (this.lastStickY < 0 && stick.y === 0)) {
+      this.uiInput = 'down';
+      this.g.swipe.clear();
+    }
+    if (keyWasPressed('ArrowLeft')
+      || swipe === 'left'
+      || (this.lastStickX < 0 && stick.x === 0)) {
+      this.uiInput = 'left';
+      this.g.swipe.clear();
+    }
+    if (keyWasPressed('ArrowRight')
+      || swipe === 'right'
+      || (this.lastStickX > 0 && stick.x === 0)) {
+      this.uiInput = 'right';
+      this.g.swipe.clear();
+    }
+
+    // Only check enter if no directional swipe was already handled
+    if (!this.uiInput) {
+      if (keyWasPressed('Enter')
+        || keyWasPressed('KeyX')
+        || gamepadWasPressed(0)
+        || gamepadWasPressed(1)
+        || gamepadWasPressed(2)
+        || gamepadWasPressed(7)
+        || (!isTouchDevice && mouseWasPressed(0))  // only on real mouse
+        || swipe === 'tap'
+        || keyWasPressed('Space')) {
+        this.uiInput = 'enter';
+        this.g.swipe.clear();
+      }
+    }
+
+    this.lastStickY = stick.y;
+    this.lastStickX = stick.x;
+  }
+
+
   updatePost() { }
 
   render() { }
 
   renderPost() {
+    if (isTouchDevice) {
+      this.g.floatingStick.render();
+      this.g.fireButton.render();
+    }
   }
 
   renderTint(tint = .7) {

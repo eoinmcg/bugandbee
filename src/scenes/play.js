@@ -237,5 +237,7 @@ export default class Play extends Scene {
       };
     })
 
+    super.renderPost();
+
   }
 }

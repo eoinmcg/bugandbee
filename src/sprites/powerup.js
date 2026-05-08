@@ -7,7 +7,7 @@ export default class Powerup extends Sprite {
 
   constructor(g, pos, burst = false, size = .5) {
     let type = 'flower';
-    if (!burst && rand() > .9) {
+    if (!burst && rand() > .99) {
       type = 'heart';
     }
     super(pos, vec2(size), g.tile(type));

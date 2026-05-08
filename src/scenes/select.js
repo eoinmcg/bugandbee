@@ -18,7 +18,8 @@ export default class Select extends Scene {
   }
 
   update() {
-    const stick = gamepadStick(0);
+    super.update();
+    this.handleUiInput();
 
     this.frameCount += timeDelta * 9;
     if (this.frameCount > 1) {
@@ -26,17 +27,11 @@ export default class Select extends Scene {
       this.frame = this.frame >= 2 ? 0 : (this.frame += 1);
     }
 
-    if (
-      keyWasPressed("ArrowLeft") ||
-      (this.lastStick[0] < 0 && stick.x === 0)
-    ) {
+    if (this.uiInput === 'left') {
       this.active -= 1;
       this.g.sfx.play("walk");
     }
-    if (
-      keyWasPressed("ArrowRight") ||
-      (this.lastStick[0] > 0 && stick.x === 0)
-    ) {
+    if (this.uiInput === 'right') {
       this.active += 1;
       this.g.sfx.play("walk");
     }
@@ -44,21 +39,13 @@ export default class Select extends Scene {
     if (this.active < 0) this.active = 1;
     if (this.active > 1) this.active = 0;
 
-    if (
-      keyWasPressed("Enter") ||
-      keyWasPressed("KeyX") ||
-      gamepadWasPressed(0) ||
-      gamepadWasPressed(1) ||
-      gamepadWasPressed(2) ||
-      keyWasPressed("Space")
-    ) {
+    if (this.uiInput === 'enter') {
       this.g.sfx.play("alert");
       this.g.store.p1.type = this.active === 1 ? "BEE" : "BUG";
       const scene = this.g.plays === 0 ? "Tutorial" : "Play";
       this.g.sceneManager.changeScene(scene);
     }
 
-    this.lastStick = [stick.x];
   }
 
   renderPost() {

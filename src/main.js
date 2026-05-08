@@ -1,6 +1,8 @@
 import Game from "./core/game.js";
 import resize from "./helpers/resize.js";
 import { tvShader, passthroughShader } from "./lib/tvShader.js";
+import Swiper from "./lib/swiper.js";
+import { FloatingStick, FireButton } from "./lib/mobileControls.js"
 
 let shaderEnabled = true;
 
@@ -17,6 +19,14 @@ function gameInit() {
 
   new PostProcessPlugin(tvShader);
   postProcess.enabled = false;
+
+  Game.floatingStick = new FloatingStick();
+  Game.fireButton = new FireButton();
+  Game.floatingStick.mount();
+  Game.fireButton.mount();
+
+  Game.swipe = new Swiper();
+  Game.swipe.clear();
 }
 
 function gameUpdate() {

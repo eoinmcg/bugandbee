@@ -29,6 +29,9 @@ export default class Tutorial extends Scene {
   }
 
   update() {
+    super.update();
+    this.handleUiInput();
+
     if (this.titleTimer.elapsed() && this.titleTyped !== this.title) {
       this.titleTyped += this.title.charAt(this.titleTyped.length);
       this.g.sfx.play("score");
@@ -48,14 +51,7 @@ export default class Tutorial extends Scene {
     }
     this.charge = this.changeEnemy * 100;
 
-    if (
-      keyWasPressed("Enter") ||
-      keyWasPressed("KeyX") ||
-      gamepadWasPressed(0) ||
-      gamepadWasPressed(1) ||
-      gamepadWasPressed(2) ||
-      keyWasPressed("Space")
-    ) {
+    if (this.uiInput === 'enter') {
       if (this.step < 3) return;
       this.g.sceneManager.changeScene("Play");
     }

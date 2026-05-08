@@ -49,6 +49,8 @@ Config.trackPaths.forEach((track) => {
 
 dataFiles.push(`public/04b19.woff`);
 dataFiles.push(`public/04b19.woff2`);
+dataFiles.push(`public/manifest.json`);
+dataFiles.push(`public/apple-icon-180.png`);
 
 console.log(``);
 chalkSuccess(` Building ${Config.title}... `, '🛠️');
@@ -159,7 +161,7 @@ function htmlBuildStep(filename) {
   const source = fs.readFileSync('index.html', 'UTF8');
   const $ = cheerio.load(source);
   $('script').remove();
-  $('body').contents().filter(function () {
+  $('body').contents().filter(function() {
     return this.type === 'comment';
   }).remove();
   let html = $.html();

@@ -8,7 +8,7 @@ import Particles from "../helpers/particles";
 import { outlineTile } from "../helpers/drawOutline";
 import isMobile from "../helpers/isMobile";
 import postScore from "../helpers/postScore";
-import { gamepadWasReleased } from "littlejsengine";
+import { gamepadWasReleased, isTouchDevice } from "littlejsengine";
 
 export default class Player extends Sprite {
   constructor(g, pos, type = "BEE", player = "p1") {
@@ -181,38 +181,52 @@ export default class Player extends Sprite {
     const K = KEYS[this.player];
 
     let stick = gamepadDpad(K.pad);
-    if (isTouchDevice) {
-      stick = gamepadStick(0);
-      FIREBUTTON = 0;
-    }
 
+    // Keyboard
     if (keyIsDown(K.left) || stick.x < 0) {
-      this.mirror = (this.canFlipX) ? true : false;
-      this.velocity.x = -0.2;
-    }
-
-    if (keyIsDown(K.right) || stick.x > 0)  {
-      this.mirror = (this.canFlipX) ? false : false;
-      this.velocity.x = 0.2;
+      this.mirror = !!this.canFlipX; this.velocity.x = -0.2;
+    } else if (keyIsDown(K.right) || stick.x > 0) {
+      this.mirror = false; this.velocity.x = 0.2;
+    } else {
+      this.velocity.x = 0;
     }
 
     if (keyIsDown(K.up) || stick.y > 0) {
       this.velocity.y = 0.2;
-    }
-    if (keyIsDown(K.down) || stick.y < 0) {
+    } else if (keyIsDown(K.down) || stick.y < 0) {
       this.velocity.y = -0.2;
+    } else {
+      this.velocity.y = 0;
     }
 
-    if (keyIsDown(K.shoot) || gamepadIsDown(2, K.pad)) {
-      this.charge += 1;
-      this.charge = clamp(this.charge, 0, 100);
-    }
+    if (isTouchDevice) {
+      stick = this.g.floatingStick.value;
+      if (stick.x !== 0 || stick.y !== 0) {
+        if (stick.x < 0) { this.mirror = !!this.canFlipX; }
+        else if (stick.x > 0) { this.mirror = false; }
 
-    const shootPressed = keyIsDown(K.shoot) || gamepadIsDown(FIREBUTTON, K.pad);
-    const shootJustPressed =
-      keyWasPressed(K.shoot) || gamepadWasPressed(FIREBUTTON, K.pad);
-    let shootReleased =
-      keyWasReleased(K.shoot) || gamepadWasReleased(FIREBUTTON, K.pad);
+        const angle = Math.atan2(stick.y, stick.x);
+        const snapped = Math.round(angle / (Math.PI / 4)) * (Math.PI / 4);
+        const snapX = Math.round(Math.cos(snapped));
+        const snapY = Math.round(Math.sin(snapped));
+
+        this.velocity.x = snapX * 0.2;
+        this.velocity.y = snapY * 0.2;
+        this.snapY = snapY;
+      } else {
+        this.velocity.x = 0;
+        this.velocity.y = 0;
+        this.snapY = 0;
+      }
+    }
+    let fireButton = this.g.fireButton;
+
+    const shootPressed = keyIsDown(K.shoot)
+      || (isTouchDevice ? fireButton.isDown : gamepadIsDown(FIREBUTTON, K.pad));
+    const shootJustPressed = keyWasPressed(K.shoot)
+      || (isTouchDevice ? fireButton.wasPressed : gamepadWasPressed(FIREBUTTON, K.pad));
+    let shootReleased = keyWasReleased(K.shoot)
+      || (isTouchDevice ? fireButton.wasReleased : gamepadWasReleased(FIREBUTTON, K.pad));
 
     if (!shootPressed) {
       shootReleased = true;
@@ -246,23 +260,23 @@ export default class Player extends Sprite {
   }
 
   handleRotation() {
-    const maxAngle = .5
+    const maxAngle = 0.5;
     const angleStep = 0.05;
     const direction = this.mirror ? -1 : 1;
+    const verticalInput = isTouchDevice ? this.snapY : Math.sign(this.velocity.y);
 
-    if (this.velocity.y !== 0) {
-      this.angle += (this.velocity.y > 0 ? -angleStep : angleStep) * direction;
+    if (verticalInput !== 0) {
+      this.angle += (verticalInput > 0 ? -angleStep : angleStep) * direction;
     } else if (this.angle !== 0) {
       this.angle += this.angle > 0 ? -angleStep : angleStep;
     }
 
-    this.angle = clamp(this.angle, -maxAngle, maxAngle)
+    this.angle = clamp(this.angle, -maxAngle, maxAngle);
   }
-
   handleShoot() {
     const direction = (this.mirror) ? 1 : -1;
     if (this.shootCharge) {
-      let chargeAngle = this.angle * (0.5 * direction); 
+      let chargeAngle = this.angle * (0.5 * direction);
       new Charge(this.g, this.pos, chargeAngle, 10, this.mirror, this.player);
       this.charge = 0;
     } else if (this.shoot) {

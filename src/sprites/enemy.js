@@ -128,7 +128,9 @@ export default class Enemy extends Sprite {
         if (waveId && this.g.waves[waveId] <= 0 && o?.owner) {
           this.g.store[o.owner].score += this.value * 2;
           delete this.g.waves[waveId];
-          new Powerup(this.g, this.lastPos);
+          if (Math.random() > .6) {
+            new Powerup(this.g, this.lastPos);
+          }
         }
 
         this.destroy();

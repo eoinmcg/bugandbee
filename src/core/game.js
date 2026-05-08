@@ -104,10 +104,11 @@ const sceneManager = new SceneManager(Game);
 Game.sceneManager = sceneManager;
 
 setTileDefaultBleed(0.1);
-setTouchGamepadEnable(true);
-setTouchGamepadButtonCount(1);
-setTouchGamepadSize(200);
-setTouchGamepadAnalog(false);
+
+// setTouchGamepadEnable(true);
+// setTouchGamepadButtonCount(1);
+// setTouchGamepadSize(200);
+// setTouchGamepadAnalog(false);
 
 setCanvasClearColor(new Color(0, 0, 0, 0));
 
@@ -143,6 +144,6 @@ if (params.s) {
 export default Game;
 
 // naughty, naughty
-Array.prototype.rnd = function () {
+Array.prototype.rnd = function() {
   return this[Math.floor(Math.random() * this.length)];
 };

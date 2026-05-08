@@ -16,17 +16,13 @@ export default class SEttings extends Scene {
 
   update() {
     super.update();
+    this.handleUiInput();
 
-    const stick = gamepadStick(0);
-
-    if (keyWasPressed("ArrowUp") || (this.lastStick[0] > 0 && stick.y === 0)) {
+    if (this.uiInput === 'up') {
       this.pointer -= 1;
       this.g.sfx.play("walk");
     }
-    if (
-      keyWasPressed("ArrowDown") ||
-      (this.lastStick[0] < 0 && stick.y === 0)
-    ) {
+    if (this.uiInput === 'down') {
       this.pointer += 1;
       this.g.sfx.play("walk");
     }
@@ -34,20 +30,10 @@ export default class SEttings extends Scene {
     if (this.pointer < 0) this.pointer = this.yPos.length - 1;
     if (this.pointer > this.yPos.length - 1) this.pointer = 0;
 
-    const inputPressed =
-      keyWasPressed("Enter") ||
-      keyWasPressed("KeyX") ||
-      keyWasPressed("KeyF") ||
-      gamepadWasPressed(0) ||
-      gamepadWasPressed(1) ||
-      gamepadWasPressed(2) ||
-      keyWasPressed("Space");
-
-    if (inputPressed) {
+    if (this.uiInput === 'enter') {
       this.runChoice(this.pointer);
     }
 
-    this.lastStick = [stick.y];
   }
 
   renderPost() {
