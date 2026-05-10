@@ -125,6 +125,12 @@ if (window.BUILD) {
     console.log(`music: https://not-jam.itch.io/not-jam-music-pack`);
     console.log(`made with: https://github.com/KilledByAPixel/LittleJS`);
   }, 1000);
+
+  // reg
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+  }
+
 } else {
   window.G = Game;
   window.NG = newgrounds;

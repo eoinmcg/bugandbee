@@ -7,8 +7,8 @@ export default class SEttings extends Scene {
     this.stick = [gamepadStick(0)];
     this.lastStick = [0];
 
-    this.options = ["Mute", "Fullscreen", "Clear HiScore", "Timewarp", "Exit"];
-    this.yPos = [0, -1.5, -3, -4.5, -6];
+    this.options = ["Mute", "Fullscreen", "Clear HiScore", "Exit"];
+    this.yPos = [0, -1.5, -3, -4.5];
     this.pointer = 0;
 
     this.initTunnel("emerald", "dark_teal", 0.02, 0.1);
@@ -63,6 +63,7 @@ export default class SEttings extends Scene {
     );
     this.options.forEach((o, i) => {
       let text = o;
+      console.log(o);
       if (o === "Mute" && this.g.sfx.isMuted) {
         text = "Mute: on";
       }
@@ -97,10 +98,10 @@ export default class SEttings extends Scene {
         console.log("FAILED TO CLEAR");
       }
     }
+    // if (option === 3) {
+    //   postProcess.enabled = !postProcess.enabled;
+    // }
     if (option === 3) {
-      postProcess.enabled = !postProcess.enabled;
-    }
-    if (option === 4) {
       this.g.sceneManager.changeScene("Splash");
     }
   }

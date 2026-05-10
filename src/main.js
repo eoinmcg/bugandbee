@@ -27,6 +27,8 @@ function gameInit() {
 
   Game.swipe = new Swiper();
   Game.swipe.clear();
+
+  console.log(do)
 }
 
 function gameUpdate() {

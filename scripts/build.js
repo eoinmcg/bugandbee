@@ -51,6 +51,7 @@ dataFiles.push(`public/04b19.woff`);
 dataFiles.push(`public/04b19.woff2`);
 dataFiles.push(`public/manifest.json`);
 dataFiles.push(`public/apple-icon-180.png`);
+dataFiles.push(`public/sw.js`);
 
 console.log(``);
 chalkSuccess(` Building ${Config.title}... `, '🛠️');
