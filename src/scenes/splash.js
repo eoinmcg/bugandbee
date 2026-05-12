@@ -78,7 +78,7 @@ export default class Splash extends Scene {
     const yellow = this.g.palette.yellow.mk();
     mainContext.font = '04b_19';
     setFontDefault('"04b_19"');
-    let col = new Color(0, 0, 0, .8);
+    let col = new Color(0, 0, 0, .5);
     drawCircle(vec2(0), 14, col, 0, CLEAR_BLACK, true);
     this.logoText({
       text: '&', pos: vec2(-4, 0), size: 2, color: WHITE,

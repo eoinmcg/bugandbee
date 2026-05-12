@@ -28,6 +28,7 @@ export default class Play extends Scene {
     this.yPos = [-5, -7];
     this.pointer = 0;
     this.lastStick = [0];
+    this.pausedPointer = 0;
 
     this.levelManager = new LevelManager(g, this.g.levelNum);
 
@@ -80,9 +81,36 @@ export default class Play extends Scene {
   }
 
   updatePost() {
-    if (!this.g.gameOver && (keyWasPressed('KeyP') || gamepadWasPressed(9))) {
+    const pausePressed = keyWasPressed('KeyP') || gamepadWasPressed(9);
+    const pauseClicked = mouseWasPressed(0) && mousePos.x > 18 && mousePos.y > 9.5;
+
+    if (!this.g.gameOver && (pausePressed || pauseClicked)) {
       this.togglePause();
     }
+
+    if (!paused) return;
+
+    this.handleUiInput();
+    this.pausedPointer = this.clampPointer(this.pausedPointer, this.uiInput);
+
+    const menuConfirmed = this.uiInput === 'enter' && mousePos.x < 19 && mousePos.y < 9.5;
+    if (menuConfirmed) {
+      this.handlePauseMenuSelection();
+    }
+  }
+
+  clampPointer(pointer, input) {
+    if (input === 'up') pointer--;
+    if (input === 'down') pointer++;
+    return (pointer + 2) % 2; // wraps between 0 and 1
+  }
+
+  handlePauseMenuSelection() {
+    const actions = [
+      () => this.g.sfx.toggleMute(),
+      () => toggleFullscreen(),
+    ];
+    actions[this.pausedPointer]?.();
   }
 
   togglePause() {
@@ -234,10 +262,7 @@ export default class Play extends Scene {
       drawTile(vec2(-6.5, this.yPos[this.pointer]), vec2(1), this.g.tile('skull'), undefined, 0, true);
     }
 
-    if (wave > 0 && paused && !this.g.hitStop) {
-      font.drawText(`PAUSED`, vec2(0, .75), 2, true, BLACK);
-      font.drawText(`PAUSED`, vec2(0, 1), 2, true, this.g.palette.lime.mk());
-    }
+    this.renderPaused();
 
     // hacky. ensure enemyFire appears above explosions
     engineObjects.forEach((o) => {
@@ -247,6 +272,40 @@ export default class Play extends Scene {
     })
 
     super.renderPost();
+
+  }
+
+  renderPaused() {
+    if (this.g.hitStop) return;
+
+    if (isTouchDevice) {
+      const rightX = this.g.widescreen ? 19 : 6;
+      drawRect(vec2(rightX + .1, 10.8), vec2(.5, 1.7), BLACK)
+      drawRect(vec2(rightX + 1.1, 10.8), vec2(.5, 1.7), BLACK)
+
+      drawRect(vec2(rightX, 11), vec2(.5, 1.7), WHITE)
+      drawRect(vec2(rightX + 1, 11), vec2(.5, 1.7), WHITE)
+    }
+
+    if (!paused) return;
+
+    const wave = Math.sin(new Date().getTime() * 0.005);
+    const font = engineFontImage;
+
+    if (wave > 0) {
+      font.drawText(`PAUSED`, vec2(0, .75), 2, true, BLACK);
+      font.drawText(`PAUSED`, vec2(0, 1), 2, true, this.g.palette.lime.mk());
+    }
+
+    const yPos = -2;
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches
+      || window.matchMedia('(display-mode: fullscreen)').matches
+      || navigator.standalone === true; // iOS Safari specific
+
+    drawRect(vec2(0, -3), vec2(12, 4), new Color(0, 0, 0, 0.8))
+    drawTile(vec2(-5, yPos - this.pausedPointer), vec2(.5), this.g.tile('circle'))
+    font.drawText(`MUTE: ${this.g.sfx.isMuted ? 'ON' : 'OFF'}`, vec2(-4, yPos), .6, false, WHITE);
+    font.drawText(`FULLSCREEN: ${isInstalled ? 'ON' : 'OFF'}`, vec2(-4, yPos - 1), .6, false, WHITE);
 
   }
 }

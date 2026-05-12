@@ -6,9 +6,7 @@ import DeadPlayer from "./deadPlayer";
 import Powerup from "./powerup";
 import Particles from "../helpers/particles";
 import { outlineTile } from "../helpers/drawOutline";
-import isMobile from "../helpers/isMobile";
 import postScore from "../helpers/postScore";
-import { gamepadWasReleased, isTouchDevice } from "littlejsengine";
 
 export default class Player extends Sprite {
   constructor(g, pos, type = "BEE", player = "p1") {
@@ -63,7 +61,7 @@ export default class Player extends Sprite {
     this.bounceTimer = 0;
     this.bounceDuration = 0.2;
 
-    this.autofire = isMobile();
+    this.autofire = isTouchDevice;
     this.autofireRate = 10;
     this.autofireCooldown = this.autofireRate;
   }

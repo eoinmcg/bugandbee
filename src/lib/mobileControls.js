@@ -138,46 +138,51 @@ export class FloatingStick {
 // FireButton
 // A fixed button on the right side of the screen.
 // Exposes .isDown, .wasPressed, .wasReleased  (updated each frame in update()).
-
 export class FireButton {
   constructor() {
     this.isDown = false;
-    this.wasPressed = false;   // true for exactly one frame on press
-    this.wasReleased = false;   // true for exactly one frame on release
-
-    this.radius = 140;           // visual + hit radius, CSS px
-
+    this.wasPressed = false;
+    this.wasReleased = false;
     this._touchIds = new Set();
     this._prevDown = false;
     this._handler = this._handleTouch.bind(this);
   }
 
-  // private
-  /** Returns the button centre in client (CSS) coordinates. */
-  _centre() {
+  get _radiusW() {
+    return Math.min(mainCanvas.width, mainCanvas.height) / cameraScale * 0.13;
+  }
+
+  _centreW() {
+    const margin = this._radiusW * 0.5;
+    const bottomRight = screenToWorld(new Vector2(mainCanvas.width, mainCanvas.height));
+    const bottomLeft = screenToWorld(new Vector2(0, mainCanvas.height));
+    return new Vector2(
+      bottomRight.x - this._radiusW - margin,
+      bottomLeft.y + this._radiusW + margin  // use + if Y is flipped
+    );
+  }
+  _toWorld(clientX, clientY) {
     const rect = mainCanvas.getBoundingClientRect();
-    return {
-      x: rect.right - this.radius * .75,
-      y: rect.bottom - this.radius * .75
-    };
+    const scaleX = mainCanvas.width / rect.width;
+    const scaleY = mainCanvas.height / rect.height;
+    return screenToWorld(new Vector2(
+      (clientX - rect.left) * scaleX,
+      (clientY - rect.top) * scaleY
+    ));
   }
-
   _hitTest(clientX, clientY) {
-    const c = this._centre();
-    const dx = clientX - c.x;
-    const dy = clientY - c.y;
-    return Math.sqrt(dx * dx + dy * dy) <= this.radius;
+    const pos = this._toWorld(clientX, clientY);
+    const c = this._centreW();
+    const dx = pos.x - c.x;
+    const dy = pos.y - c.y;
+    return Math.sqrt(dx * dx + dy * dy) <= this._radiusW;
   }
-
   _handleTouch(e) {
     e.preventDefault();
     for (const touch of e.changedTouches) {
-      // Only care about right-side touches
       if (touch.clientX < window.innerWidth / 2) continue;
-
       if (e.type === 'touchstart' && this._hitTest(touch.clientX, touch.clientY)) {
         this._touchIds.add(touch.identifier);
-
       } else if (e.type === 'touchend' || e.type === 'touchcancel') {
         this._touchIds.delete(touch.identifier);
       }
@@ -186,7 +191,6 @@ export class FireButton {
 
   update() {
     const down = this._touchIds.size > 0;
-
     this.wasPressed = down && !this._prevDown;
     this.wasReleased = !down && this._prevDown;
     this.isDown = down;
@@ -194,20 +198,8 @@ export class FireButton {
   }
 
   render() {
-    const rect = mainCanvas.getBoundingClientRect();
-    const scaleX = mainCanvas.width / rect.width;
-    const scaleY = mainCanvas.height / rect.height;
-    const c = this._centre();
-
-    const centreCanvas = new Vector2(
-      (c.x - rect.left) * scaleX,
-      (c.y - rect.top) * scaleY
-    );
-    const centreW = screenToWorld(centreCanvas);
-    const radiusW = this.radius / cameraScale;
-
     const alpha = this.isDown ? 0.75 : 0.35;
-    drawCircle(centreW, radiusW, new Color(1, 1, 1, alpha));
+    drawCircle(this._centreW(), this._radiusW, new Color(1, 1, 1, alpha));
   }
 
   mount() {
