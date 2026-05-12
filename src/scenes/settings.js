@@ -63,7 +63,6 @@ export default class SEttings extends Scene {
     );
     this.options.forEach((o, i) => {
       let text = o;
-      console.log(o);
       if (o === "Mute" && this.g.sfx.isMuted) {
         text = "Mute: on";
       }
