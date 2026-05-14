@@ -1,6 +1,7 @@
 import drawSky from "../helpers/drawSky";
 import changeBg from "../helpers/changeBg";
-import { BgBlock, Trunk, Foliage } from "./blocks";
+import palette from "../data/palette";
+import { BgBlock, Mountain, Trunk, Foliage } from "./blocks";
 
 export default class Forest {
 
@@ -14,6 +15,21 @@ export default class Forest {
     this.blocks = [];
 
     let W = 26;
+
+    for (let i = W; i >= -W; i--) {
+      const col = palette.midnight_blue.mk();
+      if (Math.random() > .3) {
+        this.blocks.push(
+          new Mountain(
+            vec2(i, -9),
+            vec2(rand(6, 12)),
+            col,
+            this.speed * -.01)
+        );
+      }
+    }
+
+    W = 26;
 
     for (let i = W; i >= -W; i--) {
       const col = BLACK;
@@ -74,7 +90,7 @@ export default class Forest {
   }
 
   render() {
-    drawSky(this.sky, ['lightning', 'fireflies']);
+    drawSky(this.sky, ['lightning']);
     this.blocks.forEach(block => block.render());
     drawSky(false, ['rain']);
   }

@@ -31,7 +31,7 @@ export default class Underground {
   }
 
   render() {
-    drawSky(this.sky, ['fog', 'eyes', 'fireflies']);
+    drawSky(this.sky, ['fog', 'fireflies']);
     this.blocks.forEach(block => block.render());
   }
 }

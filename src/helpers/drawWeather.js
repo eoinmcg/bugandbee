@@ -4,7 +4,7 @@ import palette from "../data/palette";
 let skySeed = 6;
 
 const drawWeather = {
-  stars: function () {
+  stars: function() {
     const random = new RandomGenerator(skySeed);
     const wave = Math.abs(Math.sin(new Date().getTime() * 0.0005));
 
@@ -33,7 +33,7 @@ const drawWeather = {
       drawRect(worldPos, vec2(worldSize, worldSize), color);
     }
   },
-  snow: function () {
+  snow: function() {
     const random = new RandomGenerator(skySeed);
     for (let i = 500; i--;) {
       let size = random.float(6, 1);
@@ -55,10 +55,10 @@ const drawWeather = {
     }
 
   },
-  rain: function (speed) {
+  rain: function(speed) {
     let lateral = speed <= 0;
     const random = new RandomGenerator(skySeed);
-    for (let i = 500; i--;) {
+    for (let i = 1000; i--;) {
       const size = Math.round(random.float(2, 4)) / 10;
       let speedX = -150 * (size * 10),
         speedY = size * 2000;
@@ -77,7 +77,7 @@ const drawWeather = {
 
     }
   },
-  fog: function () {
+  fog: function() {
     const random = new RandomGenerator(skySeed + 1);
     const numLayers = 5;
 
@@ -104,7 +104,7 @@ const drawWeather = {
       }
     }
   },
-  fireflies: function () {
+  fireflies: function() {
     const random = new RandomGenerator(skySeed + 2); // Different seed
     const numFireflies = 30;
 
@@ -136,14 +136,13 @@ const drawWeather = {
       if (opacity < 0.1) continue;
 
       // Draw glowing firefly with multiple rects for glow effect
-      const color = new Color(1, 0.9, 0.4, opacity);
       for (let r = 1; r <= 4; r++) {
-        const glowColor = new Color(1, 0.9, 0.4, opacity * (1 - r / 4));
+        const glowColor = new Color(0.4, 1, 0.4, opacity * (1 - r / 4));
         drawRect(worldPos, vec2(r * 0.15), glowColor, time);
       }
     }
   },
-  eyes: function () {
+  eyes: function() {
     // Initialize eyes state on first call
     if (!this.eyesState) {
       this.eyesState = {
@@ -234,7 +233,7 @@ const drawWeather = {
       });
     }
   },
-  lightning: function () {
+  lightning: function() {
     if (!this.lightningState) {
       this.lightningState = {
         nextStrike: time + 5 + Math.random() * 10, // First strike in 10-20 seconds
@@ -266,7 +265,7 @@ const drawWeather = {
       }
     }
   },
-  clouds: function (darkCol = 'black') {
+  clouds: function(darkCol = 'black') {
     const random = new RandomGenerator(skySeed);
 
     for (let i = 5; i--;) {
@@ -285,7 +284,7 @@ const drawWeather = {
     }
 
   },
-  cloudsFast: function (masterSpeed) {
+  cloudsFast: function(masterSpeed) {
     masterSpeed === 0 ? 5 : masterSpeed;
     const random = new RandomGenerator(skySeed);
     for (let i = 5; i--;) {
@@ -305,7 +304,7 @@ const drawWeather = {
 
 
   },
-  tunnel: function (speed) {
+  tunnel: function(speed) {
     const random = new RandomGenerator(skySeed);
     for (let i = 500; i--;) {
       let speedX = -500,
@@ -331,7 +330,7 @@ const drawWeather = {
       );
     }
   },
-  moon: function (darkCol) {
+  moon: function(darkCol) {
     mainContext.beginPath();
     mainContext.fillStyle = palette.white.mk(1);
     mainContext.arc(800, 120, 100, 0, 90);
@@ -341,13 +340,13 @@ const drawWeather = {
     mainContext.arc(750, 90, 100, 0, 90);
     mainContext.fill();
   },
-  sunset: function () {
+  sunset: function() {
     mainContext.beginPath();
     mainContext.fillStyle = palette.orange.mk(1);
     mainContext.arc(500, 650, 200, 0, 90);
     mainContext.fill();
   },
-  moonrise: function () {
+  moonrise: function() {
 
     const speedY = .1;
     const startY = -10;
