@@ -3,8 +3,7 @@ import resize from "./helpers/resize.js";
 import { tvShader, passthroughShader } from "./lib/tvShader.js";
 import Swiper from "./lib/swiper.js";
 import { FloatingStick, FireButton } from "./lib/mobileControls.js"
-
-let shaderEnabled = true;
+import { isTouchDevice } from "littlejsengine";
 
 function gameInit() {
   resize(Game.W, Game.H);
@@ -17,8 +16,10 @@ function gameInit() {
 
   Game.shaders = { tvShader, passthroughShader };
 
-  new PostProcessPlugin(tvShader);
-  postProcess.enabled = false;
+  if (!isTouchDevice) {
+    new PostProcessPlugin(tvShader);
+    postProcess.enabled = false;
+  }
 
   Game.floatingStick = new FloatingStick();
   Game.fireButton = new FireButton();
