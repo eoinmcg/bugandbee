@@ -36,7 +36,7 @@ export default class Help extends Scene {
 
   renderPost() {
 
-    const font = engineFontImage;
+    const font = engineImageFont;
 
     const w = mainCanvas.width / cameraScale;
     const h = mainCanvas.height / cameraScale;

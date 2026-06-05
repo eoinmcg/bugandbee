@@ -217,7 +217,7 @@ export default class Play extends Scene {
 
   renderPost() {
     const wave = Math.sin(new Date().getTime() * 0.005);
-    const font = engineFontImage;
+    const font = engineImageFont;
 
     const hi = `HI: ${this.g.hiScore.toString().padStart(5, '0')}`;
     const col = this.g.newHiscore ? this.g.palette.lime.mk() : WHITE;
@@ -290,7 +290,7 @@ export default class Play extends Scene {
     if (!paused) return;
 
     const wave = Math.sin(new Date().getTime() * 0.005);
-    const font = engineFontImage;
+    const font = engineImageFont;
 
     if (wave > 0) {
       font.drawText(`PAUSED`, vec2(0, .75), 2, true, BLACK);

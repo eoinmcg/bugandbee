@@ -61,7 +61,7 @@ export default class Tutorial extends Scene {
     this.renderTint(0.9);
 
     const wave = Math.sin(new Date().getTime() * 0.009);
-    const font = engineFontImage;
+    const font = engineImageFont;
 
     setFontDefault('"04b_19"');
     drawText(this.titleTyped, vec2(-3, 10), 2, WHITE, 0, WHITE, "left");

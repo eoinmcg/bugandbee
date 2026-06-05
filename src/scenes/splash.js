@@ -68,7 +68,7 @@ export default class Splash extends Scene {
 
   renderPost() {
 
-    const font = engineFontImage;
+    const font = engineImageFont;
 
     const hi = `HI: ${this.g.hiScore.toString().padStart(5, '0')}`;
     font.drawText(hi, vec2(0, 11.4), 1, true, BLACK);

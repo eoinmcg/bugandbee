@@ -21,7 +21,7 @@ export default class Score extends EngineObject {
 
   render() {
     let col = this.g.palette[this.value > 100 ? 'yellow' : 'lime'].mk(this.ttl);
-    const font = engineFontImage;
+    const font = engineImageFont;
     font.drawText('+' + this.value, this.pos, .7, true, col)
   }
 }

@@ -37,7 +37,7 @@ export default class SEttings extends Scene {
   }
 
   renderPost() {
-    const font = engineFontImage;
+    const font = engineImageFont;
     const gray = this.g.palette.gray.mk();
 
     this.renderTint();
