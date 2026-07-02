@@ -16,7 +16,9 @@ function gameInit() {
 
   Game.shaders = { tvShader, passthroughShader };
 
-  if (!isTouchDevice) {
+  const useShader = false;
+
+  if (!isTouchDevice && useShader) {
     new PostProcessPlugin(tvShader);
     postProcess.enabled = false;
   }

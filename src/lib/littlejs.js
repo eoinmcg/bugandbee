@@ -35,7 +35,7 @@ const engineName = 'LittleJS';
  *  @type {string}
  *  @default
  *  @memberof Engine */
-const engineVersion = '1.18.17';
+const engineVersion = '1.18.20';
 
 /** Frames per second to update
  *  @type {number}
@@ -474,6 +474,11 @@ function engineObjectsUpdate()
     // get list of solid objects for physics optimization
     engineObjectsCollide = engineObjects.filter(o=>o.collideSolidObjects);
 
+    // update physics before object update
+    for (const o of engineObjects)
+        if (!o.parent && !o.destroyed)
+            o.updatePhysics();
+
     // recursive object update
     function updateChildObject(o)
     {
@@ -489,7 +494,6 @@ function engineObjectsUpdate()
 
         // update top level objects
         o.update();
-        o.updatePhysics();
         for (const child of o.children)
             updateChildObject(child);
         o.updateTransforms();
@@ -1237,6 +1241,7 @@ function debugVideoCaptureStart()
     {
         LOG('Video capture not supported in this browser!');
         silentAudioSource?.stop();
+        audioStreamDestination && audioMasterGain.disconnect(audioStreamDestination);
         return;
     }
 
@@ -1265,6 +1270,8 @@ function debugVideoCaptureStop()
     debugVideoCapture.silentAudioSource?.stop();
     debugVideoCapture.mediaRecorder?.stop();
     debugVideoCapture.videoTrack?.stop();
+    if (debugVideoCapture.audioStreamDestination)
+        audioMasterGain.disconnect(debugVideoCapture.audioStreamDestination);
     debugVideoCapture = undefined;
 }
 
@@ -1503,7 +1510,7 @@ function smoothStep(percent) { return percent * percent * (3 - 2 * percent); }
  *  @param {number} value
  *  @return {boolean}
  *  @memberof Math */
-function isPowerOfTwo(value) { return !(value & (value - 1)); }
+function isPowerOfTwo(value) { return value > 0 && !(value & (value - 1)); }
 
 /** Returns the nearest power of two not less than the value
  *  @param {number} value
@@ -1580,7 +1587,7 @@ function isIntersecting(start, end, pos, size)
  *  @memberof Math */
 function oscillate(frequency=1, amplitude=1, t=time, offset=0, type=0)
 {
-    const phase = (offset + t*frequency) % 1;
+    const phase = mod(offset + t*frequency, 1);
     let value;
     
     if (type === 1) // triangle
@@ -2233,9 +2240,24 @@ class Color
      * @return {Color} */
     setFrom(c) { return this.set(c.r, c.g, c.b, c.a); }
 
+    /** Sets the alpha of this color and returns self
+     *  @param {number} [a] - alpha
+     *  @return {Color} */
+    setAlpha(a=1)
+    {
+        this.a = a;
+        ASSERT_COLOR_VALID(this);
+        return this;
+    }
+
     /** Returns a new color that is a copy of this
      * @return {Color} */
     copy() { return new Color(this.r, this.g, this.b, this.a); }
+
+    /** Returns a copy of this color with the alpha set
+     *  @param {number} [a] - alpha
+     *  @return {Color} */
+    withAlpha(a=1) { return new Color(this.r, this.g, this.b, a); }
 
     /** Returns a copy of this color plus the color passed in
      * @param {Color} c - other color
@@ -2501,7 +2523,7 @@ const MAGENTA = debugProtectConstant(rgb(1,0,1));
 class Timer
 {
     /** Create a timer object set time passed in
-     *  @param {number} [timeLeft] - How much time left before the timer 
+     *  @param {number} [timeLeft] - How much time left before the timer is elapsed in seconds (undefined = unset)
      *  @param {boolean} [useRealTime] - Should the timer keep running even when the game is paused? (useful for UI) */
     constructor(timeLeft, useRealTime=false)
     {
@@ -3100,6 +3122,7 @@ let vibrateEnable = true;
 let soundEnable = true;
 
 /** Volume scale to apply to all sound, music and speech
+ *  Use setSoundVolume to also update the audio master gain immediately
  *  @type {number}
  *  @default
  *  @memberof Settings */
@@ -3654,8 +3677,6 @@ class EngineObject
 
                 // notify objects of collision and check if should be resolved
                 const collide1 = this.collideWithObject(o);
-                // callback may have destroyed us; stop resolving against more objects
-                if (this.destroyed) return;
                 const collide2 = o.collideWithObject(this);
                 if (!collide1 || !collide2) continue;
 
@@ -4182,6 +4203,14 @@ class TileInfo
     }
 
     /**
+     * Returns a tile info for an index using this tile as reference
+     * @param {Vector2|number} [index=0]
+     * @return {TileInfo}
+     */
+    index(index)
+    { return tile(index, this.size, this.textureInfo, this.padding, this.bleed); }
+
+    /**
      * Set this tile to use a full image in a texture info
      * @param {TextureInfo} [textureInfo]
      * @return {TileInfo}
@@ -4194,14 +4223,6 @@ class TileInfo
         this.bleed = this.padding = 0;
         return this;
     }
-
-    /**
-     * Returns a tile info for an index using this tile as reference
-     * @param {Vector2|number} [index=0]
-     * @return {TileInfo}
-     */
-    tile(index)
-    { return tile(index, this.size, this.textureInfo, this.padding, this.bleed); }
 }
 
 /**
@@ -5078,6 +5099,62 @@ function screenToWorldTransform(screenPos, screenSize, screenAngle=0)
  *  @memberof Draw */
 function getCameraSize() { return mainCanvasSize.scale(1/cameraScale); }
 
+/** Fit the camera to a rectangle in world space by setting cameraPos and cameraScale
+ *  - worldMargin pads the content rectangle in world units, so the gap scales with the content on resize
+ *  - screenInset reserves space in screen pixels on each viewport edge (for example a HUD band) and
+ *    re-centers the content away from that edge, so the reserved band stays a fixed pixel size on resize
+ *  - worldMargin and screenInset may each be a number for all sides, a Vector2 (x=left/right, y=top/bottom),
+ *    or an object with any of {top, right, bottom, left}
+ *  @param {Vector2} center - Center of the rectangle in world space
+ *  @param {Vector2} size - Size of the rectangle in world space
+ *  @param {number|Vector2|Object} [worldMargin] - World space padding added around the content rectangle
+ *  @param {number|Vector2|Object} [screenInset] - Screen space padding in pixels reserved on each viewport edge
+ *  @return {number} - The new camera scale
+ *  @memberof Draw */
+function cameraFit(center, size, worldMargin, screenInset)
+{
+    ASSERT(isVector2(center), 'center must be a vec2');
+    ASSERT(isVector2(size), 'size must be a vec2');
+
+    // pad the content
+    const margin = padSides(worldMargin);
+    const inset  = padSides(screenInset);
+    const worldW = size.x + margin.left + margin.right;
+    const worldH = size.y + margin.top  + margin.bottom;
+    const viewW  = mainCanvasSize.x - inset.left - inset.right;
+    const viewH  = mainCanvasSize.y - inset.top  - inset.bottom;
+
+    // bail on a degenerate rect or viewport rather than NaN the camera
+    if (!(worldW > 0 && worldH > 0 && viewW > 0 && viewH > 0))
+        return cameraScale;
+
+    // scale to fit the padded content
+    cameraScale = min(viewW / worldW, viewH / worldH);
+
+    // calculate offset vectors
+    const marginVector = vec2(margin.right - margin.left, margin.top - margin.bottom).scale(.5);
+    const insetVector = vec2(inset.right - inset.left, inset.top - inset.bottom).scale(.5 / cameraScale);
+
+    // apply the offsets and return camera scale
+    cameraPos = center.add(marginVector).add(insetVector);
+    return cameraScale;
+
+    function padSides(p)
+    {
+        // normalize a padding option to {top, right, bottom, left}
+        if (p === undefined || isNumber(p))
+            p = vec2(p);
+        if (isVector2(p))
+            return { top: p.y, right: p.x, bottom: p.y, left: p.x };
+        return {
+            top:    p.top    || 0,
+            right:  p.right  || 0,
+            bottom: p.bottom || 0,
+            left:   p.left   || 0,
+        };
+    }
+}
+
 /** Check if a box, point, or circle is on screen with a circle test
  *  If size is a Vector2, uses the length as diameter
  *  This can be used to cull offscreen objects from render or update
@@ -5116,14 +5193,13 @@ function isOnScreen(pos, size=0)
            y + size > -h && y - size < h;
 }
 
-/** Enable normal or additive blend mode
+/** Enable additive blending
  *  @param {boolean} [additive]
- *  @param {CanvasRenderingContext2D|OffscreenCanvasRenderingContext2D} [context]
  *  @memberof Draw */
-function setBlendMode(additive=false, context=drawContext)
+function setAdditiveBlendMode(additive=true)
 {
     glAdditive = additive;
-    context.globalCompositeOperation = additive ? 'lighter' : 'source-over';
+    drawContext.globalCompositeOperation = additive ? 'lighter' : 'source-over';
 }
 
 /** Combines LittleJS canvases onto the main canvas
@@ -5449,10 +5525,29 @@ let mouseWheel = 0;
  *  @memberof Input */
 let mouseInWindow = true;
 
-/** Returns true if user is using gamepad (has more recently pressed a gamepad button)
+/** True if a gamepad is the most recently used input device.
+ *  Equivalent to usingGamepadInput(); derived from lastInputDevice each frame.
  *  @type {boolean}
  *  @memberof Input */
 let isUsingGamepad = false;
+
+/** The most recently used input device: 'mouse' | 'keyboard' | 'gamepad'.
+ *  Sticky: it holds its value while every device is idle, so a mouse-follow
+ *  control (e.g. paddle = mousePos) won't snap back the instant the stick/keys
+ *  are released. With several devices in play at once (e.g. keyboard to move +
+ *  mouse to aim) it tracks whichever was touched last each frame, so it may
+ *  alternate — that's intended; use it to pick which control drives a shared
+ *  action. Updated every frame by inputUpdate().
+ *  @type {string}
+ *  @memberof Input */
+let lastInputDevice = 'mouse';
+
+/** Screen-pixel mouse movement per frame that counts as "using the mouse"
+ *  (so sub-pixel hand jitter doesn't steal focus from the keyboard/gamepad).
+ *  @type {number}
+ *  @default
+ *  @memberof Input */
+let inputMouseMoveThreshold = 6;
 
 /** Prevents input continuing to the default browser handling (true by default)
  *  @type {boolean}
@@ -5473,6 +5568,18 @@ const isTouchDevice = !headlessMode && window.ontouchstart !== undefined;
  *  @param {boolean} preventDefault
  *  @memberof Input */
 function setInputPreventDefault(preventDefault=true) { inputPreventDefault = preventDefault; }
+
+/** Set the screen-pixel mouse movement per frame that counts as using the mouse
+ *  @param {number} threshold
+ *  @memberof Input */
+function setInputMouseMoveThreshold(threshold) { inputMouseMoveThreshold = threshold; }
+
+/** @return {boolean} - Is the mouse the most recently used input device?    @memberof Input */
+function usingMouseInput()    { return lastInputDevice === 'mouse'; }
+/** @return {boolean} - Is the keyboard the most recently used input device? @memberof Input */
+function usingKeyboardInput() { return lastInputDevice === 'keyboard'; }
+/** @return {boolean} - Is a gamepad the most recently used input device?    @memberof Input */
+function usingGamepadInput()  { return lastInputDevice === 'gamepad'; }
 
 /** Clears an input key state
  *  @param {string|number} key
@@ -5774,7 +5881,6 @@ function inputInit()
     {
         if (!e.repeat)
         {
-            isUsingGamepad = false;
             inputData[0][e.code] = 3;
             if (inputWASDEmulateDirection)
                 inputData[0][remapKey(e.code)] = 3;
@@ -5814,7 +5920,10 @@ function inputInit()
     {
         inputData[0][e.code] = (inputData[0][e.code]&2) | 4;
         if (inputWASDEmulateDirection)
-            inputData[0][remapKey(e.code)] = 4;
+        {
+            const remap = remapKey(e.code);
+            inputData[0][remap] = (inputData[0][remap]&2) | 4;
+        }
     }
     function remapKey(k)
     {
@@ -5833,7 +5942,6 @@ function inputInit()
         if (soundEnable && !headlessMode && audioContext && !audioIsRunning())
             audioContext.resume();
 
-        isUsingGamepad = false;
         inputData[0][e.button] = 3;
 
         const mousePosScreenLast = mousePosScreen;
@@ -5890,7 +5998,7 @@ function inputInit()
         document.addEventListener('touchend',   (e)=> handleTouch(e), { passive: false });
 
         // handle all touch events the same way
-        let wasTouching;
+        let wasTouching, touchIdentifier;
         function handleTouch(e)
         {
             if (!touchInputEnable) return;
@@ -5921,13 +6029,11 @@ function inputInit()
                     const pos = vec2(gameTouches[0].clientX, gameTouches[0].clientY);
                     const mousePosScreenLast = mousePosScreen;
                     mousePosScreen = mouseEventToScreen(pos);
-                    if (wasTouching)
+                    if (wasTouching && gameTouches[0].identifier === touchIdentifier)
                         mouseDeltaScreen = mouseDeltaScreen.add(mousePosScreen.subtract(mousePosScreenLast));
-                    else
-                    {
+                    else if (!wasTouching)
                         inputData[0][button] = 3;
-                        isUsingGamepad = false; // a passthrough tap is mouse-style input
-                    }
+                    touchIdentifier = gameTouches[0].identifier;
                 }
                 else if (wasTouching)
                     inputData[0][button] = inputData[0][button] & 2 | 4;
@@ -5973,7 +6079,43 @@ function inputUpdate()
 
     // update gamepads if enabled
     gamepadsUpdate();
-        
+
+    // update most recently used input device
+    updateLastInputDevice();
+
+    function updateLastInputDevice()
+    {
+        // mouse: any button held or moved
+        const mouseActive = mouseIsDown(0) || mouseIsDown(1) || mouseIsDown(2) || mouseDeltaScreen.length() > inputMouseMoveThreshold;
+
+        // gamepad: any button held or stick moved
+        let gamepadActive = false;
+        for (let s = gamepadStickCount(); s-- && !gamepadActive;)
+            gamepadActive = gamepadStick(s).lengthSquared() > .04;
+        for (let b = 17; b-- && !gamepadActive;)
+            gamepadActive = gamepadIsDown(b);
+
+        // keyboard: any non-mouse key down
+        let keyboardActive = false;
+        for (const k in inputData[0])
+            if (isNaN(+k) && (inputData[0][k] & 1))
+            {
+                keyboardActive = true;
+                break;
+            }
+
+        // update the last input
+        if (gamepadActive)
+            lastInputDevice = 'gamepad';
+        else if (mouseActive)
+            lastInputDevice = 'mouse';
+        else if (keyboardActive)
+            lastInputDevice = 'keyboard';
+
+        // set flag if gamepad is last device
+        isUsingGamepad = lastInputDevice === 'gamepad';
+    }
+
     // gamepads are updated by engine every frame automatically
     function gamepadsUpdate()
     {
@@ -6096,7 +6238,6 @@ function inputUpdate()
                 gamepadHadInput[i] = true;
                 if (!gamepadHadInput[gamepadPrimary])
                     gamepadPrimary = i;
-                isUsingGamepad ||= (gamepadPrimary === i);
             }
 
             if (gamepad.mapping === 'standard')
@@ -6531,7 +6672,6 @@ function touchGamepadPointerDown(e, zone)
     e.preventDefault();
     zone.setPointerCapture(e.pointerId);
     touchGamepadTimer.set();
-    isUsingGamepad = true;
 
     // resume audio on first interaction
     if (soundEnable && !headlessMode && audioContext && !audioIsRunning())
@@ -7051,7 +7191,7 @@ class SoundInstance
  *  @param {number} [rate] - How quickly to speak
  *  @param {number} [pitch] - How much to change the pitch by
  *  @param {string} [language] - The language/accent to use (examples: en, it, ru, ja, zh)
- *  @return {SpeechSynthesisUtterance} - The utterance that was spoken
+ *  @return {SpeechSynthesisUtterance|undefined} - The utterance that was spoken, or undefined if speech is unavailable
  *  @memberof Audio */
 function speak(text, volume=1, rate=1, pitch=1, language='')
 {
@@ -7104,7 +7244,7 @@ function getNoteFrequency(semitoneOffset, rootFrequency=220)
  *  @param {number}   [pan] - How much to apply stereo panning
  *  @param {boolean}  [loop] - True if the sound should loop when it reaches the end
  *  @param {number}   [sampleRate=44100] - Sample rate for the sound
- *  @param {GainNode} [gainNode] - Optional gain node for volume control while playing
+ *  @param {GainNode} [gainNode] - Optional gain node for volume control while playing (disconnected when the sound ends)
  *  @param {number}   [offset] - Offset in seconds to start playback from
  *  @param {AudioEndedCallback} [onended] - Callback for when the sound ends
  *  @return {AudioBufferSourceNode} - The source node of the sound played, may be undefined if play fails
@@ -7346,10 +7486,14 @@ function tileCollisionGetData(pos, solidOnly=true)
     // check all tile collision layers
     for (const layer of tileCollisionLayers)
         if (!solidOnly || layer.isSolid)
-        if (pos.arrayCheck(layer.size))
         {
-            const data = layer.getCollisionData(pos);
-            if (data) return data;
+            // convert world pos to layer local space
+            const layerPos = pos.subtract(layer.pos);
+            if (layerPos.arrayCheck(layer.size))
+            {
+                const data = layer.getCollisionData(layerPos);
+                if (data) return data;
+            }
         }
     return 0;
 }
@@ -7624,7 +7768,7 @@ class TileLayer extends CanvasLayer
         
         /** @property {TileInfo} - Default tile info for layer */
         this.tileInfo = undefined;
-        /** @property {Array<TileLayerData>} - Default tile info for layer */
+        /** @property {Array<TileLayerData>} - Array of tile data for the layer */
         this.data = [];
         /** @property {boolean} - Is this layer using a webgl texture? */
         this.isUsingWebGL = false;
@@ -7709,7 +7853,7 @@ class TileLayer extends CanvasLayer
 
         const size = this.drawSize || this.size;
         const pos = this.pos.add(size.scale(.5));
-        this.draw(pos, this.size, this.color, this.angle, this.mirror, this.additiveColor);
+        this.draw(pos, size, this.color, this.angle, this.mirror, this.additiveColor);
     }
 
     /** Called after this layer is redrawn, does nothing by default */
@@ -7798,7 +7942,7 @@ class TileLayer extends CanvasLayer
         const d = this.getData(layerPos);
         if (!d || !d.tile) return;
 
-        const tileInfo = this.tileInfo && this.tileInfo.tile(d.tile);
+        const tileInfo = this.tileInfo && this.tileInfo.index(d.tile);
         this.drawLayerTile(drawPos, drawSize, tileInfo, d.color, d.direction*PI/2, d.mirror);
     }
 
@@ -8092,8 +8236,8 @@ class TileCollisionLayer extends TileLayer
  *     rgb(1,1,1,1), rgb(0,0,0,1), // colorStartA, colorStartB
  *     rgb(1,1,1,0), rgb(0,0,0,0), // colorEndA, colorEndB
  *     1, .2, .2, .1, .05,  // particleTime, sizeStart, sizeEnd, particleSpeed, particleAngleSpeed
- *     .99, 1, 1, PI, .05,  // damping, angleDamping, gravityScale, particleCone, fadeRate,
- *     .5, 1                // randomness, collide, additive, randomColorLinear, renderOrder
+ *     .99, 1, 1, PI, .05,  // damping, angleDamping, gravityScale, particleCone, fadeRate
+ *     .5, 1                // randomness, collide
  * );
  */
 class ParticleEmitter extends EngineObject
@@ -8485,13 +8629,12 @@ class Particle
             const hitLayer = tileCollisionTest(this.pos);
             if (!testCollision(oldPos))
             {
-                // testCollision already invoked collideCallback with the
-                // correct (this, data, pos) args; no need to re-check here.
                 // test which side we bounced off (or both if a corner)
                 const isBlockedX = testCollision(vec2(this.pos.x, oldPos.y));
                 const isBlockedY = testCollision(vec2(oldPos.x, this.pos.y));
-                const hitRestitution = max(restitution, hitLayer.restitution);
-                const hitFriction = max(friction, hitLayer.friction);
+                // collide callback may hit where the layer test does not, so hitLayer can be undefined
+                const hitRestitution = hitLayer ? max(restitution, hitLayer.restitution) : restitution;
+                const hitFriction = hitLayer ? max(friction, hitLayer.friction) : friction;
                 if (isBlockedX)
                 {
                     // move to previous X position and bounce
@@ -8547,9 +8690,6 @@ class Particle
         this.color.b = p2 * this.colorStart.b + p1 * this.colorEnd.b;
         this.color.a = (p2 * this.colorStart.a + p1 * this.colorEnd.a) * alphaFade;
 
-        // draw the particle
-        additive && setBlendMode(true);
-
         // update the position and angle for drawing
         const pos = particleDrawPos.set(this.pos.x, this.pos.y);
         let angle = this.angle;
@@ -8562,6 +8702,9 @@ class Particle
                 emitter.pos.y + pos.x*s + pos.y*c);
             angle += a;
         }
+
+        // draw the particle
+        additive && setAdditiveBlendMode();
         if (trailScale)
         {
             // trail style particles
@@ -8579,7 +8722,7 @@ class Particle
         }
         else
             drawTile(pos, size, this.tileInfo, this.color, angle, this.mirror);
-        additive && setBlendMode();
+        additive && setAdditiveBlendMode(false);
         debugParticles && debugRect(pos, size, '#f005', 0, angle);
     }
 }
@@ -10140,7 +10283,8 @@ class NewgroundsPlugin
             return;
         }
         debugMedals && LOG(xmlHttp.responseText);
-        return xmlHttp.responseText && JSON.parse(xmlHttp.responseText);
+        try { return xmlHttp.responseText && JSON.parse(xmlHttp.responseText); }
+        catch(e) { debugMedals && LOG('newgrounds response is not valid JSON', e); }
     }
 }
 /**
@@ -10159,8 +10303,8 @@ class NewgroundsPlugin
 let postProcess;
 
 /////////////////////////////////////////////////////////////////////////
-/** 
- * UI System Global Object
+/**
+ * Post Process Plugin - Applies a full screen shader to the rendered output
  * @memberof PostProcess
  */
 class PostProcessPlugin
@@ -10274,8 +10418,9 @@ class PostProcessPlugin
                 workCanvas.height = mainCanvasSize.y;
                 glCopyToContext(workContext);
                 workContext.drawImage(mainCanvas, 0, 0);
-                mainCanvas.width |= 0
-                
+                mainCanvas.width |= 0; // setting size clears the main canvas
+
+
                 // copy work canvas to texture
                 glContext.texImage2D(glContext.TEXTURE_2D, 0, glContext.RGBA, glContext.RGBA, glContext.UNSIGNED_BYTE, workCanvas);
             }
@@ -10489,7 +10634,7 @@ class LightSystemPlugin
 
             // 3. walk engineObjects calling renderLight() — additive blend
             //    (lightmap accumulates raw additive color contributions)
-            setBlendMode(true);
+            setAdditiveBlendMode();
             glContext.enable(glContext.BLEND);
             glContext.blendFunc(glContext.ONE, glContext.ONE);
 
@@ -10523,7 +10668,7 @@ class LightSystemPlugin
             //    is, and any debug text / future draw could sample the lightmap)
             if (glActiveTexture)
                 glContext.bindTexture(glContext.TEXTURE_2D, glActiveTexture);
-            setBlendMode(prevAdditive);
+            setAdditiveBlendMode(prevAdditive);
             glSetInstancedMode(true);
         }
         function lightSystemContextLost()
@@ -11380,7 +11525,7 @@ class UISystemPlugin
     }
 
     /** Get other axis navigation direction from gamepad or keyboard
-     *  @return {Vector2} */
+     *  @return {number} */
     getNavigationOtherDirection()
     {
         if (uiSystem.navigationDirection === 2)
@@ -11469,6 +11614,7 @@ class UISystemPlugin
             uiSystem.navigationDirection = savedNavigationDirection;
             inputClear();
         }
+        return confirmMenu;
     }
 }
 
@@ -11902,7 +12048,7 @@ class UITextInput extends UIObject
         this.onClick();
     }
 
-    /** Stop editing the text edited */
+    /** Stop editing the text */
     stopEditing()
     {
         if (!this.isKeyInputObject())
@@ -12065,7 +12211,7 @@ class UICheckbox extends UIObject
         ASSERT(isStringLike(text), 'ui checkbox must be a string');
         ASSERT(isColor(color), 'ui checkbox color must be a color');
 
-        /** @property {boolean} - Current percentage value of this slider 0-1 */
+        /** @property {boolean} - Is the checkbox currently checked? */
         this.checked = checked;
         // set properties
         this.text = text;
@@ -12830,7 +12976,7 @@ class Box2dObject extends EngineObject
             shape.set_m_vertex3(box2d.vec2dTo(getPoint(i+2)));
             const f = this.addShape(shape, density, friction, restitution, isSensor);
             fixtures.push(f);
-            i < points.length && edgePoints.push(points[i].copy());
+            edgePoints.push(points[i].copy());
         }
         this.edgeLoops.push(edgePoints);
         return fixtures;
@@ -12896,7 +13042,7 @@ class Box2dObject extends EngineObject
     /** Sets the position
      *  @param {Vector2} pos */
     setPosition(pos)
-    { this.setTransform(pos, this.body.GetAngle()); }
+    { this.setTransform(pos, -this.body.GetAngle()); }
 
     /** Sets the angle
      *  @param {number} angle */
@@ -12993,6 +13139,7 @@ class Box2dObject extends EngineObject
             filter.set_categoryBits(categoryBits);
             filter.set_maskBits(0xffff & ~ignoreCategoryBits);
             filter.set_groupIndex(groupIndex);
+            fixture.SetFilterData(filter); // applies and refilters contacts
         });
     }
 
@@ -13528,7 +13675,7 @@ class Box2dRevoluteJoint extends Box2dJoint
         jointDef.set_bodyB(objectB.body);
         jointDef.set_localAnchorA(box2d.vec2dTo(localAnchorA));
         jointDef.set_localAnchorB(box2d.vec2dTo(localAnchorB));
-        jointDef.set_referenceAngle(objectA.body.GetAngle() - objectB.body.GetAngle());
+        jointDef.set_referenceAngle(objectB.body.GetAngle() - objectA.body.GetAngle());
         jointDef.set_collideConnected(collide);
         super(jointDef);
     }
@@ -13675,14 +13822,14 @@ class Box2dPrismaticJoint extends Box2dJoint
         anchor ||= box2d.vec2From(objectB.body.GetPosition());
         const localAnchorA = objectA.worldToLocal(anchor);
         const localAnchorB = objectB.worldToLocal(anchor);
-        const localAxisA = objectB.worldToLocalVector(worldAxis);
+        const localAxisA = objectA.worldToLocalVector(worldAxis);
         const jointDef = new box2d.instance.b2PrismaticJointDef();
         jointDef.set_bodyA(objectA.body);
         jointDef.set_bodyB(objectB.body);
         jointDef.set_localAnchorA(box2d.vec2dTo(localAnchorA));
         jointDef.set_localAnchorB(box2d.vec2dTo(localAnchorB));
         jointDef.set_localAxisA(box2d.vec2dTo(localAxisA));
-        jointDef.set_referenceAngle(objectA.body.GetAngle() - objectB.body.GetAngle());
+        jointDef.set_referenceAngle(objectB.body.GetAngle() - objectA.body.GetAngle());
         jointDef.set_collideConnected(collide);
         super(jointDef);
     }
@@ -13785,7 +13932,7 @@ class Box2dWheelJoint extends Box2dJoint
         anchor ||= box2d.vec2From(objectB.body.GetPosition());
         const localAnchorA = objectA.worldToLocal(anchor);
         const localAnchorB = objectB.worldToLocal(anchor);
-        const localAxisA = objectB.worldToLocalVector(worldAxis);
+        const localAxisA = objectA.worldToLocalVector(worldAxis);
         const jointDef = new box2d.instance.b2WheelJointDef();
         jointDef.set_bodyA(objectA.body);
         jointDef.set_bodyB(objectB.body);
@@ -13885,7 +14032,7 @@ class Box2dWeldJoint extends Box2dJoint
         jointDef.set_bodyB(objectB.body);
         jointDef.set_localAnchorA(box2d.vec2dTo(localAnchorA));
         jointDef.set_localAnchorB(box2d.vec2dTo(localAnchorB));
-        jointDef.set_referenceAngle(objectA.body.GetAngle() - objectB.body.GetAngle());
+        jointDef.set_referenceAngle(objectB.body.GetAngle() - objectA.body.GetAngle());
         jointDef.set_collideConnected(collide);
         super(jointDef);
     }
@@ -14332,7 +14479,7 @@ class Box2dPlugin
      *  @param {number} [lineWidth]
      *  @param {boolean} [useWebGL=glEnable]
      *  @param {CanvasRenderingContext2D} [context] */
-    drawFixture(fixture, pos, angle, color=WHITE, lineColor=BLACK, lineWidth=.1, useWebgl, context)
+    drawFixture(fixture, pos, angle, color=WHITE, lineColor=BLACK, lineWidth=.1, useWebGL, context)
     {
         const shape = box2d.castShapeObject(fixture.GetShape());
         switch (shape.GetType())
@@ -14342,20 +14489,20 @@ class Box2dPlugin
                 let points = [];
                 for (let i=shape.GetVertexCount(); i--;)
                     points.push(box2d.vec2From(shape.GetVertex(i)));
-                drawPoly(points, color, lineWidth, lineColor, pos, angle, useWebgl, false, context);
+                drawPoly(points, color, lineWidth, lineColor, pos, angle, useWebGL, false, context);
                 break;
             }
             case box2d.instance.b2Shape.e_circle:
             {
                 const radius = shape.get_m_radius();
-                drawCircle(pos, radius*2, color, lineWidth, lineColor, useWebgl, false, context);
+                drawCircle(pos, radius*2, color, lineWidth, lineColor, useWebGL, false, context);
                 break;
             }
             case box2d.instance.b2Shape.e_edge:
             {
                 const v1 = box2d.vec2From(shape.get_m_vertex1());
                 const v2 = box2d.vec2From(shape.get_m_vertex2());
-                drawLine(v1, v2, lineWidth, lineColor, pos, angle, useWebgl, false, context);
+                drawLine(v1, v2, lineWidth, lineColor, pos, angle, useWebGL, false, context);
                 break;
             }
         }
@@ -14569,8 +14716,8 @@ async function box2dInit()
  *  This function can not apply color because it draws using the 2d context
  *  @param {Vector2} pos - Screen space position
  *  @param {Vector2} size - Screen space size
- *  @param {TileInfo} startTile - Starting tile for the nine-slice pattern
- *  @param {number} [borderSize] - Width of the border sections
+ *  @param {TileInfo} startTile - Top-left tile of the 3x3 block to sample (see drawNineSlice)
+ *  @param {number} [borderSize] - Rendered thickness of the border sections
  *  @param {number} [extraSpace] - Extra spacing adjustment
  *  @param {number} [angle] - Angle to rotate by
  *  @memberof DrawUtilities */
@@ -14581,11 +14728,16 @@ function drawNineSliceScreen(pos, size, startTile, borderSize=32, extraSpace=2, 
 
 /** Draw a scalable nine-slice UI element in world space
  *  This function can apply color and additive color if WebGL is enabled
+ *  The nine-slice samples a 3x3 block of tiles from the tilesheet, it does not
+ *  subdivide a single tile. Pass the top-left tile of that block as startTile;
+ *  the other 8 tiles (edges, corners, and center) are taken automatically from
+ *  the 3x3 grid of tiles extending right and down from it. borderSize only sets
+ *  the rendered thickness of the edges and corners, not how the texture is cut.
  *  @param {Vector2} pos - World space position
  *  @param {Vector2} size - World space size
- *  @param {TileInfo} startTile - Starting tile for the nine-slice pattern
+ *  @param {TileInfo} startTile - Top-left tile of the 3x3 block to sample the nine-slice from
  *  @param {Color} [color] - Color to modulate with
- *  @param {number} [borderSize] - Width of the border sections
+ *  @param {number} [borderSize] - Rendered thickness of the border sections
  *  @param {Color} [additiveColor] - Additive color
  *  @param {number} [extraSpace] - Extra spacing adjustment
  *  @param {number} [angle] - Angle to rotate by
@@ -14595,7 +14747,8 @@ function drawNineSliceScreen(pos, size, startTile, borderSize=32, extraSpace=2, 
  *  @memberof DrawUtilities */
 function drawNineSlice(pos, size, startTile, color, borderSize=1, additiveColor, extraSpace=.05, angle=0, useWebGL=glEnable, screenSpace, context)
 {
-    // setup nine slice tiles
+    // setup nine slice tiles - startTile is the top-left of a 3x3 tile block,
+    // so the center tile is one tile down and right from it
     const centerTile = startTile.offset(startTile.size);
     const centerSize = size.add(vec2(extraSpace-borderSize*2));
     const cornerSize = vec2(borderSize);
@@ -14629,8 +14782,8 @@ function drawNineSlice(pos, size, startTile, color, borderSize=1, additiveColor,
  *  This function can not apply color because it draws using the 2d context
  *  @param {Vector2} pos - Screen space position
  *  @param {Vector2} size - Screen space size
- *  @param {TileInfo} startTile - Starting tile for the three-slice pattern
- *  @param {number} [borderSize] - Width of the border sections
+ *  @param {TileInfo} startTile - First of 3 consecutive tiles: corner, side, center (see drawThreeSlice)
+ *  @param {number} [borderSize] - Rendered thickness of the border sections
  *  @param {number} [extraSpace] - Extra spacing adjustment
  *  @param {number} [angle] - Angle to rotate by
  *  @memberof DrawUtilities */
@@ -14641,11 +14794,15 @@ function drawThreeSliceScreen(pos, size, startTile, borderSize=32, extraSpace=2,
 
 /** Draw a scalable three-slice UI element in world space
  *  This function can apply color and additive color if WebGL is enabled
+ *  The three-slice samples 3 consecutive tiles from the tilesheet, it does not
+ *  subdivide a single tile. Pass the first tile as startTile; the three tiles
+ *  are used in order as corner, side, and center, then rotated and mirrored to
+ *  build all four edges and corners. borderSize only sets the rendered thickness.
  *  @param {Vector2} pos - World space position
  *  @param {Vector2} size - World space size
- *  @param {TileInfo} startTile - Starting tile for the three-slice pattern
+ *  @param {TileInfo} startTile - First of 3 consecutive tiles (corner, side, center) for the three-slice
  *  @param {Color} [color] - Color to modulate with
- *  @param {number} [borderSize] - Width of the border sections
+ *  @param {number} [borderSize] - Rendered thickness of the border sections
  *  @param {Color} [additiveColor] - Additive color
  *  @param {number} [extraSpace] - Extra spacing adjustment
  *  @param {number} [angle] - Angle to rotate by
@@ -14655,7 +14812,7 @@ function drawThreeSliceScreen(pos, size, startTile, borderSize=32, extraSpace=2,
  *  @memberof DrawUtilities */
 function drawThreeSlice(pos, size, startTile, color, borderSize=1, additiveColor, extraSpace=.05, angle=0, useWebGL=glEnable, screenSpace, context)
 {
-    // setup three slice tiles
+    // setup three slice tiles - 3 tiles in a row starting at startTile
     const cornerTile = startTile.frame(0);
     const sideTile   = startTile.frame(1);
     const centerTile = startTile.frame(2);
@@ -15176,7 +15333,11 @@ function tweenProperty(target, propertyPath, start, end, duration = 1, options =
     const callback = (value) =>
     {
         let obj = target;
-        for (const k of parts) obj = obj[k];
+        for (const k of parts)
+        {
+            obj = obj[k];
+            ASSERT(obj != null, 'tweenProperty path does not resolve: ' + propertyPath);
+        }
         obj[lastKey] = value;
     };
     return new Tween(callback, start, end, duration, options);
