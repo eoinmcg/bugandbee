@@ -10,8 +10,9 @@ export default class Waver extends Scene {
 
     this.points = [];
     this.mouse = new Mouse();
+    const skies = ['day', 'dusk', 'night', 'dawn']
 
-    this.BG = new Meadow('dusk', 0);
+    this.BG = new Meadow(skies.rnd(), 1);
   }
 
   update() {
@@ -22,6 +23,14 @@ export default class Waver extends Scene {
       this.points.push(
         new Point(mousePos)
       );
+    }
+
+    if (keyWasPressed('KeyX')) {
+      console.log('x', this.points)
+      this.points.forEach((p) => {
+        p.destroy()
+      })
+      this.points = [];
     }
 
     if (keyWasPressed('Enter')) {
