@@ -55,7 +55,7 @@ export default class Waver extends Scene {
       }
     });
 
-    drawText(mousePos.x.toFixed(1) + ',' + mousePos.y.toFixed(1), cameraPos.add(vec2(0, 4)), .1, true);
+    drawText(mousePos.x.toFixed(1) + ',' + mousePos.y.toFixed(1), cameraPos.add(vec2(0, 4)), .1);
   }
 
 }

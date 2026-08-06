@@ -111,7 +111,7 @@ export default class EyeBoss extends Boss {
 
   collideWithObject(o) {
     if (o.name === 'platform') {
-      this.verticalDirection *= -1;
+      // this.verticalDirection *= -1;
       return;
     }
     super.collideWithObject(o);

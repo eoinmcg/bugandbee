@@ -28,10 +28,12 @@ export default class Boss extends Enemy {
     this.g.bossFight = this;
     this.velocity = vec2(-.2, rand(-.1, .1))
 
-    this.g.stopMusic();
-    window.setTimeout(() => {
-      this.g.playMusic(6);
-    }, 10);
+    if (!this.g.sfx.isMuted) {
+      this.g.stopMusic();
+      window.setTimeout(() => {
+        this.g.playMusic(6);
+      }, 10);
+    }
 
   }
 
