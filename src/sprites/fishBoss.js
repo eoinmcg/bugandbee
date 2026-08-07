@@ -48,6 +48,10 @@ export default class FishBoss extends Boss {
     // Water surface / bottom patrol level near bottom of screen
     const bottomY = size.min.y + 2;
 
+    if (this.state === 'patrol' && Math.random() > .9) {
+      Particles.swampSplash(this.pos, .3)
+    }
+
     // --- STATE 1: PATROL (Swimming along the bottom) ---
     if (this.state === 'patrol') {
       this.changeAnim('swim', .2);
