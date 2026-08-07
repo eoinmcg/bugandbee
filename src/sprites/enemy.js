@@ -29,7 +29,9 @@ export default class Enemy extends Sprite {
       muncher: ['bitey0', 'bitey1'],
       flappy: ['flappy0', 'flappy1'],
       bat: ['bat0', 'bat1'],
+      fish: ['fish0', 'fish1'],
       skull: ['skull'],
+      bubble: ['skull'],
       eye: ['eye'],
     }
 

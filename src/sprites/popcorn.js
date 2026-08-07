@@ -14,12 +14,16 @@ export default class Popcorn extends Enemy {
       pos: props.pos,
       size: vec2(1),
       tile: g.tile('flappy0'),
-      health: 0,
-      value: 10,
+      health: 0, value: 10,
     });
 
-    const anim = this.g.levelNum === 4
+    const bg = this.g.level.data?.bg || '';
+    let anim = bg === 'Underground'
       ? 'bat' : 'flappy';
+
+    if (bg === 'Swamp') {
+      anim = 'drone'
+    }
 
     this.changeAnim(anim, 0.1);
     this.canShoot = rand() > .85;

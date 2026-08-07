@@ -10,14 +10,18 @@ import Seeker from '../sprites/seeker';
 import Spider from '../sprites/spider';
 import Shroom from '../sprites/shroom';
 import Popcorn from '../sprites/popcorn';
+import Bubble from '../sprites/bubble';
+import Fish from '../sprites/fish';
 import Spike from '../sprites/spike';
 import Rock from '../sprites/rock';
 import SkullBoss from '../sprites/skullboss';
 import SpiderBoss from '../sprites/spiderboss';
+import FishBoss from '../sprites/fishBoss';
 import EyeBoss from '../sprites/eyeboss';
 
 import Meadow from '../bgs/meadow';
 import Forest from '../bgs/forest';
+import Swamp from '../bgs/swamp';
 import Tunnel from '../bgs/tunnel';
 import Underground from '../bgs/underground';
 
@@ -31,7 +35,7 @@ export default class LevelManager {
     this.g.totalLevels = levels.length;
 
     this.bgs = {
-      Meadow, Forest, Tunnel, Underground
+      Meadow, Forest, Swamp, Tunnel, Underground
     };
 
     this.ents = {
@@ -41,8 +45,11 @@ export default class LevelManager {
       rock: Rock,
       popcorn: Popcorn,
       seeker: Seeker,
+      bubble: Bubble,
+      fish: Fish,
       skullboss: SkullBoss,
       spiderboss: SpiderBoss,
+      fishboss: FishBoss,
       eyeboss: EyeBoss,
       alert: Alert,
     }
@@ -70,9 +77,8 @@ export default class LevelManager {
     this.g.level = {
       // ground speed ALWAYS *-.15
       speed: this.level.speed[0] * -.15,
+      data: this.level
     }
-
-
 
     this.addPlatforms();
 

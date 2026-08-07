@@ -30,7 +30,6 @@ export default class Forest {
     }
 
     W = 26;
-
     for (let i = W; i >= -W; i--) {
       const col = BLACK;
       if (Math.random() > .9) {

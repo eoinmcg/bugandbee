@@ -6,6 +6,7 @@ export default class Bullet extends Sprite {
 
     const t = props.g.tile('bullet');
     super(pos, vec2(1), t, props);
+    console.log(this.g.level.data.floor)
 
     this.speed = 2;
 
@@ -26,6 +27,7 @@ export default class Bullet extends Sprite {
     this.outline = {
       offset: .1, color: RED
     }
+    this.floor = this.g.level.data?.floor || false;
   }
 
   update() {
@@ -33,6 +35,11 @@ export default class Bullet extends Sprite {
 
     if (this.isOffScreen()) {
       this.destroy();
+    }
+    if (this.floor && this.pos.y < this.floor) {
+      const effect = this.g.level.data.floorEffect;
+      Particles[effect](this.pos);
+      this.destroy()
     }
   }
 

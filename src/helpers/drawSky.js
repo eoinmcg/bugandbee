@@ -64,6 +64,13 @@ const styles = {
     streak: 10,
     stops: [1.8, 3]
   },
+  swamp: {
+    light: 'emerald',
+    med: 'green',
+    dark: 'emerald',
+    streak: 10,
+    stops: [1.3, 3]
+  },
   title: {
     light: 'navy_blue',
     med: 'royal_purple',
@@ -96,6 +103,10 @@ const copperStyles = {
   },
   stormy: {
     cols: ['midnight_blue', 'royal_purple', 'midnight_blue'],
+    steps: 20,
+  },
+  swamp: {
+    cols: ['emerald', 'green', 'emerald'],
     steps: 20,
   },
   title: {

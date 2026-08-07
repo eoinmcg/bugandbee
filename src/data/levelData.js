@@ -20,9 +20,9 @@ export const levels = [
   {
     title: 'Mayhem Meadow',
     sky: 'day',
-    audio: 2,
     bg: 'Meadow',
     speed: [2, 0],
+    audio: 2,
     phases: [
       { start: 0, end: 40, types: ['popcorn'], freq: [3, 5] },
       { start: 30, end: 50, types: ['worm'], freq: [3, 5] },
@@ -44,6 +44,23 @@ export const levels = [
       { start: 70, types: ['alert'], props: { text: 'BEWARE SPIDERS!', sfx: 'spotted', stopMusic: true } },
       { start: 75, types: ['spiderboss'], props: { pos: vec2(-10, 10) } },
     ],
+  },
+  {
+    title: 'Stinky Swamp',
+    sky: 'swamp',
+    bg: 'Swamp',
+    floor: -9.5,
+    floorEffect: 'swampSplash',
+    speed: [1, 0],
+    audio: 7,
+    phases: [
+      { start: 0, types: ['fishboss'], props: { pos: vec2(-10, 10) } },
+      { start: 0, end: 100, types: ['bubble'], freq: [1, 1] },
+      // { start: 5, end: 100, types: ['fish'], freq: [2, 4] },
+      // { start: 10, end: 100, types: ['popcorn'], freq: [3, 5] },
+      // { start: 100, types: ['alert'], props: { text: 'HMM.. FISHY!', sfx: 'spotted', stopMusic: true } },
+      // { start: 105, types: ['fishboss'], props: { pos: vec2(-10, 10) } },
+    ]
   },
   {
     title: 'Deadly Descent',

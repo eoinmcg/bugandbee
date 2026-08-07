@@ -20,6 +20,7 @@ const Config = {
     "meltdown.ogg",
     "drag.ogg",
     "boss.ogg",
+    "swamp.ogg",
   ],
   tracks: [],
   size: {
@@ -67,6 +68,9 @@ const Config = {
     flappy1: 43,
     rock0: 44,
     rock1: 45,
+    fish0: 46,
+    fish1: 47,
+    pshroom: 48
   },
 };
 

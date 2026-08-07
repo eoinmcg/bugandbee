@@ -1,10 +1,10 @@
 import Scene from './scene';
+import Sprite from '../sprites/sprite';
 
 export default class Cols extends Scene {
   enter(Game) {
     this.g = Game;
     this.mouse = new Mouse();
-    // setShowWatermark(false);
 
     const rowLen = 6;
     let x = -12, y = 11, size = vec2(5, 4)
@@ -21,15 +21,14 @@ export default class Cols extends Scene {
 }
 
 
-class Mouse extends EngineObject {
+class Mouse extends Sprite {
   constructor() {
     super(vec2(0), vec2(.25));
-    this.setCollision();
-    this.mass = 0;
   }
 
   update() {
     this.pos = mousePos.copy();
+    super.update()
   }
 
   render() {
@@ -37,31 +36,29 @@ class Mouse extends EngineObject {
   }
 
   collideWithObject(o) {
-    console.log('HIT');
-    // if (mouseIsDown(0)) {
-    //   console.log(this.key);
-    // }
+    if (mouseWasPressed(0)) {
+      console.log(o.key, o.col);
+    }
   }
+
 }
 
-class ColBox extends EngineObject {
+class ColBox extends Sprite {
   constructor(pos, size, key, col) {
     super(pos, size);
 
     this.col = col;
     this.key = key;
     this.shadow = new Color(0, 0, 0, .5);
-    this.setCollision();
-    this.mass = 0;
+    this.text = this.key.split('_').join('\n');
   }
 
   render() {
-
     drawRect(this.pos, this.size, this.col);
 
     const textPos = this.pos.copy().add(vec2(-.5, 0));
-    drawTextOverlay(this.key, textPos.add(vec2(-.08)), .7, this.shadow);
-    drawTextOverlay(this.key, textPos, .7, WHITE);
+    drawText(this.text, textPos.add(vec2(-.08)), .8, this.shadow);
+    drawText(this.text, textPos, .8, WHITE);
 
   }
 

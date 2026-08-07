@@ -1,5 +1,8 @@
 import Scene from "./scene";
 import Meadow from "../bgs/meadow";
+import Forest from '../bgs/forest';
+import Swamp from '../bgs/swamp';
+
 import Enemy from "../sprites/enemy";
 import Mouse from "../sprites/mouse";
 
@@ -10,9 +13,13 @@ export default class Waver extends Scene {
 
     this.points = [];
     this.mouse = new Mouse();
-    const skies = ['day', 'dusk', 'night', 'dawn']
+    // const skies = ['day', 'dusk', 'night', 'dawn']
+    const skies = ['dawn']
+    const scenes = [Meadow, Forest, Swamp]
+    const scene = scenes.rnd()
 
-    this.BG = new Meadow(skies.rnd(), 1);
+    // this.BG = new scene(skies.rnd(), 1);
+    this.BG = new Swamp('swamp', 1);
   }
 
   update() {

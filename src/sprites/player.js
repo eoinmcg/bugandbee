@@ -94,6 +94,18 @@ export default class Player extends Sprite {
       this.fade = (t * -1) / this.hurtFor;
     }
 
+    const floor = this.g.level?.data?.floor || false
+    if (floor && this.pos.y < floor) {
+      console.log('HIT FLOOR')
+      this.collideWithObject({
+        name: 'platform',
+        pos: this.pos.copy(),
+        destroy: function() { }
+      }
+      )
+    }
+
+
     if (this.hitPlatform) {
       this.pos.add(vec2(0, -2));
       this.velocity.y = 0;

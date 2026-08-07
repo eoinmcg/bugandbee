@@ -4,7 +4,7 @@ import { Game as G } from '../core/game';
 const Particles = {
 
 
-  score: function () {
+  score: function() {
     let pos = vec2(rand(2, -2), -10.5);
     const color = palette.yellow.col;
     const color2 = palette.orange.col;
@@ -20,7 +20,7 @@ const Particles = {
     );
   },
 
-  gunsmoke: function (pos, mirror, size = 1) {
+  gunsmoke: function(pos, mirror, size = 1) {
     const off = (mirror) ? -.2 : .2;
     const color = palette.white.col;
     new ParticleEmitter(
@@ -35,7 +35,7 @@ const Particles = {
     );
   },
 
-  gunhit: function (pos, color = false) {
+  gunhit: function(pos, color = false) {
     color = color || palette.white.col;
 
     new ParticleEmitter(
@@ -51,7 +51,7 @@ const Particles = {
 
   },
 
-  explode: function (pos, size = .5, cols = ['maroon', 'orange']) {
+  explode: function(pos, size = .5, cols = ['maroon', 'orange']) {
     const color = palette[cols[0]].col;
     const color2 = palette[cols[1]].col;
     new ParticleEmitter(
@@ -82,7 +82,7 @@ const Particles = {
 
   },
 
-  damage: function (pos, size) {
+  damage: function(pos, size) {
     const color = palette.red.col;
     const color2 = palette.orange.col;
     new ParticleEmitter(
@@ -97,22 +97,22 @@ const Particles = {
     );
   },
 
-  splash: function (pos) {
-    const color = palette.white.col;
-    const color2 = palette.sky.col;
+  swampSplash: function(pos, size = .2) {
+    const color = palette.lime.col;
+    const color2 = palette.slate.col;
     new ParticleEmitter(
-      vec2(pos.x, pos.y + .5), 0,            // pos, angle
+      vec2(pos.x, pos.y - .5), 0,            // pos, angle
       0, .1, 200, 1, // emitSize, emitTime, emitRate, emiteCone
       G.tile('circle'),
       color, color2,           // colorStartA, colorStartB
       color.scale(1, 0), color2.scale(1, 0), // colorEndA, colorEndB
-      1, .2, .2, .12, 0.05,  // time, sizeStart, sizeEnd, speed, angleSpeed
+      1, size, size, .12, 0.05,  // time, sizeStart, sizeEnd, speed, angleSpeed
       1, 1, 0.25, PI,   // damping, angleDamping, gravityScale, cone
       .1, .43, 0, 0        // fadeRate, randomness, collide, additive
     );
   },
 
-  sparks: function (pos) {
+  sparks: function(pos) {
     const color = palette.red.col;
     const color2 = palette.orange.col;
     new ParticleEmitter(
@@ -127,7 +127,7 @@ const Particles = {
     );
   },
 
-  powerup: function (p, c = WHITE, t = 4) {
+  powerup: function(p, c = WHITE, t = 4) {
     new ParticleEmitter(
       p, PI * 2,            // pos, angle
       0, .2, 30, 1, // emitSize, emitTime, emitRate, emiteCone
