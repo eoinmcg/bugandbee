@@ -12,7 +12,7 @@ export default class FishBoss extends Boss {
       pos: vec2(g.size.min.x, bottomY),
       size: vec2(4),
       tile: g.tile('fish0'),
-      health: 60,
+      health: 40,
       value: 300,
     });
 
@@ -86,10 +86,10 @@ export default class FishBoss extends Boss {
       // Trigger Jump Phase
       if (this.jumpTimer.elapsed()) {
         this.state = 'jump';
-        this.changeAnim('bite', .15);
+        this.changeAnim('jump', .15);
         this.g.sfx.play('splash', this.pos);
         Particles.swampSplash(this.pos, .4)
-        this.angle = PI * -.25
+        // this.angle = PI * -.25
 
 
         // Calculate parabolic launch toward player position
@@ -126,7 +126,7 @@ export default class FishBoss extends Boss {
       // Apply gravity pulling boss down
       this.velocity.y -= this.gravity;
       if (this.velocity.y < 0 && this.angle > (PI * .25)) {
-        this.angle += 0.05;
+        // this.angle -= 0.05;
       }
 
       // Update face direction based on current movement

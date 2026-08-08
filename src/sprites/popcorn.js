@@ -17,19 +17,23 @@ export default class Popcorn extends Enemy {
       health: 0, value: 10,
     });
 
+    const vx = props.pos.x < 0 ? .1 : -.1;
+    this.velocity = vec2(vx, 0);
+
+    this.oscillate = false
     const bg = this.g.level.data?.bg || '';
     let anim = bg === 'Underground'
       ? 'bat' : 'flappy';
 
     if (bg === 'Swamp') {
-      anim = 'drone'
+      anim = 'moth'
+      this.oscillate = true
+      this.velocity.x *= 2
     }
 
     this.changeAnim(anim, 0.1);
     this.canShoot = rand() > .85;
 
-    const vx = props.pos.x < 0 ? .1 : -.1;
-    this.velocity = vec2(vx, 0);
 
     this.mirror = this.velocity.x > 0;
   }
@@ -39,6 +43,10 @@ export default class Popcorn extends Enemy {
     if ((this.velocity.x > 0 && this.pos.x > this.g.size.max.x + this.size.x)
       || (this.velocity.x < 0 && this.pos.x < this.g.size.min.x - this.size.x)) {
       this.remove();
+    }
+
+    if (this.oscillate) {
+      this.pos.y += (Math.sin(time * 5)) * .1
     }
 
     if (this.canShoot && rand() > .995) {

@@ -224,7 +224,7 @@ export default class LevelManager {
     this.bg.update();
 
 
-    if (this.g.levelNum === 3) {
+    if (this.g.level.data?.bg === 'Tunnel') {
 
       this.angleOffset += 0.01;
       const noise = (noise1D(this.angleOffset) - 0.5) * 2;

@@ -54,7 +54,6 @@ export const levels = [
     speed: [1, 0],
     audio: 7,
     phases: [
-      { start: 0, types: ['fishboss'], props: { pos: vec2(-10, 10) } },
       { start: 0, end: 100, types: ['bubble'], freq: [1, 1] },
       { start: 0, end: 100, types: ['fish'], freq: [2, 4] },
       { start: 10, end: 100, types: ['popcorn'], freq: [3, 5] },
