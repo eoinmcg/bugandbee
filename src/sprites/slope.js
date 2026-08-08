@@ -59,7 +59,6 @@ export default class Slope extends Sprite {
     let xOff = size.x + 1 + Math.abs(this.g.angle * 10)
     drawRect(pos, size.add(vec2(.5, 0)), this.col, this.angle);
     if (!xOff) xOff = 0
-    console.log({ surface, xOff })
     drawRect(pos.add(surface), vec2(xOff, 1), new Color(0, 0, 0, 0.5), this.angle);
     drawRect(pos.add(surface).add(vec2(0, .35 * (this.type === 'bottom' ? 1 : -1))), vec2(xOff, .2), new Color(0, 0, 0, .5), this.angle);
 

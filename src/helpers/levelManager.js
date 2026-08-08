@@ -173,6 +173,7 @@ export default class LevelManager {
   }
 
   setGameOver() {
+    if (this.g.sfx.isMuted) return
     this.g.stopMusic();
     window.setTimeout(() => {
       this.g.playMusic(0);
