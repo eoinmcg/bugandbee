@@ -20,6 +20,7 @@ export default class Fish extends Enemy {
 
     const anim = 'fish';
     this.changeAnim(anim, 0.1);
+    this.hasSplashed = false
 
     // Gravity force pulling down each frame
     this.gravity = 0.008;
@@ -54,6 +55,7 @@ export default class Fish extends Enemy {
 
     this.g.sfx.play("splash", this.pos);
     Particles.swampSplash(this.pos)
+    this.angle = PI * .25
 
 
   }
@@ -61,10 +63,19 @@ export default class Fish extends Enemy {
   update() {
     this.velocity.y -= this.gravity;
 
-    let trajectoryAngle = Math.atan2(this.velocity.y, this.velocity.x);
-    this.angle = trajectoryAngle + Math.PI;
+    if (this.velocity.y < 0 && this.angle > (PI * -.25)) {
+      this.angle -= 0.05;
+    }
+
 
     super.update();
+
+    if (this.pos.y < -9 && !this.hasSplashed && this.velocity.y < 0) {
+      console.log('splash')
+      this.g.sfx.play("splash", this.pos);
+      Particles.swampSplash(this.pos)
+      this.hasSplashed = true
+    }
 
     if (
       this.pos.y < this.g.size.min.y - this.size.y ||

@@ -70,7 +70,12 @@ const Config = {
     rock1: 45,
     fish0: 46,
     fish1: 47,
-    pshroom: 48
+    pshroom: 48,
+    moth0: 54,
+    moth1: 55,
+    moth2: 56,
+    swift0: 57,
+    swift1: 58,
   },
 };
 

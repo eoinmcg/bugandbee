@@ -19,6 +19,7 @@ export default class FishBoss extends Boss {
     this.anims = {
       swim: ['fish1', 'fish1'],
       jump: ['fish0'],
+      bite: ['fish0', 'fish1'],
     };
     this.changeAnim('swim', .2);
 
@@ -85,9 +86,11 @@ export default class FishBoss extends Boss {
       // Trigger Jump Phase
       if (this.jumpTimer.elapsed()) {
         this.state = 'jump';
-        this.changeAnim('jump');
+        this.changeAnim('bite', .15);
         this.g.sfx.play('splash', this.pos);
         Particles.swampSplash(this.pos, .4)
+        this.angle = PI * -.25
+
 
         // Calculate parabolic launch toward player position
         let player = this.getRandomPlayer();
@@ -122,6 +125,9 @@ export default class FishBoss extends Boss {
     else if (this.state === 'jump') {
       // Apply gravity pulling boss down
       this.velocity.y -= this.gravity;
+      if (this.velocity.y < 0 && this.angle > (PI * .25)) {
+        this.angle += 0.05;
+      }
 
       // Update face direction based on current movement
       if (this.velocity.x !== 0) {
@@ -132,6 +138,7 @@ export default class FishBoss extends Boss {
       if (this.velocity.y < 0 && this.pos.y <= bottomY) {
         this.pos.y = bottomY;
         this.state = 'patrol';
+        this.angle = 0;
 
         // Trigger splash effect sound!
         this.g.sfx.play('splash', this.pos);
