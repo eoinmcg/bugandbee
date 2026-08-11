@@ -104,6 +104,68 @@ const drawWeather = {
       }
     }
   },
+  pollen: function() {
+    const random = new RandomGenerator(skySeed + 2);
+    const num = 30;
+
+    const worldWidth = mainCanvas.width / cameraScale;
+    const worldHeight = mainCanvas.height / cameraScale;
+    const worldMin = vec2(
+      cameraPos.x - worldWidth / 2,
+      cameraPos.y - worldHeight / 2
+    );
+
+    for (let i = 0; i < num; i++) {
+      const baseX = random.float(worldWidth);
+      const baseY = random.float(worldHeight);
+
+      const speed = 20 + random.float(30);
+      const phaseY = random.float(Math.PI * 2);
+
+      // Move left and wrap around
+      const x = ((baseX - time * 8) % worldWidth + worldWidth) % worldWidth;
+
+      const worldPos = vec2(
+        worldMin.x + x,
+        worldMin.y + baseY + Math.sin(time * speed * 0.015 + phaseY) * 2
+      );
+
+      for (let r = 1; r <= 4; r++) {
+        const glowColor = new Color(1, 1, 1, .4 * (1 - r / 4));
+        drawRect(worldPos, vec2(r * 0.15), glowColor, time);
+      }
+    }
+  },
+  // pollen: function() {
+  //   const random = new RandomGenerator(skySeed + 2); // Different seed
+  //   const num = 40;
+  //
+  //   // Get actual camera viewport bounds in world space
+  //   const worldWidth = mainCanvas.width / cameraScale;
+  //   const worldHeight = mainCanvas.height / cameraScale;
+  //   const worldMin = vec2(cameraPos.x - worldWidth / 2, cameraPos.y - worldHeight / 2);
+  //   const worldMax = vec2(cameraPos.x + worldWidth / 2, cameraPos.y + worldHeight / 2);
+  //
+  //   for (let i = 0; i < num; i++) {
+  //     const baseX = worldMin.x + random.float(worldMax.x - worldMin.x);
+  //     const baseY = worldMin.y + random.float(worldMax.y - worldMin.y);
+  //     const speed = 20 + random.float(30);
+  //     const phaseX = random.float(Math.PI * 2);
+  //     const phaseY = random.float(Math.PI * 2);
+  //
+  //     const worldPos = vec2(
+  //       baseX + Math.sin(time * speed * 0.01 + phaseX) * 0.5,
+  //       baseY + Math.sin(time * speed * 0.015 + phaseY) * 0.4
+  //     );
+  //
+  //
+  //     for (let r = 1; r <= 4; r++) {
+  //       const glowColor = new Color(1, 1, 1, .4 * (1 - r / 4));
+  //       drawRect(worldPos, vec2(r * 0.15), glowColor, time);
+  //     }
+  //   }
+  // },
+
   fireflies: function() {
     const random = new RandomGenerator(skySeed + 2); // Different seed
     const numFireflies = 30;

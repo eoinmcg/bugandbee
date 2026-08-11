@@ -11,10 +11,10 @@ export default class Swamp {
     this.blocks = [];
 
     let W = 40;
-    // for (let i = W; i >= -W; i--) {
-    //   const col = new Color(0, rand(.2, .1), 0);
-    //   this.blocks.push(new SwampFoliage(vec2(i, 12.2), vec2(rand(5, 6)), col, this.speed * -.05));
-    // }
+    for (let i = W; i >= -W; i--) {
+      const col = new Color(.1, rand(.1, .2), .1);
+      this.blocks.push(new SwampFoliage(vec2(i, 12.2), vec2(rand(5, 6)), col, this.speed * -.05));
+    }
 
     W = 26;
     for (let i = W + 10; i >= -W; i--) {
@@ -53,7 +53,7 @@ export default class Swamp {
   }
 
   render() {
-    drawSky(this.sky, ['fog', 'fireflies'], this.speed);
+    drawSky(this.sky, ['fog', 'pollen'], this.speed);
 
     this.blocks.forEach(block => block.render());
   }

@@ -71,6 +71,8 @@ const Config = {
     fish0: 46,
     fish1: 47,
     pshroom: 48,
+    drop0: 52,
+    drop1: 53,
     moth0: 54,
     moth1: 55,
     moth2: 56,

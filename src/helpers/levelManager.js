@@ -12,6 +12,7 @@ import Shroom from '../sprites/shroom';
 import Popcorn from '../sprites/popcorn';
 import Bubble from '../sprites/bubble';
 import Fish from '../sprites/fish';
+import Dropper from '../sprites/dropper';
 import Spike from '../sprites/spike';
 import Rock from '../sprites/rock';
 import SkullBoss from '../sprites/skullboss';
@@ -47,6 +48,7 @@ export default class LevelManager {
       seeker: Seeker,
       bubble: Bubble,
       fish: Fish,
+      dropper: Dropper,
       skullboss: SkullBoss,
       spiderboss: SpiderBoss,
       fishboss: FishBoss,

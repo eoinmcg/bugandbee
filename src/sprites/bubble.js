@@ -23,7 +23,9 @@ export default class Bubble extends Enemy {
 
     const vx = -.1;
     this.velocity = vec2(vx, rand(.05, .1));
-    this.col = new Color(1, 1, 0, .7)
+    this.col = new Color(1, 1, 0, .5);
+
+    this.sinOffset = rand(.05, .1);
 
   }
 
@@ -35,20 +37,18 @@ export default class Bubble extends Enemy {
       || (this.velocity.x < 0 && this.pos.x < this.g.size.min.x - this.size.x)) {
       this.remove();
     }
-    this.pos.x += (Math.sin(time * 5)) * .1
+    this.pos.x += (Math.sin(time * 5)) * this.sinOffset;
   }
 
 
   destroy(explode = true) {
-    this.dead = true; // prevent double counting
-    // super.destroy();
+    this.dead = true;
 
     if (!explode) return;
-    console.log('DESTROY')
     new Score(this.g, { value: this.value, pos: this.pos });
-    // Particles.swampSplash(this.pos);
     this.g.sfx.play('pop', this.pos);
-    super.destroy(false)
+    Particles.swampSplash(this.pos, .3, this.g.palette.lime.col, this.g.palette.lime.col);
+    super.destroy(false);
   }
 
 }

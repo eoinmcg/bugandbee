@@ -1,6 +1,5 @@
 import drawSky from "../helpers/drawSky";
-import changeBg from "../helpers/changeBg";
-import { BgBlock, Beam } from "./blocks";
+import { Beam } from "./blocks";
 
 export default class Underground {
 

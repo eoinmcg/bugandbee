@@ -270,7 +270,7 @@ export default class Player extends Sprite {
   }
 
   handleRotation() {
-    const maxAngle = 0.5;
+    const maxAngle = 0.6;
     const angleStep = 0.05;
     const direction = this.mirror ? -1 : 1;
     const verticalInput = isTouchDevice ? this.snapY : Math.sign(this.velocity.y);

@@ -71,7 +71,6 @@ export default class Fish extends Enemy {
     super.update();
 
     if (this.pos.y < -9 && !this.hasSplashed && this.velocity.y < 0) {
-      console.log('splash')
       this.g.sfx.play("splash", this.pos);
       Particles.swampSplash(this.pos)
       this.hasSplashed = true

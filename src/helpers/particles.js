@@ -97,9 +97,9 @@ const Particles = {
     );
   },
 
-  swampSplash: function(pos, size = .2) {
-    const color = palette.lime.col;
-    const color2 = palette.slate.col;
+  swampSplash: function(pos, size = .2, color = false, color2 = false) {
+    color = color || palette.lime.col;
+    color2 = color2 || palette.slate.col;
     new ParticleEmitter(
       vec2(pos.x, pos.y - .5), 0,            // pos, angle
       0, .1, 200, 1, // emitSize, emitTime, emitRate, emiteCone

@@ -16,7 +16,11 @@ export class BgBlock extends EngineObject {
 
   update() {
     this.pos.x += this.speed;
-    if (this.pos.x <= -this.maxW) this.pos.x = this.maxW;
+    if (this.pos.x <= -this.maxW) this.reset()
+  }
+
+  reset() {
+    this.pos.x = this.maxW;
   }
 
   render() {
@@ -103,8 +107,9 @@ export class SwampFoliage extends BgBlock {
 
   constructor(pos, size, col, speed) {
     super(pos, size, col, speed);
-    this.a = rand(-.5, .5);
-    this.t = Math.random() > .5 ? 'tile' : 'circle'
+    this.a = rand(1, 5);
+    this.t = Math.random() > .2 ? 'tile' : 'circle'
+    this.renderOrder = 30000;
   }
 
   update() {
@@ -116,14 +121,13 @@ export class SwampFoliage extends BgBlock {
 
   render() {
     this.t === 'tile'
-      ? drawTile(this.pos, this.size, tile(Config.atlas.circle, Config.tileSize), this.col, .7 + this.a)
-      : drawCircle(this.pos, this.size.x, this.col);
+      ? drawTile(this.pos.add(vec2(0, 2)), this.size, tile(Config.atlas.round, Config.tileSize), this.col, .7 + this.a)
+      : drawEllipse(this.pos, vec2(.3, 4 + this.a), CLEAR_BLACK, 0, .3, new Color(.1, .1, .1, 1))
   }
 
 }
 
 export class Mountain extends BgBlock {
-
   update() {
     this.pos.x += this.speed;
     if (this.pos.x <= -this.maxW) this.pos.x = this.maxW;
@@ -132,11 +136,9 @@ export class Mountain extends BgBlock {
   render() {
     drawTile(this.pos, this.size, tile(Config.atlas.square, Config.tileSize), this.col, .7);
   }
-
 }
 
 export class Trunk extends BgBlock {
-
   update() {
     if (Math.abs(this.angle) === 0) {
       this.resetAngle();
@@ -159,7 +161,6 @@ export class Trunk extends BgBlock {
 }
 
 export class Beam extends Trunk {
-
   constructor(pos, size, col, speed, shape) {
     super(pos, size);
     this.size = size;
@@ -168,14 +169,11 @@ export class Beam extends Trunk {
     this.pos.y += rand(0, .2);
     this.maxW = Game.widescreen ? 32 : 18;
     this.renderOrder = -4;
-
   }
-
 
   resetAngle() {
     this.angle = rand(-.2, .2);
   }
-
 }
 
 export class BgSwampTree extends EngineObject {
