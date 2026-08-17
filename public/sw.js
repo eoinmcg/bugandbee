@@ -11,6 +11,7 @@ const assets = [
   "./switch.ogg",
   "./critical.ogg",
   "./meltdown.ogg",
+  "./swamp.ogg",
   "./drag.ogg",
   "./boss.ogg",
 ];

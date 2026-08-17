@@ -25,6 +25,7 @@ import Forest from '../bgs/forest';
 import Swamp from '../bgs/swamp';
 import Tunnel from '../bgs/tunnel';
 import Underground from '../bgs/underground';
+import Ascent from '../bgs/ascent';
 
 import paths from '../data/paths';
 
@@ -36,7 +37,8 @@ export default class LevelManager {
     this.g.totalLevels = levels.length;
 
     this.bgs = {
-      Meadow, Forest, Swamp, Tunnel, Underground
+      Meadow, Forest, Swamp, Tunnel, Underground,
+      Ascent
     };
 
     this.ents = {

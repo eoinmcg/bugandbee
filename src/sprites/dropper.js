@@ -37,7 +37,6 @@ export default class Dropper extends Enemy {
       this.isFalling = true
       this.velocity.y = -.01;
       this.velocity.x *= rand(-.15, .15);
-      this.mirror = false
     } else {
       this.pos.y += (Math.sin(time * 2) * .005);
     }

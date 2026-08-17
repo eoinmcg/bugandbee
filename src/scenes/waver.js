@@ -2,6 +2,7 @@ import Scene from "./scene";
 import Meadow from "../bgs/meadow";
 import Forest from '../bgs/forest';
 import Swamp from '../bgs/swamp';
+import Tunnel from '../bgs/tunnel';
 
 import Enemy from "../sprites/enemy";
 import Mouse from "../sprites/mouse";
@@ -19,7 +20,7 @@ export default class Waver extends Scene {
     const scene = scenes.rnd()
 
     // this.BG = new scene(skies.rnd(), 1);
-    this.BG = new Swamp('swamp', 1);
+    this.BG = new Tunnel('swamp', 1);
   }
 
   update() {
